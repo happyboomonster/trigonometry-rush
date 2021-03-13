@@ -18,7 +18,7 @@ Hopefully this README is helpful...
 To try out my take on Reverse-Engineering Geometry Dash [is it reverse
 engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3!
 (both should work fine, although I don't actively use Python 3 so there
- might be some bugs...)
+ might be some bugs...)  NOTE:  You need Pygame 2 or later installed!
 
 Creating Levels:
 Please refer to the README in the "leveldesign" folder.  Also, you can
