@@ -14,15 +14,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-Hopefully this README is helpful...
+Hopefully this README is helpful...  First of all, I want to mention that
+this program is in pre-alpha phase (like really pre-alpha), and may not
+even work if you download it and try it...
+
 To try out my take on Reverse-Engineering Geometry Dash [is it reverse
 engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3!
 (both should work fine, although I don't actively use Python 3 so there
  might be some bugs...)  NOTE:  You need Pygame 2 or later installed!
 
 Creating Levels:
-Please refer to the README in the "leveldesign" folder.  Also, you can
-contact me on my Github account ("happyboomonster").
+Please refer to the README in the "leveldesign" folder.  More to come in
+a little?
 
 Program Structure:
 Basically, I made a few classes.  One for the Cube sprite, including position,
