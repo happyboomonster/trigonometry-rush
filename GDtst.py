@@ -57,93 +57,8 @@ class GD_Figure():
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-                 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,1,0,0,0,1,1,1,1,1,0,0,0],
-                  [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,1,0,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-                  [0,0,0,1,1,1,1,1,0,0,0,1,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-                 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,0,1,0,0,2,2,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-                  [0,0,0,1,1,1,1,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-
-                 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,0,1,0,0,2,2,0,0,1,0,0,0,0],
-                  [0,0,0,0,1,0,0,2,2,0,0,1,0,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-                 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0],
-                  [0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,1,0,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,0,1,0,0,0],
-                  [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,0,0,1,0,0,0,1,1,1,1,0,0,0],
-                  [0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-                 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0],
-                  [0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0],
-                  [0,0,0,1,0,0,0,2,2,0,0,0,1,0,0,0],
-                  [0,0,0,0,1,0,0,2,2,0,0,1,0,0,0,0],
-                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
-                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
-                  [0,0,0,0,1,0,0,0,1,1,1,1,0,0,0,0],
-                  [0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]]
+
 
         self.arrowframes = [[[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
                              [0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1],
@@ -303,55 +218,52 @@ class GD_Figure():
     def setrotate(self,inframe):
         self.angle = inframe
 
-    def drawerase(self,figureshape='cube'):  #this function doesn't work properly at the moment.
+    def draw(self,figureshape='cube'):
         global screen
         if(figureshape == 'cube'):
-            self.clean_16x16([int(self.oldpos[0]),int(self.oldpos[1])])
             self.rotatedimage = pygame.transform.rotate(self.cubeframe,int(self.angle)).convert_alpha()
+            if(self.mini == True):
+                self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
             self.extramove = [self.cubecenteredpos[0] - self.rotatedimage.get_rect().center[0],self.cubecenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'arrow'):
-            self.clean_16x16([int(self.oldpos[0]),int(self.oldpos[1])])
             self.rotatedimage = pygame.transform.rotate(self.arrowframe,int(self.angle)).convert_alpha()
+            if(self.mini == True):
+                self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
             self.extramove = [self.arrowcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.arrowcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
-
-    def draw(self,figureshape='cube'):
-        global screen
-        if(self.mini == True):
-            pass
-        else:
-            if(figureshape == 'cube'):
-                self.rotatedimage = pygame.transform.rotate(self.cubeframe,int(self.angle)).convert_alpha()
-                self.extramove = [self.cubecenteredpos[0] - self.rotatedimage.get_rect().center[0],self.cubecenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-                screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
-            elif(figureshape == 'arrow'):
-                self.rotatedimage = pygame.transform.rotate(self.arrowframe,int(self.angle)).convert_alpha()
-                self.extramove = [self.arrowcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.arrowcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-                screen.blit(pygame.transform.rotate(self.arrowframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
-            elif(figureshape == 'ship'):
-                self.rotatedimage = pygame.transform.rotate(self.shipframe,int(self.angle)).convert_alpha()
-                self.extramove = [self.shipcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.shipcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-                screen.blit(pygame.transform.rotate(self.shipframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
-            elif(figureshape == 'ball'):
-                self.rotatedimage = pygame.transform.rotate(self.ballframe,int(self.angle)).convert_alpha()
-                self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-                screen.blit(pygame.transform.rotate(self.ballframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+            screen.blit(pygame.transform.rotate(self.arrowframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+        elif(figureshape == 'ship'):
+            self.rotatedimage = pygame.transform.rotate(self.shipframe,int(self.angle)).convert_alpha()
+            if(self.mini == True):
+                self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
+            self.extramove = [self.shipcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.shipcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            screen.blit(pygame.transform.rotate(self.shipframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+        elif(figureshape == 'ball'):
+            self.rotatedimage = pygame.transform.rotate(self.ballframe,int(self.angle)).convert_alpha()
+            if(self.mini == True):
+                self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
+            self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            screen.blit(pygame.transform.rotate(self.ballframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
 
     def getcoords(self,figureshape='cube'):
-        #if(figureshape == 'cube'):  #I had it so it shrunk the hitbox when rotating, but that caused a LOT of glitches!
-            #if(self.angle < 16 and self.angle > 360 - 16):
-         #   return [int(self.pos[0]) + 4,int(self.pos[1]) + 4,int(self.pos[0]) + 14,int(self.pos[1] + 14)]
-            #else:
-                #return [int(self.pos[0]) + 6,int(self.pos[1]) + 6,int(self.pos[0]) + 12,int(self.pos[1]) + 12]
-        if(figureshape == 'arrow'):
-            return [int(self.pos[0]) + 5,int(self.pos[1]) + 5,int(self.pos[0]) + 10,int(self.pos[1]) + 8]
+        if(self.mini == False):
+            if(figureshape == 'arrow'):
+                return [int(self.pos[0]) + 5,int(self.pos[1]) + 5,int(self.pos[0]) + 10,int(self.pos[1]) + 8]
 
-        elif(figureshape == 'ship'):
-            return [int(self.pos[0] + 1.5),int(self.pos[1] + 5),int(self.pos[0] + 14.5),int(self.pos[1] + 10)]
+            elif(figureshape == 'ship'):
+                return [int(self.pos[0] + 1.5),int(self.pos[1] + 5),int(self.pos[0] + 14.5),int(self.pos[1] + 10)]
 
-        elif(figureshape == 'ball' or figureshape == 'cube'):
-            return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
+            elif(figureshape == 'ball' or figureshape == 'cube'):
+                return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
+        else: #GLITCHY!!!
+            if(figureshape == 'arrow'):
+                return [int(self.pos[0]) + 2,int(self.pos[1]) + 2,int(self.pos[0]) + 5,int(self.pos[1]) + 4]
+
+            elif(figureshape == 'ship'):
+                return [int(self.pos[0] + 0.75),int(self.pos[1] + 2.5),int(self.pos[0] + 7.25),int(self.pos[1] + 5)]
+
+            elif(figureshape == 'ball' or figureshape == 'cube'):
+                return [int(self.pos[0] + 2),int(self.pos[1] + 2),int(self.pos[0] + 6),int(self.pos[1] + 10)]
 
     def update(self):
         pygame.display.flip()
@@ -811,13 +723,7 @@ class CoursePortals():
                     newx = 20 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        # Type 3 Collision = bounce, Type 2 collision = Death!, Type 1 collision = Ground
-                        #if(currentmap[coords[1] + y][coords[0] + x] == 1):
                         self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])
-                        #elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                        #    self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,2,'portal'])
-                        #elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                        #    self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,3,'portal'])
         return self.collidecoords
 
 
@@ -1827,6 +1733,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             exec("self.gd" + str(x) + ".form = 'cube'")
             exec("self.gd" + str(x) + ".dead = 0")
 
+            #tmp!!!
+            #exec("self.gd" + str(x) + ".mini = True")
+
             self.deadlist.append(0)
 
         #so I have this for other functions
@@ -1868,7 +1777,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.balljumpsizes = [-1.37,-1.91,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
         
         #fps info / presets
-        self.fps = 10
+        self.fps = 52
         self.fpsextremes = [self.fps,self.fps]
         
         #key repeat
@@ -1939,33 +1848,33 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 self.portals.direction = self.direction
 
                 #get the average Y position of everyone on the screen ************************************************** something's wrong here!!!  you slam the floor randomly! ********************************************
-                for abcdef in range(0,3):
-                    self.avgY = 0
-                    for imrunningoutofvariables in range(0,self.players):
-                        exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
-                    self.avgY = int(self.avgY / self.players)
-
-                    #move our screen and players around a little based on our avgY variable (set above)
-                    if(self.avgY < 30):
-                        if(self.y10y[1] < 9):
-                            self.y10y[1] += 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] += 1")
-                        else:
-                            self.y10y[1] = 0
-                            self.y10y[0] -= 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] += 1")
-                    elif(self.avgY > 60):
-                        if(self.y10y[1] > 0):
-                            self.y10y[1] -= 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] -= 1")
-                        else:
-                            self.y10y[1] = 9
-                            self.y10y[0] += 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] -= 1")
+##                for abcdef in range(0,3):
+##                    self.avgY = 0
+##                    for imrunningoutofvariables in range(0,self.players):
+##                        exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
+##                    self.avgY = int(self.avgY / self.players)
+##
+##                    #move our screen and players around a little based on our avgY variable (set above)
+##                    if(self.avgY < 30):
+##                        if(self.y10y[1] < 9):
+##                            self.y10y[1] += 1
+##                            for p in range(0,self.players):
+##                                exec("self.gd" + str(p) + ".pos[1] += 1")
+##                        else:
+##                            self.y10y[1] = 0
+##                            self.y10y[0] -= 1
+##                            for p in range(0,self.players):
+##                                exec("self.gd" + str(p) + ".pos[1] += 1")
+##                    elif(self.avgY > 60):
+##                        if(self.y10y[1] > 0):
+##                            self.y10y[1] -= 1
+##                            for p in range(0,self.players):
+##                                exec("self.gd" + str(p) + ".pos[1] -= 1")
+##                        else:
+##                            self.y10y[1] = 9
+##                            self.y10y[0] += 1
+##                            for p in range(0,self.players):
+##                                exec("self.gd" + str(p) + ".pos[1] -= 1")
 
                 #move the effects every third frame (this could almost go in DrawEVERYTHING())
                 if(self.x10x[1] % 3 == 0):
@@ -2140,7 +2049,11 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                     if('portal#4' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".mini = True")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 0") #8: gravity 9: reverse-gravity...
+                    if('portal#8' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
+                    if('portal#9' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
 
                     #booster collision handling
                     exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.boosters." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
