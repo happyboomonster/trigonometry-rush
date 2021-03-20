@@ -1528,7 +1528,7 @@ class Menu():
     def __init__(self):
         self.levellist = {"Stereo Madness" : "StereoMadness" , "Back on Track" : "BackOnTrack", "Polargeist" : "Polargeist"}
         self.compliment = self.levellist.keys()
-        self.pusab = pygame.font.Font("Assets/PUSAB.ttf",40)
+        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
         self.clock = pygame.time.Clock()
 
     def Draw(self,shape,extraparams):
@@ -1803,7 +1803,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.AvgCameraPos = 120
 
         #pusab font
-        self.pusab = pygame.font.Font("Assets/PUSAB.ttf",40)
+        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
 
         ###############*********** End Of GameLoop Init *******************###################
 
@@ -1817,7 +1817,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         exec("self.y10y = [len(self.squares." + str(choice) + ") - 18,0]")
         exec("self.x10x = [0,0]")
         #start some music
-        exec("pygame.mixer.music.load('Assets/" + str(choice) + ".ogg')")
+        exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
         #pygame.mixer.music.play() ************************************************************************need to reenable this **********************************************************8
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squares." + str(choice) + "[0])")
@@ -2119,7 +2119,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             if(self.gd0.form == 'cube' and self.gd0.touchingground == 1):
                                 self.gd0.Yspeed = self.jumpsizes[0] * self.unit
                                 self.gd0.touchingground = 0
-                            elif(self.gd0.form == 'ship' and self.gd0.Yspeed > -2.6):
+                            elif(self.gd0.form == 'ship' and self.gd0.Yspeed > -1.5):
                                 self.gd0.Yspeed -= 0.05
 
                 self.DrawEVERYTHING(self.x10x,self.y10y,choice)
@@ -2242,7 +2242,7 @@ effects = BGEffects()
 fgeffects = FGEffects()
 postprocessing = PostProcessing_Effects()
 #a font
-attemptfont = pygame.font.Font("Assets/PUSAB.ttf",40)
+attemptfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
 #moving / init our GD Figure
 gd = GD_Figure()
 gd.goto([50,90])
@@ -2288,7 +2288,7 @@ while True:
     else:
         attempts = 1
     #create a font surface for the attempts
-    attemptfont = pygame.font.Font("Assets/PUSAB.ttf",40)
+    attemptfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
     attemptpos = [30,40]
     GDYspeed = 0.5
     gd.goto([0,90])
@@ -2308,7 +2308,7 @@ while True:
     gd.form = 'cube'
     gamespeed = 2
     gdcoordslist = []
-    pygame.mixer.music.load("Assets/BackOnTrack.ogg")
+    pygame.mixer.music.load("Assets/Music/BackOnTrack.ogg")
     pygame.mixer.music.play()
     exec("LevelLength = len(background." + str(choice) + "[0])")
     for f in range(0,LevelLength - 20):
