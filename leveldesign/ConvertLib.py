@@ -41,7 +41,13 @@ def convert(level):
                     triangles.append([y,x,1])
             elif(level[y][x] == 1):
                 try:
-                    if(level[y - 1][x] != 1 and level[y + 1][x] != 1):
+                    if(level[y + 1][x] != 1 and level[y - 1][x] == 2):
+                        #halfblock bottom
+                        blocks.append([y,x,3])
+                    elif(level[y - 1][x] == 2):
+                        #full block
+                        blocks.append([y,x,1])
+                    elif(level[y - 1][x] != 1 and level[y + 1][x] != 1):
                         #halfblock top
                         blocks.append([y,x,2])
                     else:
@@ -120,7 +126,7 @@ def convert(level):
     for x in range(0,len(bouncepads)):
         bouncepadsout[bouncepads[x][0]][bouncepads[x][1]] = bouncepads[x][2]
     for x in range(0,len(portals)):
-        portalsout[portalsout[x][0]][portalsout[x][1]] = portals[x][2]
+        portalsout[portals[x][0]][portals[x][1]] = portals[x][2]
 
     #return output
     return [blocksout,trianglesout,bouncepadsout,bounceballsout,portalsout]

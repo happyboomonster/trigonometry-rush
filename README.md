@@ -19,7 +19,8 @@ this program is in pre-alpha phase (like really pre-alpha), and may not
 even work if you download it and try it...
 
 To try out my take on Reverse-Engineering Geometry Dash [is it reverse
-engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3!
+engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3! (Actually,
+Python 3 for the moment doesn't work due to some...problems with Pickle)
 (both should work fine, although I don't actively use Python 3 so there
  might be some bugs...)  NOTE:  You need Pygame 2 or later installed!
 
@@ -35,11 +36,11 @@ hurt you C) The "bounceballs" (I can't think of a better name) D) The
 BouncePads E) The Portals...  Then I made a Menu and GameLoop class to link
 all the stuff I made together.
 
-What I want to add:  Changeable cube costumes, and a menu for that
-A front menu [WHAT, I know...  I don't have a front menu yet  =(  ]
-Controller and custom control setup support
-Optomisations that speed up my horrible code!  =)
-Make it easier for people to make levels
+What I want to add:  Changeable cube costumes, and a menu for that.  
+A front menu [WHAT, I know...  I don't have a front menu yet  =(  ].  
+Controller and custom control setup support.  
+Optomisations that speed up my horrible code!  =) .  
+Make it easier for people to make levels.  
 
 
 Attribution to various people:

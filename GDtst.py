@@ -18,6 +18,8 @@ import pygame
 import time as timelib
 import random
 import sys
+import math
+import pickle
 
 pygame.init()
 pygame.font.init()
@@ -25,6 +27,18 @@ pygame.font.init()
 videostuff = pygame.display.Info()
 screen = pygame.display.set_mode([200,120],pygame.HWSURFACE | pygame.HWACCEL | pygame.SCALED)
 pygame.display.set_caption('Geometry Dash Test')
+
+print("Testing Python 2 or 3...")
+try:
+    tmpfile = open("Assets/Levels/TestLevel01/OutputLevel.pkl","r")
+    pickle.load(tmpfile)
+    print("Python 2 confirmed... Continuing")
+    PYTHON2 = True
+    PYTHON3 = False
+except TypeError:
+    print("Python 3 confirmed... Continuing")
+    PYTHON2 = False
+    PYTHON3 = True
 
 class GD_Figure():
     def __init__(self):
@@ -42,7 +56,7 @@ class GD_Figure():
         self.mini = False
         self.Yspeed = 0
         #more variable setup beneath frames
-        self.frames =[[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        self.frames = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -57,10 +71,10 @@ class GD_Figure():
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]]
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
 
-        self.arrowframes = [[[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
+        self.arrowframes = [[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
                              [0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1],
                              [0,0,0,0,0,0,0,0,1,1,2,2,2,2,2,1],
                              [0,0,0,0,0,0,0,1,2,2,2,2,2,2,1,0],
@@ -75,24 +89,7 @@ class GD_Figure():
                              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-
-                         [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,1,2,2,1,0,0,0,0,0],
-                          [0,0,0,0,0,0,1,2,2,2,1,0,0,0,0,0],
-                          [0,0,0,0,0,1,2,2,2,2,1,1,0,0,0,0],
-                          [0,0,0,0,1,2,2,2,2,2,2,1,0,0,0,0],
-                          [0,0,0,0,0,1,1,1,1,2,2,1,1,0,0,0],
-                          [0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]]
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
         self.shipframes = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -129,12 +126,12 @@ class GD_Figure():
                            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
         #cubeframe setups
-        self.cubeframe = self.draw_16x16(self.frames[0],[0,0])
+        self.cubeframe = self.draw_16x16(self.frames,[0,0])
         self.cubecenterpos = self.cubeframe.get_rect().center
         self.cubecenteredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
 
         #arrowframe setups
-        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes[0],[0,0]),180)
+        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[0,0]),180)
         self.arrowcenterpos = self.arrowframe.get_rect().center
         self.arrowcenteredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
 
@@ -276,72 +273,6 @@ class GD_Figure():
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def handlejump(self,collidecoords,gravity,figureshape='cube'): #a very old depricated jump function that doesn't quite make proper GD jumps...
-        if(self.jumping == 1 and figureshape == 'cube'):
-            if(self.jumpingcounter <= self.pixels):
-                if(self.amount >= 2):
-                    self.amount = int(self.amount)
-                    if(self.jumpingcounter <= self.pixels / 4):
-                        self.move([0,-self.amount - 1],gravity)
-                    elif(self.jumpingcounter <= self.pixels / 2):
-                        self.move([0,-self.amount + 1],gravity)
-                    elif(self.jumpingcounter <= self.pixels / 2 + self.pixels / 4):
-                        self.move([0,self.amount - 1],gravity)
-                    elif(self.jumpingcounter <= self.pixels):
-                        self.move([0,self.amount + 1],gravity)
-                    outputgravity = self.amount + 1
-                else:
-                    if(self.jumpingcounter <= self.pixels / 2):
-                        if(self.jumpingcounter <= self.pixels / 4):
-                            self.move([0,-self.amount - 0.5],gravity)
-                        else:
-                            self.move([0,-self.amount + 0.5],gravity)
-                    elif(self.jumpingcounter <= self.pixels):
-                        if(self.jumpingcounter <= self.pixels / 4 * 3):
-                            self.move([0,self.amount - 0.5],gravity)
-                        else:
-                            self.move([0,self.amount + 0.5],gravity)
-                    outputgravity = self.amount + 0.5
-                self.move([0,2],gravity)
-                self.collide = self.checkcollision(collidecoords,self.getcoords(),gravity)
-                if('ground' in self.collide and self.jumpingcounter >= self.pixels / 2):
-                    self.setrotate(0)
-                    self.jumping = 0
-                    self.jumpingcounter = 0
-                    self.move([0,-1],gravity)
-                self.move([0,-2],gravity)
-                if('slamdown' in self.collide or 'slamup' in self.collide):
-                    if('slamup' in self.collide):
-                        self.move([0,-2],gravity)
-                        self.jumping = 0
-                        self.jumpingcounter = 0
-                        self.setrotate(0)
-                self.rotate(gravity)
-                self.jumpingcounter += 1
-                return [0,outputgravity]
-            else:
-                self.jumping = 0
-                self.setrotate(0)
-                return [1,False]
-        elif(figureshape == 'arrow' and self.jumping == 1):
-            gd.setrotate(90)
-            gd.move([0,-2],gravity)
-        else:
-            self.jumping = 0
-            return [1,False]
-
-    def beginjump(self,specs): #part of an old depricated jump system before I got proper physics implemented
-        #   specs[0] = length  specs[1] = height
-        self.jumping = 1
-        self.jumpingcounter = 0
-        self.amount = float(specs[0]) / specs[1] * 2
-        self.pixels = specs[1]
-        self.rotation = self.pixels / 12
-
-    def endjump(self): #part of an old deprecated jump system
-        self.jumping = 0
-        self.jumpingcounter = 0
-
     def draw_16x16(self,image,coords):
         self.tmpsurface = pygame.Surface([16,16])
         self.tmpsurface.set_colorkey([0,0,0])
@@ -357,10 +288,6 @@ class GD_Figure():
                     self.tmpsurface.set_at([x + coords[0],y + coords[1]],self.colorC)
         return self.tmpsurface
 
-    def clean_16x16(self,coords):
-        global screen
-        pygame.draw.rect(screen,[0,0,0],[coords[0],coords[1],16,16],0)
-
     def checkcollision(self,collidecoords,gdcoords,gravity):
         #there's a few different types of collision: 'ground' stuff you can stand on, or 'slamleft', 'slamright', 'slamup', and 'slamdown'.
         #then there's triangles / spikes.  they all return 'triangle' (you're dead)
@@ -370,6 +297,7 @@ class GD_Figure():
         for x in range(0,len(collidecoords)):
             if(collidecoords[x][5] == 'ground'):  #this is for block collision ONLY.
                 if(collidecoords[x][4] == 1):
+                    #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],10,10],1) #*****************************************for debug*************************************
                     #inside a collision list, we get [x,y,x2,y2,Collision Type:(1 = Ground,2 = Death), in GDcoords, we have just [x,y,x2,y2] though.
                     if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
@@ -567,10 +495,10 @@ class CourseSquares(): # all done
     def return_collision(self,currentmap,coords,speccoords):
         self.collidecoords = []
         if(self.direction == 'right'):
-            for x in range(0,20):
+            for x in range(0,21):
                 for y in range(0,12):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        # Type 3 Collision = bounce, Type 2 collision = Death!, Type 1 collision = Ground
+                        # Type 3 Collision = bounce, Type 2 collision = Death!, Type 1 collision = Ground                                                    v - that number is the collision type
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
                             self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 10,1,'ground'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 2):
@@ -578,7 +506,7 @@ class CourseSquares(): # all done
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
                             self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1] + 5,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 10,1,'ground'])
         elif(self.direction == 'left'):
-            for x in range(0,20):
+            for x in range(0,21):
                 for y in range(0,12):
                     newx = 20 - x
                     newy = y
@@ -601,8 +529,6 @@ class CoursePortals():
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
-        # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
-
         #Portals legend:1-9? form changer? (uh-oh)  we might need to go above 9 objs for this one...
 
         self.BackOnTrack = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1526,8 +1452,8 @@ class PostProcessing_Effects():
 
 class Menu():
     def __init__(self):
-        self.levellist = {"Stereo Madness" : "StereoMadness" , "Back on Track" : "BackOnTrack", "Polargeist" : "Polargeist"}
-        self.compliment = self.levellist.keys()
+        self.levellist = ["Stereo Madness", "Back on Track", "Polargeist"]
+        self.compliment = ["StereoMadness", "BackOnTrack", "Polargeist"]
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
         self.clock = pygame.time.Clock()
 
@@ -1636,8 +1562,9 @@ class Menu():
             pygame.display.flip()
             self.clock.tick(10)
 
-        #return level name
-        return self.levellist[self.compliment[self.position]]
+        #return level name #******************************************8 temporarily disabled! *****************************************************
+        #return self.levellist[self.compliment[self.position]]
+        return "Assets/Levels/BackOnTrack/OutputLevel.pkl"
 
     def GameMenu(self,PMStatus = False):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
@@ -1648,7 +1575,7 @@ class Menu():
             for event in pygame.event.get():
                 #do we want to LEAVE???
                 if(event.type == pygame.QUIT):
-                    InMenu = False
+                    pygame.quit()
 
                 #were TRACKING your mouse movements!
                 elif(event.type == pygame.MOUSEMOTION):
@@ -1721,8 +1648,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             exec("self.gd" + str(x) + " = GD_Figure()")
             exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",30])")
             exec("self.gd" + str(x) + "dead = False")
-            #a very misleading variable name which tracks the Y speeds of the GD figure (used in jumping)
-            exec("self.gd" + str(x) + ".shipspeeds = []")
+            exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading variable name which tracks the Y speeds of the GD figure (used in jumping)
             exec("self.gd" + str(x) + ".gdcoordslist = []")
             exec("self.gd" + str(x) + ".jumping = 0")
             exec("self.gd" + str(x) + ".touchingground = 0")
@@ -1799,28 +1725,34 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #SET OUR DIRECTION, FOR PETE'S SAKE!
         self.direction = 'right'
 
-        #average camera Y position
-        self.AvgCameraPos = 120
-
         #pusab font
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
 
         ###############*********** End Of GameLoop Init *******************###################
+
+    def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - SEE Assets/Levels/README.md for more info on this...
+        loadedfile = open(filename, "r")
+        conglomeration = pickle.load(loadedfile)
+        self.squaresCourse = conglomeration[0][:]
+        self.trianglesCourse = conglomeration[1][:]
+        self.bouncepadsCourse = conglomeration[2][:]
+        self.bounceballsCourse = conglomeration[3][:]
+        self.portalsCourse = conglomeration[4][:]
 
     def GameLoop(self,choice):
         #when we exit the loop, we need to give out something to tell what we wanted to do
         self.returnstatement = "dead"
         #for some reason or other, fgeffects has a bug that requires reinit every time someone dies.
         self.fgeffects.__init__()
-        self.avgY = 0
+        self.avgY = 1 #************************************************************** might need to change this later **************************************************
         #give us a starting position
-        exec("self.y10y = [len(self.squares." + str(choice) + ") - 18,0]")
+        exec("self.y10y = [len(self.squaresCourse) - 18,0]")
         exec("self.x10x = [0,0]")
-        #start some music
-        exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
-        #pygame.mixer.music.play() ************************************************************************need to reenable this **********************************************************8
+        #start some music #************************************************************************need to reenable this **********************************************************
+        #exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
+        #pygame.mixer.music.play()
         #make a levellength variable based on out selected level (used in the next line)
-        exec("self.LevelLength = len(self.squares." + str(choice) + "[0])")
+        exec("self.LevelLength = len(self.squaresCourse[0])")
         for f in range(0,self.LevelLength - 20):
             for e in range(1,int(10 / float(self.gamespeed)) + 1):
                 #are we heading left or right?
@@ -1847,34 +1779,47 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 self.bounceballs.direction = self.direction
                 self.portals.direction = self.direction
 
-                #get the average Y position of everyone on the screen ************************************************** something's wrong here!!!  you slam the floor randomly! ********************************************
-##                for abcdef in range(0,3):
-##                    self.avgY = 0
-##                    for imrunningoutofvariables in range(0,self.players):
-##                        exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
-##                    self.avgY = int(self.avgY / self.players)
-##
-##                    #move our screen and players around a little based on our avgY variable (set above)
-##                    if(self.avgY < 30):
-##                        if(self.y10y[1] < 9):
-##                            self.y10y[1] += 1
-##                            for p in range(0,self.players):
-##                                exec("self.gd" + str(p) + ".pos[1] += 1")
-##                        else:
-##                            self.y10y[1] = 0
-##                            self.y10y[0] -= 1
-##                            for p in range(0,self.players):
-##                                exec("self.gd" + str(p) + ".pos[1] += 1")
-##                    elif(self.avgY > 60):
-##                        if(self.y10y[1] > 0):
-##                            self.y10y[1] -= 1
-##                            for p in range(0,self.players):
-##                                exec("self.gd" + str(p) + ".pos[1] -= 1")
-##                        else:
-##                            self.y10y[1] = 9
-##                            self.y10y[0] += 1
-##                            for p in range(0,self.players):
-##                                exec("self.gd" + str(p) + ".pos[1] -= 1")
+                #get the average Y position of everyone on the screen ************************************************** something's wrong here!!!  collision boxes go nuts!!! ********************************************
+                for abcdef in range(0,3):
+                    self.avgY = 0
+                    for imrunningoutofvariables in range(0,self.players):
+                        exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
+                    self.avgY = int(self.avgY / self.players)
+
+                    #move our screen and players around a little based on our avgY variable (set above)
+                    if(self.avgY < 30):
+                        if(self.y10y[1] < 9):
+                            self.y10y[1] += 1
+                            for p in range(0,self.players):
+                                exec("self.gd" + str(p) + ".pos[1] += 1")
+                        else:
+                            self.y10y[1] = 0
+                            self.y10y[0] -= 1
+                            for p in range(0,self.players):
+                                exec("self.gd" + str(p) + ".pos[1] += 1")
+                    elif(self.avgY > 60):
+                        if(self.y10y[1] > 0):
+                            self.y10y[1] -= 1
+                            for p in range(0,self.players):
+                                exec("self.gd" + str(p) + ".pos[1] -= 1")
+                        else:
+                            self.y10y[1] = 9
+                            self.y10y[0] += 1
+                            for p in range(0,self.players):
+                                exec("self.gd" + str(p) + ".pos[1] -= 1")
+
+##                if(self.avgY < 50 and self.avgY > 0): #a quick Y scrolling test that doesn't work...
+##                    self.avgY += 1
+##                    self.y10y[1] += 1
+##                    self.gd0.pos[1] += 1
+##                if(self.avgY == 50):
+##                    self.avgY = -1
+##                if(self.avgY > -50 and self.avgY < 0):
+##                    self.avgY -= 1
+##                    self.y10y[1] -= 1
+##                    self.gd0.pos[1] -= 1
+##                if(self.avgY == -50):
+##                    self.avgY = 1
 
                 #move the effects every third frame (this could almost go in DrawEVERYTHING())
                 if(self.x10x[1] % 3 == 0):
@@ -1882,6 +1827,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         self.effects.moveeffects('left')
                     else:
                         self.effects.moveeffects('right')
+
+                #draw the WHOLE screen
+                self.DrawEVERYTHING(self.x10x,self.y10y,choice)
 
                 #some quick rotation handling for when falling
                 for imrunningoutofvariables in range(0,self.players):
@@ -1899,6 +1847,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
                     exec("self.selectedYspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed")
                     exec("self.selectedtouchingground = self.gd" + str(imrunningoutofvariables) + ".touchingground")
+                    exec("self.selectedpos = self.gd" + str(imrunningoutofvariables) + ".pos")
+                    exec("self.selectedgravity = self.gd" + str(imrunningoutofvariables) + ".gravity")
                     if(len(self.selectedshipspeeds) > 120): #make sure our lists aren't so long it slows doooowwwwwnnnnn the computer =)
                         exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.pop(0)")
                     for c in range(0,self.gamespeed): #move all GD figures what they're supposed to be moved
@@ -1906,14 +1856,18 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     for c in range(0,self.gamespeed):
                         self.gdcollision = []
                         if(self.selectedform == 'cube' or self.selectedform == 'ball'):
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                             if('ground' in self.gdcollision):
+                                if(self.selectedgravity == 1):
+                                   exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.ceil(self.selectedpos[1])")
+                                else:
+                                   exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.floor(self.selectedpos[1])")
                                 for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
                                     self.currentshipspeed = 0
                                     for d in range(0,len(self.selectedshipspeeds)):
                                         if(self.selectedshipspeeds[d] != 0):
                                             self.currentshipspeed = self.selectedshipspeeds[d]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                     if('ground' in self.gdcollision):
                                         if(self.currentshipspeed > 0):
                                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -1934,7 +1888,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                     for d in range(0,len(self.selectedshipspeeds)):
                                         if(self.selectedshipspeeds[d] != 0):
                                             self.currentshipspeed = self.selectedshipspeeds[imrunningoutofvariables]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                     if('ground' in self.gdcollision):
                                         if(self.currentshipspeed > 0):
                                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -1942,7 +1896,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                             #this checks if we are still on the ground or no.
                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                             if('ground' not in self.gdcollision):
                                 exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
                             else:
@@ -1956,7 +1910,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 1")
                             #are we still on the ground or NO?
                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                             if('ground' not in self.gdcollision):
                                 exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
                                 exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0 - self.selectedYspeed * 40)")
@@ -1964,7 +1918,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                 exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                             #actual gravity stuff begins
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                             if('ground' in self.gdcollision):
                                 exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
                                 exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
@@ -1979,7 +1933,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                     for d in range(0,len(self.selectedshipspeeds)):
                                         if(self.selectedshipspeeds[d] != 0):
                                             currentshipspeed = self.selectedshipspeeds[d]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                     if('ground' in self.gdcollision):
                                         if(currentshipspeed > 0):
                                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -1999,7 +1953,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     exec("self.handlednojump = self.gd" + str(CryingOutLoud) + ".nojump")
                     exec("self.handleddead = self.gd" + str(CryingOutLoud) + ".dead")
                     if(self.handledform == 'cube' or self.handledform == 'ball'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[1]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                             #pass
@@ -2014,11 +1968,11 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         elif(self.handledpos[1] > 160 or self.handledpos[1] < -40):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                     elif(self.handledform == 'arrow'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('ground' in self.gdcollision):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                     elif(self.handledform == 'ship'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squares." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('slamleft' in self.gdcollision and self.direction == 'right'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                             #pass
@@ -2026,12 +1980,12 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
 
                     #this is triangle death detection
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.triangles." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('triangle' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
 
                     #portal collision and what happens
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portals." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('portal#5' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
@@ -2051,13 +2005,15 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gd" + str(CryingOutLoud) + ".mini = True")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
                     if('portal#8' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                         exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
                     if('portal#9' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                         exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
 
                     #booster collision handling
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.boosters." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                    exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.boosters." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
                     if('bouncepadP1' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
@@ -2083,9 +2039,6 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     #check, can we jump another blue bounceball yet, or have we not passed enough frames?
                     if(self.handlednojump > 0):
                         exec("self.gd" + str(CryingOutLoud) + ".nojump = self.gd" + str(CryingOutLoud) + ".nojump - 1")
-
-                    #we check, have we collided with any bounceballs?
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballs." + str(choice) + ",[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
 
                     #are we an arrow? if so, get our frames in place!
                     if(self.handledform == 'arrow'):
@@ -2116,13 +2069,24 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                              elif(self.returnstatement == "resume"):
                                 timelib.sleep(1)
                         if(event.key == pygame.K_SPACE):
+                            if(self.gd0.form == 'cube' and self.gd0.nojump == 0):
+                                #we check, have we collided with any bounceballs?
+                                exec("self.gdcollision = self.gd0.checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd0.getcoords(),self.gd0.gravity)[0]")
+                                if("bounceballP1" in self.gdcollision):
+                                    self.gd0.Yspeed = self.balljumpsizes[0]
+                                if("bounceballP2" in self.gdcollision):
+                                    self.gd0.Yspeed = self.balljumpsizes[1]
+                                if("bounceballP3" in self.gdcollision):
+                                    self.gd0.Yspeed = self.balljumpsizes[2]
+                                if("bounceballP4" in self.gdcollision):
+                                    self.gd0.Yspeed = 0
+                                    self.gd0.gravity = self.gd0.gravity * -1
+                                    self.gd0.nojump = 10
                             if(self.gd0.form == 'cube' and self.gd0.touchingground == 1):
                                 self.gd0.Yspeed = self.jumpsizes[0] * self.unit
                                 self.gd0.touchingground = 0
                             elif(self.gd0.form == 'ship' and self.gd0.Yspeed > -1.5):
                                 self.gd0.Yspeed -= 0.05
-
-                self.DrawEVERYTHING(self.x10x,self.y10y,choice)
 
                 #display handling and some misc stuff
                 self.framecount += 1
@@ -2131,7 +2095,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 self.clock.tick(self.fps)
                 if(int(self.clock.get_fps()) < self.fps / 4 * 3 and self.framecount > 20 and self.lastframe + 20 < self.framecount):
                     self.lastframe = self.framecount
-                    print("SLOWDOOOOOOOWWWWNNN!")
+                    print("SLOW DOOOOOOOWWWWNNN!")
 
                 #erase the screen with whatever bgcolor is for next frame
                 screen.fill(self.bgcolor)
@@ -2153,7 +2117,6 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 break #everyone's really dead!
 
         #return something
-        print self.returnstatement
         return self.returnstatement
 
     def DrawEVERYTHING(self,x10x,y10y,choice):
@@ -2167,11 +2130,11 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.fgeffects.draweffects(self.framecount)
             
         #draw the various components of the arena
-        exec("self.squares.draw_arena(self.squares." + str(choice) + ",[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.portals.draw_arena(self.portals." + str(choice) + ",[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.triangles.draw_arena(self.triangles." + str(choice) + ",[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.boosters.draw_arena(self.boosters." + str(choice) + ",[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
-        exec("self.bounceballs.draw_arena(self.bounceballs." + str(choice) + ",[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
+        exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
+        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
+        exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
+        exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
+        exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube:
         for imrunningoutofvariables in range(0,self.players):
@@ -2218,6 +2181,7 @@ migameloop = GameLoop(1) #a short game loop engine
 mimenu = Menu()
 while True:
     milevelchoice = mimenu.LevelMenu()
+    migameloop.LoadLevel(milevelchoice)
     while True:
         migameloop.__init__(1)
         returnstatement = migameloop.GameLoop(milevelchoice)
@@ -2232,7 +2196,7 @@ while True:
 
 
 choice = "BackOnTrack"
-#a not so quick, beautiful test, which is slowly turning into a game loop (AUUGH!)
+#a not so quick, beautiful test, which is slowly turning into a game loop (AUUGH!) - not anymore!  To be removed in a little...  Say, 2 commits?
 background = CourseSquares()
 triangles = CourseTriangles()
 boosters = CourseBoosters()
@@ -2308,6 +2272,7 @@ while True:
     gd.form = 'cube'
     gamespeed = 2
     gdcoordslist = []
+    exec("y10y = [0,len(bounceballs." + str(choice) + ") - 18]")
     pygame.mixer.music.load("Assets/Music/BackOnTrack.ogg")
     pygame.mixer.music.play()
     exec("LevelLength = len(background." + str(choice) + "[0])")
@@ -2326,6 +2291,24 @@ while True:
                 gd.setx(50)
             elif(direction == 'left'):
                 gd.setx(150)
+
+            ##                    #move our screen and players around a little
+            if(gd.pos[1] < 30):
+                if(y10y[0] < 9):
+                    y10y[0] += 1
+                    exec("gd.pos[1] += 1")
+                else:
+                    y10y[0] = 0
+                    y10y[1] -= 1
+                    exec("gd.pos[1] += 1")
+            elif(gd.pos[1] > 60):
+                if(y10y[0] > 0):
+                    y10y[0] -= 1
+                    exec("gd.pos[1] -= 1")
+                else:
+                    y10y[0] = 9
+                    y10y[1] += 1
+                    exec("gd.pos[1] -= 1")
 
             #gdlistcoords handling (for showing a trail behind GD_Cube:
             if(touchingground == 0 and jumping == 1 and GDYspeed != 0):
@@ -2387,11 +2370,11 @@ while True:
             gd.draw(gd.form)
 
             #draw the various components of the arena
-            exec("background.draw_arena(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0])")
-            exec("portals.draw_arena(portals." + str(choice) + ",[x,len(portals." + str(choice) + ") - 18],[-y,0])")
-            exec("triangles.draw_arena(triangles." + str(choice) + ",[x,len(triangles." + str(choice) + ") - 18],[-y,0])")
-            exec("boosters.draw_arena(boosters." + str(choice) + ",[x,len(boosters." + str(choice) + ") - 18],[-y,0],fgeffects,framecount,40,gamespeed)")
-            exec("bounceballs.draw_arena(bounceballs." + str(choice) + ",[x,len(bounceballs." + str(choice) + ") - 18],[-y,0],fgeffects,framecount,30,gamespeed)")
+            exec("background.draw_arena(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
+            exec("portals.draw_arena(portals." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
+            exec("triangles.draw_arena(triangles." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
+            exec("boosters.draw_arena(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]],fgeffects,framecount,40,gamespeed)")
+            exec("bounceballs.draw_arena(bounceballs." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]],fgeffects,framecount,30,gamespeed)")
 
             #draw the FGEffects
             fgeffects.draweffects(framecount)
@@ -2420,14 +2403,14 @@ while True:
                 gd.move([0,GDYspeed],gravity)
             for c in range(0,gamespeed):
                 if(gd.form == 'cube' or gd.form == 'ball'):
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                     if('ground' in gdcollision):
                         for i in range(0,int((GDYspeed + 1) * gamespeed)):
                             currentshipspeed = 0
                             for imrunningoutofvariables in range(0,len(shipspeeds)):
                                 if(shipspeeds[imrunningoutofvariables] != 0):
                                     currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                             if('ground' in gdcollision):
                                 if(currentshipspeed > 0):
                                     gd.move([0,-1],gravity)
@@ -2448,7 +2431,7 @@ while True:
                             for imrunningoutofvariables in range(0,len(shipspeeds)):
                                 if(shipspeeds[imrunningoutofvariables] != 0):
                                     currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                             if('ground' in gdcollision):
                                 if(currentshipspeed > 0):
                                     gd.move([0,-1],gravity)
@@ -2456,7 +2439,7 @@ while True:
                                     gd.move([0,1],gravity)
                     #this checks if we are still on the ground or no.
                     gd.move([0,1],gravity)
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                     if('ground' not in gdcollision):
                         touchingground = 0
                     else:
@@ -2469,7 +2452,7 @@ while True:
                     jumping = 1
                     #are we still on the ground or NO?
                     gd.move([0,1],gravity)
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                     if('ground' not in gdcollision):
                         touchingground = 0
                         gd.setrotate(0 - GDYspeed * 40)
@@ -2477,7 +2460,7 @@ while True:
                         touchingground = 1
                     gd.move([0,-1],gravity)
                     #actual gravity stuff begins
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                     if('ground' in gdcollision):
                         gd.setrotate(0)
                         touchingground = 1
@@ -2491,7 +2474,7 @@ while True:
                             for imrunningoutofvariables in range(0,len(shipspeeds)):
                                 if(shipspeeds[imrunningoutofvariables] != 0):
                                     currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                             if('ground' in gdcollision):
                                 if(currentshipspeed > 0):
                                     gd.move([0,-1],gravity)
@@ -2501,7 +2484,7 @@ while True:
 
             #some death detection
             if(gd.form == 'cube' or gd.form == 'ball'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                 if('slamleft' in gdcollision and gravity == 1 and direction == 'right' or 'slamdown' in gdcollision and gravity == 1 and direction == 'right'):
                     dead = True
                     #pass
@@ -2516,11 +2499,11 @@ while True:
                 elif(gd.getcoords()[1] > 160 or gd.getcoords()[1] < -40):
                     dead = True
             elif(gd.form == 'arrow'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                 if('ground' in gdcollision):
                     dead = True
             elif(gd.form == 'ship'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
                 if('slamleft' in gdcollision and direction == 'right'):
                     dead = True
                     #pass
@@ -2528,12 +2511,12 @@ while True:
                     dead = True
 
             #this is triangle death detection
-            exec("gdcollision = gd.checkcollision(triangles.return_collision(triangles." + str(choice) + ",[x,len(triangles." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+            exec("gdcollision = gd.checkcollision(triangles.return_collision(triangles." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
             if('triangle' in gdcollision):
                 dead = True
 
             #portal collision and what happens
-            exec("gdcollision = gd.checkcollision(portals.return_collision(portals." + str(choice) + ",[x,len(portals." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+            exec("gdcollision = gd.checkcollision(portals.return_collision(portals." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
             if('portal#5' in gdcollision):
                 gd.form = 'arrow'
                 jumping = 1
@@ -2554,8 +2537,8 @@ while True:
                 jumping = 0
 
             #booster collision handling
-            exec("gdcollision = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,len(boosters." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
-            exec("gravity = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,len(boosters." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[1]")
+            exec("gdcollision = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
+            exec("gravity = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[1]")
             if('bouncepadP1' in gdcollision):
                 GDYspeed = padjumpsizes[0] * unit
                 touchingground = 0
@@ -2579,7 +2562,7 @@ while True:
                 nojump = nojump - 1
 
             #we check, have we collided with any bounceballs?
-            exec("gdcollision = gd.checkcollision(bounceballs.return_collision(bounceballs." + str(choice) + ",[x,len(bounceballs." + str(choice) + ") - 18],[-y,0]),gd.getcoords(),gravity)[0]")
+            exec("gdcollision = gd.checkcollision(bounceballs.return_collision(bounceballs." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
 
             #are we an arrow? if so, get our frames in place!
             if(gd.form == 'arrow'):
@@ -2662,7 +2645,7 @@ while True:
 
         #are we dead?  Reset if true
         if dead == True:
-            pygame.mixer.music.load("Assets/Explosion.ogg")
+            pygame.mixer.music.load("Assets/SFX/Explosion.ogg")
             pygame.mixer.music.play()
             
             #shake & explosion!   #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
