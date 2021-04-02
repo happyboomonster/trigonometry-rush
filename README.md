@@ -20,9 +20,9 @@ even work if you download it and try it...
 
 To try out my take on Reverse-Engineering Geometry Dash [is it reverse
 engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3! (Actually,
-Python 3 for the moment doesn't work due to some...problems with Pickle)
-(both should work fine, although I don't actively use Python 3 so there
- might be some bugs...)  NOTE:  You need Pygame 2 or later installed!
+Python 3 for the moment mostly works, but due to some...problems with Pickle,
+you have to spend a little more time creating levels than when using Python 2)
+NOTE:  You need Pygame 2 or later installed!
 
 Creating Levels:
 Please refer to the README in the "leveldesign" folder.  More to come in
