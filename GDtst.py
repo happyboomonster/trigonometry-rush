@@ -1455,6 +1455,7 @@ class Menu():
         self.levellist = ["Stereo Madness", "Back on Track", "Polargeist"]
         self.compliment = ["StereoMadness", "BackOnTrack", "Polargeist"]
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
+        self.oxygeneI = pygame.font.Font("Assets/Fonts/OXYGENE1.TTF",20)
         self.clock = pygame.time.Clock()
 
     def Draw(self,shape,extraparams):
@@ -1562,9 +1563,85 @@ class Menu():
             pygame.display.flip()
             self.clock.tick(10)
 
-        #return level name #******************************************8 temporarily disabled! *****************************************************
+        #return level name #****************************************** temporarily disabled! *****************************************************
         #return self.levellist[self.compliment[self.position]]
-        return "Assets/Levels/BackOnTrack/OutputLevel.pkl"
+        return "Assets/Levels/TestLevel01/OutputLevel.pkl"
+
+    def draw_image(self,image,position,colors):
+        for x in range(0,len(image[0])):
+            for y in range(0,len(image)):
+                if(image[y][x] != 0):
+                    if(image[y][x] == 1):
+                        screen.set_at([x + position[0],y + position[1]],colors[0])
+                    else:
+                        screen.set_at([x + position[0],y + position[1]],colors[1])
+                        
+    def FrontMenu(self):  #I'm finally working on a front menu!!!
+        running = True
+        leveleditor = [[0,0,2,0,1,1,1,0,0,0],
+                       [0,0,0,2,0,0,0,1,0,0],
+                       [2,0,0,2,0,0,1,1,1,0],
+                       [0,2,2,2,0,1,0,1,1,1],
+                       [0,0,0,0,1,0,0,0,1,0],
+                       [0,0,0,1,0,2,0,0,0,0],
+                       [0,0,1,0,0,0,2,0,0,0],
+                       [0,1,0,0,0,0,0,2,0,0],
+                       [1,0,0,0,0,0,0,0,2,2],
+                       [0,0,0,0,0,0,0,0,2,2]]
+        self.Trigonometry = self.oxygeneI.render("TRIGONOMETRY",1,[0,255,10])
+        self.Rush = self.oxygeneI.render("RUSH",1,[0,255,60])
+        mousepos = [0,0]
+
+        #next few variables are for animating lines along the ground
+        linepositions = [0,20,40,60,80,100,120,140,160,180,200]
+        count20 = 0
+        lineselector = len(linepositions) - 1
+        
+        while running:
+            #start with a blue screen of death
+            screen.fill([10,50,200])
+            
+            #animate ground lines
+            count20 += 1
+            if(count20 > 20):
+                count20 = 0
+            if(count20 == 0):
+                linepositions[lineselector] = 0
+                lineselector -= 1
+                if(lineselector < 0):
+                    lineselector = len(linepositions) - 1
+            for x in range(0,len(linepositions)):
+                linepositions[x] += 1
+                pygame.draw.line(screen, [0,255,0], [linepositions[x],110],[linepositions[x],120],2)
+            
+            #draw a triangle in the middle of the screen (play button)
+            self.Draw('polygon',[[0,0,255],[[90,50],[90,70],[110,60]]])
+            #draw the cube selection button slightly to the left
+            self.Draw('polygon',[[255,0,0],[[65,55],[75,55],[75,65],[65,65]]])
+            self.Draw('polygon',[[0,255,0],[[69,59],[71,59],[71,61],[69,61]]])
+            #draw settings button (a yellow square under a VERY bad wrench)
+            self.Draw('polygon',[[170,170,0],[[0,0],[10,0],[10,10],[0,10]]])
+            self.Draw('polygon',[[100,100,100],[[1,9],[2,9],[5,6],[6,7],[9,4],[6,5],[6,5],[5,2],[3,4],[4,5],[1,8]]])
+            #draw level editor button (currently SHOULD do nothing...)
+            self.draw_image(leveleditor,[120,55],[[0,0,255],[255,0,0]])
+            #draw game logo
+            screen.blit(self.Trigonometry, [20,10])
+            screen.blit(self.Rush, [100,26])
+            #draw a line near the screen bottom
+            pygame.draw.line(screen, [255,0,0], [0,110],[200,110],2)
+
+            #event loop
+            for event in pygame.event.get():
+                if(event.type == pygame.QUIT):
+                    pygame.quit()
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    pass
+                if(event.type == pygame.MOUSEMOTION):
+                    mousepos = event.pos[:]
+            
+            #flip display and cap framelimit
+            self.clock.tick(10)
+            pygame.display.flip()
 
     def GameMenu(self,PMStatus = False):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
@@ -1731,7 +1808,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         ###############*********** End Of GameLoop Init *******************###################
 
     def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - SEE Assets/Levels/README.md for more info on this...
-        loadedfile = open(filename, "r")
+        if PYTHON2:
+            loadedfile = open(filename, "r")
+        elif PYTHON3:
+            loadedfile = open(filename, "rb")
         conglomeration = pickle.load(loadedfile)
         self.squaresCourse = conglomeration[0][:]
         self.trianglesCourse = conglomeration[1][:]
@@ -1746,7 +1826,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.fgeffects.__init__()
         self.avgY = 1 #************************************************************** might need to change this later **************************************************
         #give us a starting position
-        exec("self.y10y = [len(self.squaresCourse) - 18,0]")
+        exec("self.y10y = [len(self.squaresCourse) - 12,0]")
         exec("self.x10x = [0,0]")
         #start some music #************************************************************************need to reenable this **********************************************************
         #exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
@@ -2179,6 +2259,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
 migameloop = GameLoop(1) #a short game loop engine
 mimenu = Menu()
+
+mimenu.FrontMenu()
 while True:
     milevelchoice = mimenu.LevelMenu()
     migameloop.LoadLevel(milevelchoice)
