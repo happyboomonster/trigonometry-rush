@@ -147,31 +147,19 @@ class GD_Figure():
 
     def sety(self,y):
         self.pos = [self.pos[0],y]
-        if(gd.form == 'cube'):
-            centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-        elif(gd.form == 'arrow'):
-            centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-        elif(gd.form == 'ship'):
-            centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-        elif(gd.form == 'ball'):
-            centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+        if(self.mini == False):
+            if(gd.form == 'cube'):
+                centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
+            elif(gd.form == 'arrow'):
+                centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
+            elif(gd.form == 'ship'):
+                centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
+            elif(gd.form == 'ball'):
+                centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+                
     def setx(self,x):
         self.pos = [x,self.pos[1]]
-        if(self.form == 'cube'):
-            centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-        elif(self.form == 'arrow'):
-            centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-        elif(self.form == 'ship'):
-            centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-        elif(self.form == 'ball'):
-            centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
-
-    def move(self,move,gravity):
-        #gravity = 1: normal  #gravity = -1:  upside-down
-        if(gravity == 1 or gravity == -1):
-            self.oldpos = self.pos[:]
-            self.pos[0] = self.pos[0] + move[0] * gravity
-            self.pos[1] = self.pos[1] + move[1] * gravity
+        if(self.mini == False):
             if(self.form == 'cube'):
                 centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
             elif(self.form == 'arrow'):
@@ -180,21 +168,36 @@ class GD_Figure():
                 centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
             elif(self.form == 'ball'):
                 centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
-        else:
-            pass
+
+    def move(self,move,gravity):
+        #gravity = 1: normal  #gravity = -1:  upside-down
+        if(gravity == 1 or gravity == -1):
+            self.oldpos = self.pos[:]
+            self.pos[0] = self.pos[0] + move[0] * gravity
+            self.pos[1] = self.pos[1] + move[1] * gravity
+            if(self.mini == False):
+                if(self.form == 'cube'):
+                    centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
+                elif(self.form == 'arrow'):
+                    centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
+                elif(self.form == 'ship'):
+                    centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
+                elif(self.form == 'ball'):
+                    centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
 
     def goto(self,goto):
         self.oldpos = self.pos[:]
         self.pos[0] = goto[0]
         self.pos[1] = goto[1]
-        if(self.form == 'cube'):
-            centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-        elif(self.form == 'arrow'):
-            centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-        elif(self.form == 'ship'):
-            centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-        elif(self.form == 'ball'):
-            centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+        if(self.mini == False):
+            if(self.form == 'cube'):
+                centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
+            elif(self.form == 'arrow'):
+                centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
+            elif(self.form == 'ship'):
+                centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
+            elif(self.form == 'ball'):
+                centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
 
     def rotate(self,gravity,figureshape ='cube'):
         if(figureshape == 'cube' or figureshape == 'ball'):
@@ -1575,6 +1578,15 @@ class Menu():
                         screen.set_at([x + position[0],y + position[1]],colors[0])
                     else:
                         screen.set_at([x + position[0],y + position[1]],colors[1])
+
+    def get_collision(self,coord,coordset):
+        if(coord[0] > coordset[0]):
+            if(coord[0] < coordset[2]):
+                if(coord[1] > coordset[1]):
+                    if(coord[1] < coordset[3]):
+                        #COLLISION!!!
+                        return True
+        return False
                         
     def FrontMenu(self):  #I'm finally working on a front menu!!!
         running = True
@@ -1591,6 +1603,12 @@ class Menu():
         self.Trigonometry = self.oxygeneI.render("TRIGONOMETRY",1,[0,255,10])
         self.Rush = self.oxygeneI.render("RUSH",1,[0,255,60])
         mousepos = [0,0]
+
+        #hitboxes for menu buttons
+        playbutton = [90,50,110,70]
+        settingsbutton = [0,0,10,10]
+        editorbutton = [120,55,130,65]
+        skinsbutton = [65,55,75,65]
 
         #next few variables are for animating lines along the ground
         linepositions = [0,20,40,60,80,100,120,140,160,180,200]
@@ -1635,13 +1653,29 @@ class Menu():
                 if(event.type == pygame.QUIT):
                     pygame.quit()
                 if(event.type == pygame.MOUSEBUTTONDOWN):
-                    pass
+                    if(self.get_collision(mousepos,playbutton)):
+                        print("play")
+                        return "play"
+                    elif(self.get_collision(mousepos,settingsbutton)):
+                        print("settings")
+                        return "settings"
+                    elif(self.get_collision(mousepos,editorbutton)):
+                        print("editor")
+                        return "editor"
+                    elif(self.get_collision(mousepos,skinsbutton)):
+                        print("skins")
+                        return "skins"
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
             
             #flip display and cap framelimit
             self.clock.tick(10)
             pygame.display.flip()
+
+    def SettingsMenu(self):  #this'll take some TIME...
+        #format for each True/False setting:  main list["name of setting","name of setting#2"]
+        self.TFoptions = ["testsetting1","testsetting2"]
+        self.TFstates = [False,False]
 
     def GameMenu(self,PMStatus = False):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
@@ -2260,21 +2294,22 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 migameloop = GameLoop(1) #a short game loop engine
 mimenu = Menu()
 
-mimenu.FrontMenu()
 while True:
-    milevelchoice = mimenu.LevelMenu()
-    migameloop.LoadLevel(milevelchoice)
-    while True:
-        migameloop.__init__(1)
-        returnstatement = migameloop.GameLoop(milevelchoice)
-        if(returnstatement == "level menu"):
-            break
-        elif(returnstatement == "practice mode"):
-            break #DO NOTHING!
-        elif(returnstatement == "resume"):
-            pass
-        elif(returnstatement == "dead"):
-            pass
+    choice1 = mimenu.FrontMenu()
+    if(choice1 == 'play'):
+        milevelchoice = mimenu.LevelMenu()
+        migameloop.LoadLevel(milevelchoice)
+        while True:
+            migameloop.__init__(1)
+            returnstatement = migameloop.GameLoop(milevelchoice)
+            if(returnstatement == "level menu"):
+                break
+            elif(returnstatement == "practice mode"):
+                break #DO NOTHING!
+            elif(returnstatement == "resume"):
+                pass
+            elif(returnstatement == "dead"):
+                pass
 
 
 choice = "BackOnTrack"
