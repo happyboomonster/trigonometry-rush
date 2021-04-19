@@ -1488,6 +1488,17 @@ class Menu():
         self.direction = ' '
         self.mousepos = [0,0]
         self.oldpos = 0
+        self.backbutton = [0,0,10,10]
+        self.backimage = [[0,0,0,1,0,0,0,0,0,0],
+                          [0,0,1,0,0,0,0,0,0,0],
+                          [0,1,1,1,1,1,1,1,0,0],
+                          [0,0,1,0,0,0,0,0,1,0],
+                          [0,0,0,1,0,0,0,0,1,0],
+                          [0,0,0,0,0,0,0,0,0,1],
+                          [0,0,0,0,0,0,0,0,0,1],
+                          [0,0,0,0,0,0,0,0,1,0],
+                          [0,0,0,0,0,0,0,1,0,0],
+                          [0,0,0,0,0,1,1,1,0,0]]
         while self.NotInGame:
             #handling all these problematic events!
             for event in pygame.event.get():
@@ -1509,6 +1520,9 @@ class Menu():
                             self.direction = 'right'
                         elif(self.mousepos[0] > 0 and self.mousepos[0] < 30):
                             self.direction = 'left'
+                    #have we clicked that "back" button?
+                    if(self.get_collision(self.mousepos,self.backbutton)):
+                        return "EX    IT"
 
             #handling some event variables
             #do we need to scroll left?
@@ -1562,6 +1576,9 @@ class Menu():
                 self.Draw('polygon',[[255,255,0],[[180,50],[180,70],[198,60]]])
                 self.Draw('polygon',[[255,255,0],[[2,60],[20,50],[20,70]]])
 
+            #draw an exit button
+            self.draw_image(self.backimage,[0,0],[[255,0,0],[0,255,0],[0,0,255]])
+
             #FOR PETE'S SAKE, UPDATE THE DISPLAY!
             pygame.display.flip()
             self.clock.tick(10)
@@ -1576,8 +1593,10 @@ class Menu():
                 if(image[y][x] != 0):
                     if(image[y][x] == 1):
                         screen.set_at([x + position[0],y + position[1]],colors[0])
-                    else:
+                    elif(image[y][x] == 2):
                         screen.set_at([x + position[0],y + position[1]],colors[1])
+                    elif(image[y][x] == 3):
+                        screen.set_at([x + position[0],y + position[1]],colors[2])
 
     def get_collision(self,coord,coordset):
         if(coord[0] > coordset[0]):
@@ -1588,7 +1607,7 @@ class Menu():
                         return True
         return False
                         
-    def FrontMenu(self):  #I'm finally working on a front menu!!!
+    def FrontMenu(self):  #I'm finally working on a front menu!!! (mostly done, just some animation, etc needed)
         running = True
         leveleditor = [[0,0,2,0,1,1,1,0,0,0],
                        [0,0,0,2,0,0,0,1,0,0],
@@ -1641,7 +1660,7 @@ class Menu():
             self.Draw('polygon',[[170,170,0],[[0,0],[10,0],[10,10],[0,10]]])
             self.Draw('polygon',[[100,100,100],[[1,9],[2,9],[5,6],[6,7],[9,4],[6,5],[6,5],[5,2],[3,4],[4,5],[1,8]]])
             #draw level editor button (currently SHOULD do nothing...)
-            self.draw_image(leveleditor,[120,55],[[0,0,255],[255,0,0]])
+            self.draw_image(leveleditor,[120,55],[[0,0,255],[255,0,0],[0,0,0]])
             #draw game logo
             screen.blit(self.Trigonometry, [20,10])
             screen.blit(self.Rush, [100,26])
@@ -1654,16 +1673,13 @@ class Menu():
                     pygame.quit()
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     if(self.get_collision(mousepos,playbutton)):
-                        print("play")
                         return "play"
                     elif(self.get_collision(mousepos,settingsbutton)):
                         print("settings")
                         return "settings"
                     elif(self.get_collision(mousepos,editorbutton)):
-                        print("editor")
                         return "editor"
                     elif(self.get_collision(mousepos,skinsbutton)):
-                        print("skins")
                         return "skins"
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
@@ -1672,12 +1688,159 @@ class Menu():
             self.clock.tick(10)
             pygame.display.flip()
 
-    def SettingsMenu(self):  #this'll take some TIME...
-        #format for each True/False setting:  main list["name of setting","name of setting#2"]
-        self.TFoptions = ["testsetting1","testsetting2"]
-        self.TFstates = [False,False]
+    def DrawSettings(self,settingslist,pagenumber,selectedoption):
+        for x in range(0,4):
+            try:
+                temporarysurface = self.pusab.render(settingslist[x + pagenumber * 4][0],1,[random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+                temporarysurface = pygame.transform.scale(temporarysurface, [140,27])
+                #blit on screen,
+                screen.blit(temporarysurface, [20, 30 * x])
+                #checkbox/slider drawn beside each option
+                pygame.draw.rect(screen, [random.randint(0,255),random.randint(0,255),random.randint(0,255)],[160,30 * x,20,30],2)
+            except IndexError:
+                pass
+        #calculate the pages you can flip
+        NumOfPages = len(settingslist) / 4
+        #return how many pages can be moved left and right
+        return [abs(pagenumber), NumOfPages - pagenumber]
 
-    def GameMenu(self,PMStatus = False):
+    def SettingsMenu(self):  #this'll take some TIME...
+        #format for each setting:  [main list["name of setting","I/O or analog",default state]
+        # DEMO List:   self.optionslist = [["name","I/O","Default"]] OR ["name","analog",defaultnumber,maximumsetting]
+        self.optionslist = [["volume","analog",100,100],["player #","analog",1,10],["FG-Effects","I/O","On"],["BG-Effects","I/O","On"],["PP-Effects","I/O","Off"]]
+
+        #we're gonna need to insert the saved settings somewhere in here...
+
+        #our mouse cursor position
+        self.mousepos = [0,0]
+
+        #that key repeat really needs to be slowed down here...
+        pygame.key.set_repeat(20,20)
+
+        #exit button 10x10 image
+        self.exitimage = [[0,0,0,1,0,0,0,0,0,0],
+                          [0,0,1,0,0,0,0,0,0,0],
+                          [0,1,0,0,0,0,0,0,0,0],
+                          [1,1,1,1,1,1,1,1,0,0],
+                          [0,1,0,0,0,0,0,0,1,0],
+                          [2,2,3,0,3,2,3,3,3,1],
+                          [2,0,3,1,3,2,0,3,0,1],
+                          [2,2,0,3,0,2,0,3,1,0],
+                          [2,0,3,0,3,2,0,3,0,0],
+                          [2,2,3,0,3,2,0,3,0,0]]
+
+        #current page of options we're on
+        self.page = 0
+        pageflips = [0,0]
+
+        #what option are we currently highlighting?
+        self.selOption = 0
+
+        #some collision definitions for some buttons in the GUI
+        leftbutton = [2,50,20,70]
+        rightbutton = [180,50,198,70]
+        optionAbutton = [20,0,160,29]
+        optionBbutton = [20,30,160,59]
+        optionCbutton = [20,60,160,89]
+        optionDbutton = [20,90,160,120]
+        exitbutton = [0,0,10,10]
+
+        #our cursor position
+        cursorpos = ["optionA",0]
+
+        #our real position within the list of settings
+        realpos = 0
+
+        #main loop
+        running = True
+        while running:
+            #start on a clean screen...
+            screen.fill([random.randint(0,50),random.randint(0,50),random.randint(0,50)])
+
+            #draw settings.
+            pageflips = self.DrawSettings(self.optionslist,self.page,self.selOption)
+
+            #Here, we draw the current states of the settings.
+            for x in range(0,4):
+                try:
+                    tmpstr = str(self.optionslist[x + self.page * 4][2])
+                    tmpsurface = self.pusab.render(tmpstr,0,[random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+                    tmpsurface = pygame.transform.scale(tmpsurface, [18,30])
+                    screen.blit(tmpsurface,[161,x * 30])
+                except IndexError:
+                    pass
+
+            #draw arrows from side to side for L/R buttons
+            self.Draw('polygon',[[255,255,0],[[180,50],[180,70],[198,60]]])
+            self.Draw('polygon',[[255,255,0],[[2,60],[20,50],[20,70]]])
+
+            #draw exit button
+            self.draw_image(self.exitimage, [0,0], [[255,0,0],[0,255,0],[0,0,255]])
+
+            #draw our cursor
+            pygame.draw.rect(screen, [0,0,255], [19,30 * cursorpos[1],141,30],1)
+
+            #update our real position within the settings list
+            realpos = (self.page * 4) + cursorpos[1]
+
+            for event in pygame.event.get():
+                #get me out of here!!!
+                if(event.type == pygame.QUIT):
+                    pygame.quit()
+                #update mouse coordinates
+                if(event.type == pygame.MOUSEMOTION):
+                    self.mousepos = event.pos[:]
+                #check what we've clicked on
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    #did we press RIGHT?
+                    if(self.get_collision(self.mousepos,rightbutton)):
+                        if(pageflips[1] > 0):
+                            self.page += 1
+                    #did we press LEFT???
+                    elif(self.get_collision(self.mousepos,leftbutton)):
+                        if(pageflips[0] > 0):
+                            self.page -= 1
+                    #have we selected an OPTION???
+                    elif(self.get_collision(self.mousepos,optionAbutton)):
+                        cursorpos = ["optionA",0]
+                    elif(self.get_collision(self.mousepos,optionBbutton)):
+                        cursorpos = ["optionB",1]
+                    elif(self.get_collision(self.mousepos,optionCbutton)):
+                        cursorpos = ["optionC",2]
+                    elif(self.get_collision(self.mousepos,optionDbutton)):
+                        cursorpos = ["optionD",3]
+                    #did you seriously want to get out of this beautiful place???
+                    elif(self.get_collision(self.mousepos,exitbutton)):
+                        running = False
+                #did we press LEFT/RIGHT to change a setting???
+                if(event.type == pygame.KEYDOWN):
+                    try:
+                        #change a setting down a notch
+                        if(event.key == pygame.K_LEFT):
+                            if(self.optionslist[realpos][1] == 'analog'):
+                                if(self.optionslist[realpos][2] > 1):
+                                    self.optionslist[realpos][2] -= 1
+                            else:
+                                if(self.optionslist[realpos][2] == "On"):
+                                    self.optionslist[realpos][2] = "Off"
+                        #change a setting up a notch
+                        elif(event.key == pygame.K_RIGHT):
+                            if(self.optionslist[realpos][1] == "analog"):
+                                if(self.optionslist[realpos][2] < self.optionslist[realpos][3]):  #if we're not past our maximum value, raise things a notch
+                                    self.optionslist[realpos][2] += 1
+                            else:
+                                if(self.optionslist[realpos][2] == "Off"):  #same as above
+                                    self.optionslist[realpos][2] = "On"
+                    except IndexError:
+                        pass
+
+            #FLIP THE DISPLLLLLLAAAAAAAAAAYYYYYYYYYYYYYYYYYYY, for CryingOutLoud... (get it, - if you've seen GameLoop's GameLoop function)
+            pygame.display.flip()
+
+            #tick the clock
+            self.clock.tick(10)
+
+    def GameMenu(self,PMStatus = False,PMPos = [[0,0],[0,0],[0,0]]):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
         global screen
         InMenu = True
@@ -1751,29 +1914,25 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
         #how many players are dead yet???
         self.deadlist = []
-
+        
         self.menu = Menu()
 
         #create as many players as we want! (and set up their variables)
         for x in range(0,players):#note: I store all variable ATTRIBUTES about GD figures inside the object instance.
             exec("self.gd" + str(x) + " = GD_Figure()")
             exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",30])")
-            exec("self.gd" + str(x) + "dead = False")
             exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading variable name which tracks the Y speeds of the GD figure (used in jumping)
             exec("self.gd" + str(x) + ".gdcoordslist = []")
             exec("self.gd" + str(x) + ".jumping = 0")
             exec("self.gd" + str(x) + ".touchingground = 0")
-            exec("self.gd" + str(x) + ".dead = False")
             exec("self.gd" + str(x) + ".gravity = 1")
             exec("self.gd" + str(x) + ".rotating = 0")
             exec("self.gd" + str(x) + ".nojump = 0")
             exec("self.gd" + str(x) + ".form = 'cube'")
-            exec("self.gd" + str(x) + ".dead = 0")
-
-            #tmp!!!
-            #exec("self.gd" + str(x) + ".mini = True")
-
-            self.deadlist.append(0)
+            exec("self.gd" + str(x) + ".exploding = 0")  #this variable and the next should handle cubes EXPLODING (what fun!)
+            exec("self.gd" + str(x) + ".explodingframes = 20")
+            exec("self.gd" + str(x) + ".dead = False")
+            self.deadlist.append([x,False])
 
         #so I have this for other functions
         self.players = players
@@ -1841,10 +2000,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
         ###############*********** End Of GameLoop Init *******************###################
 
-    def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - SEE Assets/Levels/README.md for more info on this...
-        if PYTHON2:
+    def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - see Assets/Levels/README.md for more info on this...
+        if(PYTHON2):
             loadedfile = open(filename, "r")
-        elif PYTHON3:
+        elif(PYTHON3):
             loadedfile = open(filename, "rb")
         conglomeration = pickle.load(loadedfile)
         self.squaresCourse = conglomeration[0][:]
@@ -1854,11 +2013,15 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.portalsCourse = conglomeration[4][:]
 
     def GameLoop(self,choice):
+        #set key repeat
+        pygame.key.set_repeat(5,5)
         #when we exit the loop, we need to give out something to tell what we wanted to do
         self.returnstatement = "dead"
-        #for some reason or other, fgeffects has a bug that requires reinit every time someone dies.
+        #a countdown variable that gives a few frames left after the last person dies so he can have a glorious explosion like everyone else.
+        self.framecountdown = 20
+        #for some reason or other, fgeffects has a bug that requires reinit every time the level is restarted.
         self.fgeffects.__init__()
-        self.avgY = 1 #************************************************************** might need to change this later **************************************************
+        self.avgY = 1
         #give us a starting position
         exec("self.y10y = [len(self.squaresCourse) - 12,0]")
         exec("self.x10x = [0,0]")
@@ -1893,7 +2056,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 self.bounceballs.direction = self.direction
                 self.portals.direction = self.direction
 
-                #get the average Y position of everyone on the screen ************************************************** something's wrong here!!!  collision boxes go nuts!!! ********************************************
+                #get the average Y position of everyone on the screen
                 for abcdef in range(0,3):
                     self.avgY = 0
                     for imrunningoutofvariables in range(0,self.players):
@@ -1921,19 +2084,6 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             self.y10y[0] += 1
                             for p in range(0,self.players):
                                 exec("self.gd" + str(p) + ".pos[1] -= 1")
-
-##                if(self.avgY < 50 and self.avgY > 0): #a quick Y scrolling test that doesn't work...
-##                    self.avgY += 1
-##                    self.y10y[1] += 1
-##                    self.gd0.pos[1] += 1
-##                if(self.avgY == 50):
-##                    self.avgY = -1
-##                if(self.avgY > -50 and self.avgY < 0):
-##                    self.avgY -= 1
-##                    self.y10y[1] -= 1
-##                    self.gd0.pos[1] -= 1
-##                if(self.avgY == -50):
-##                    self.avgY = 1
 
                 #move the effects every third frame (this could almost go in DrawEVERYTHING())
                 if(self.x10x[1] % 3 == 0):
@@ -2055,10 +2205,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                             exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                    #and ends here
 
-                    #some death detection
+                #some death detection
                 for CryingOutLoud in range(0,self.players):
-                    self.deadcheck = self.deadlist[CryingOutLoud]
-                    
                     exec("self.handledtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
                     exec("self.handledYspeed = self.gd"  + str(CryingOutLoud) + ".Yspeed")
                     exec("self.handledform = self.gd" + str(CryingOutLoud) + ".form")
@@ -2070,39 +2218,41 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            #pass
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                         elif('slamleft' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            #pass
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                         elif('slamright' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left' or 'slamdown' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            #pass
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                         elif('slamright' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                        elif(self.handledpos[1] > 160 or self.handledpos[1] < -40):
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                        elif(self.handledpos[1] > 160 or self.handledpos[1] < -60):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                     elif(self.handledform == 'arrow'):
                         exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('ground' in self.gdcollision):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                     elif(self.handledform == 'ship'):
                         exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if('slamleft' in self.gdcollision and self.direction == 'right'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            #pass
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                         elif('slamright' in self.gdcollision and self.direction == 'left'):
                             exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                     #this is triangle death detection
                     exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('triangle' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                     #portal collision and what happens
                     exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                    if('portal#5' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
                     if('portal#1' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
@@ -2118,6 +2268,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     if('portal#4' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".mini = True")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
+                    if('portal#5' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
                     if('portal#8' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                         exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
@@ -2146,9 +2299,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[3] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
 
-                    #are we dead?
-                    if(self.handleddead == True):
-                        self.deadlist[CryingOutLoud] = 1
+                    #update dead lists
+                    exec("self.deadlist[CryingOutLoud][1] = self.gd" + str(CryingOutLoud) + ".dead")
 
                     #check, can we jump another blue bounceball yet, or have we not passed enough frames?
                     if(self.handlednojump > 0):
@@ -2164,15 +2316,20 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gd" + str(CryingOutLoud) + ".rotating = 1")
                         exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
 
-                if(self.deadcheck == 1):
-                    break #DEAD!!!!!!! (as in, EVERYONE'S dead.
+                self.bool = []
+                for pq in range(0,self.players):
+                    self.bool.append(self.deadlist[pq][1])
+                    
+                if(False not in self.bool):
+                    self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
+
+                if(self.framecountdown < 1):
+                    break
 
                 #PUT EVENT LOOP SOMEWHERE IN HERE!
                 for event in pygame.event.get():
                     if(event.type == pygame.QUIT):
-                        self.deadlist = []
-                        for imrunningoutofvariables in range(0,self.players):
-                            self.deadlist.append(True)
+                        pygame.quit()
                     if(event.type == pygame.KEYDOWN):
                         if(event.key == pygame.K_ESCAPE):
                              self.returnstatement = self.menu.GameMenu(False) #start a basic UI
@@ -2227,19 +2384,16 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 else:
                     pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
 
-            if(self.deadcheck == 1):
+            if(self.framecountdown < 1):
                 break #everyone's really dead!
 
         #return something
         return self.returnstatement
 
     def DrawEVERYTHING(self,x10x,y10y,choice):
-        #draw the GD figure and the BGEffects
+        #draw the BGEffects
         self.effects.draweffects()
-        for imrunningoutofvariables in range(0,self.players):
-            if(self.deadlist[imrunningoutofvariables] == 0):
-                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form)")
-
+        
         #draw the FGEffects
         self.fgeffects.draweffects(self.framecount)
             
@@ -2249,6 +2403,11 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
         exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
         exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
+
+        #draw the GD figure
+        for imrunningoutofvariables in range(0,self.players):
+            if(self.deadlist[imrunningoutofvariables][1] == False):
+                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form)")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube:
         for imrunningoutofvariables in range(0,self.players):
@@ -2298,18 +2457,21 @@ while True:
     choice1 = mimenu.FrontMenu()
     if(choice1 == 'play'):
         milevelchoice = mimenu.LevelMenu()
-        migameloop.LoadLevel(milevelchoice)
-        while True:
-            migameloop.__init__(1)
-            returnstatement = migameloop.GameLoop(milevelchoice)
-            if(returnstatement == "level menu"):
-                break
-            elif(returnstatement == "practice mode"):
-                break #DO NOTHING!
-            elif(returnstatement == "resume"):
-                pass
-            elif(returnstatement == "dead"):
-                pass
+        if(milevelchoice != "EX    IT"):
+            migameloop.LoadLevel(milevelchoice)
+            while True:
+                migameloop.__init__(1)
+                returnstatement = migameloop.GameLoop(milevelchoice)
+                if(returnstatement == "level menu"):
+                    break
+                elif(returnstatement == "practice mode"):
+                    break # go back to level menu
+                elif(returnstatement == "resume"):
+                    pass
+                elif(returnstatement == "dead"):
+                    pass
+    elif(choice1 == "settings"):
+        mimenu.SettingsMenu()
 
 
 choice = "BackOnTrack"
