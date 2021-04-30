@@ -777,10 +777,10 @@ class CourseBounceballs(): # all done
                                 for z in range(0,1):
                                     randomizerx = random.randint(-5,15)
                                     randomizery = random.randint(-5,15)
-                                    fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time - time / 10 + randomizerx,y * 10 + speccoords[1] + randomizery]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
+                                    fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time - time / 10 + randomizerx,y * 10 + speccoords[1] + randomizery]],[effectcolor,effectcolor],[time,currentframe + 1]])
                                 if(currentframe % time - 8 == 0 and time >= 8):
-                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
-                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - time,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
+                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
+                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
                         elif(currentmap[coords[1] + y][coords[0] + x] <= 8 and currentframe % 4 == 0):
                             if(currentmap[coords[1] + y][coords[0] + x] == 5):
                                 effectcolor = self.colorA[:]
@@ -796,8 +796,8 @@ class CourseBounceballs(): # all done
                                     randomizery = random.randint(-5,15)
                                     fgeffects.addeffect('pixel',[[4,1],[[x *  10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time - time / 10 + randomizerx,y * 10 + speccoords[1] + 10 + randomizery]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
                                 if(currentframe % time - 8 == 0 and time >= 8):
-                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
-                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - time,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
+                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
+                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
         if(self.direction == 'left'):
             for x in range(0,21):
                 for y in range(0,12):
@@ -820,8 +820,8 @@ class CourseBounceballs(): # all done
                                 randomizery = random.randint(-5,15)
                                 fgeffects.addeffect('pixel',[[4,1],[[newx * 10 + speccoords[0] + 5,newy * 10 + speccoords[1] + 5],[newx * 10 + speccoords[0] + time + time / 10 + randomizerx,newy * 10 + speccoords[1] + randomizery]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
                             if(currentframe % time - 8 == 0 and time >= 8):
-                                fgeffects.addeffect('circle',[[1,10],[[newx * 10 + 7 + speccoords[0],newy * 10 + 5 + speccoords[1]],[newx * 10 + 7 + speccoords[0] + time / 2,newy * 10 + 5 + speccoords[1]]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
-                                fgeffects.addeffect('circle',[[10,1],[[newx * 10 + 8 + speccoords[0] + time / 2,newy * 10 + 5 + speccoords[1]],[newx * 10 + speccoords[0] + 8 + time,newy * 10 + 5 + speccoords[1]]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
+                                fgeffects.addeffect('circle',[[1,10],[[newx * 10 + 7 + speccoords[0],newy * 10 + 5 + speccoords[1]],[newx * 10 + 7 + speccoords[0] + (time / 2) * gamespeed,newy * 10 + 5 + speccoords[1]]],[effectcolor,effectcolor],[time / 2,currentframe + 1]])
+                                fgeffects.addeffect('circle',[[10,1],[[newx * 10 + 8 + speccoords[0] + time / 2,newy * 10 + 5 + speccoords[1]],[newx * 10 + speccoords[0] + 8 + (time * gamespeed),newy * 10 + 5 + speccoords[1]]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
                             
 
     def return_collision(self,currentmap,coords,speccoords):
@@ -1455,9 +1455,9 @@ class PostProcessing_Effects():
 
 class Menu():
     def __init__(self):
-        self.levellist = ["Stereo Madness", "Back on Track", "Polargeist"]
-        self.compliment = ["StereoMadness", "BackOnTrack", "Polargeist"]
-        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
+        self.levellist = ["TestLevel01","Stereo Madness", "Back on Track", "Polargeist"]
+        self.compliment = ["Assets/Levels/TestLevel01/OutputLevel.pkl","StereoMadness", "Assets/Levels/BackOnTrack/OutputLevel.pkl", "Polargeist"]
+        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",20)
         self.oxygeneI = pygame.font.Font("Assets/Fonts/OXYGENE1.TTF",20)
         self.clock = pygame.time.Clock()
 
@@ -1558,9 +1558,9 @@ class Menu():
                     else:
                         self.offset = -e * 4
                         self.incomingoffset = 200 - (e * 4)
-                    self.needtoblit = self.Draw('text',[self.compliment[self.position],[255,255,255],10])
+                    self.needtoblit = self.Draw('text',[self.levellist[self.position],[255,255,255],10])
                     screen.blit(self.needtoblit,[(100 - len(list(self.compliment[self.position])) * 10 / 2) + self.incomingoffset, 40])
-                    self.needtoblit = self.Draw('text',[self.compliment[self.oldpos],[255,255,255],10])
+                    self.needtoblit = self.Draw('text',[self.levellist[self.oldpos],[255,255,255],10])
                     screen.blit(self.needtoblit,[(100 - len(list(self.compliment[self.oldpos])) * 10 / 2) + self.offset, 40])
                     pygame.display.flip()
                     self.clock.tick(60)
@@ -1571,8 +1571,8 @@ class Menu():
             if(self.position == self.oldpos):
                 screen.fill([0,0,0])
                 self.Draw('square',[[255,0,0],[30,20,140,80]])
-                self.needtoblit = self.Draw('text',[self.compliment[self.position],[255,255,255],10])
-                screen.blit(self.needtoblit,[100 - len(list(self.compliment[self.position])) * 10 / 2, 40])
+                self.needtoblit = self.Draw('text',[self.levellist[self.position],[255,255,255],10])
+                screen.blit(self.needtoblit,[100 - len(list(self.levellist[self.position])) * 10 / 2, 40])
                 self.Draw('polygon',[[255,255,0],[[180,50],[180,70],[198,60]]])
                 self.Draw('polygon',[[255,255,0],[[2,60],[20,50],[20,70]]])
 
@@ -1583,9 +1583,7 @@ class Menu():
             pygame.display.flip()
             self.clock.tick(10)
 
-        #return level name #****************************************** temporarily disabled! *****************************************************
-        #return self.levellist[self.compliment[self.position]]
-        return "Assets/Levels/TestLevel01/OutputLevel.pkl"
+        return self.compliment[self.position]
 
     def draw_image(self,image,position,colors):
         for x in range(0,len(image[0])):
@@ -1675,7 +1673,6 @@ class Menu():
                     if(self.get_collision(mousepos,playbutton)):
                         return "play"
                     elif(self.get_collision(mousepos,settingsbutton)):
-                        print("settings")
                         return "settings"
                     elif(self.get_collision(mousepos,editorbutton)):
                         return "editor"
@@ -1687,6 +1684,8 @@ class Menu():
             #flip display and cap framelimit
             self.clock.tick(10)
             pygame.display.flip()
+
+        return 0
 
     def DrawSettings(self,settingslist,pagenumber,selectedoption):
         for x in range(0,4):
@@ -1715,7 +1714,7 @@ class Menu():
         self.mousepos = [0,0]
 
         #that key repeat really needs to be slowed down here...
-        pygame.key.set_repeat(20,20)
+        pygame.key.set_repeat(250,20)
 
         #exit button 10x10 image
         self.exitimage = [[0,0,0,1,0,0,0,0,0,0],
@@ -1763,8 +1762,8 @@ class Menu():
             #Here, we draw the current states of the settings.
             for x in range(0,4):
                 try:
-                    tmpstr = str(self.optionslist[x + self.page * 4][2])
-                    tmpsurface = self.pusab.render(tmpstr,0,[random.randint(0,255),random.randint(0,255),random.randint(0,255)])
+                    tmpstr = str(self.optionslist[x + self.page * 4][2]).upper()
+                    tmpsurface = self.oxygeneI.render(tmpstr,0,[random.randint(0,255),random.randint(0,255),random.randint(0,255)])
                     tmpsurface = pygame.transform.scale(tmpsurface, [18,30])
                     screen.blit(tmpsurface,[161,x * 30])
                 except IndexError:
@@ -1840,6 +1839,64 @@ class Menu():
             #tick the clock
             self.clock.tick(10)
 
+        return self.optionslist
+
+    def ControlsConfigure(self,numjoysticks):
+        #button collision boxes
+        JSchangeL = [0,0,10,10]
+        JSchangeR = [190,0,200,10]
+
+        #what Joystick are we currently configuring?
+        JSnum = 0
+
+        #some prepared text surfaces
+        RightSurface = self.pusab.render("Right",0,[255,0,0])
+        LeftSurface = self.pusab.render("Left",0,[0,255,0])
+        JumpSurface = self.pusab.render("Jump",0,[0,0,255])
+
+        #mouse position variable
+        mousepos = [0,0]
+        
+        while True:
+            #clear our screen
+            screen.fill([255,255,0])
+            
+            #draw some JS Name change controls (change which Joystick we're configuring)
+            pygame.draw.polygon(screen, [255,255,255],[[0,5],[10,0],[10,10],[0,5]])
+            pygame.draw.polygon(screen, [255,255,255],[[200,5],[190,0],[190,10],[200,5]])
+
+            #draw our current JS name we're configuring
+            screen.blit(self.pusab.render("Js# " + str(JSnum),0,[100,100,100]), [50,0])
+
+            #draw some button widgets which will be clickable...
+            pygame.draw.polygon(screen, [0,255,0], [[30,60],[40,65],[40,55],[30,60]]) #L button
+            pygame.draw.polygon(screen, [255,0,0], [[75,55],[75,65],[85,60],[75,55]]) #R button
+            pygame.draw.polygon(screen, [0,0,255], [[150,65],[160,65],[155,55],[150,65]]) #jump button
+
+            #draw labels for the above 3 buttons
+            screen.blit(LeftSurface,[10,70])
+            screen.blit(RightSurface,[70,70])
+            screen.blit(JumpSurface,[145,70])
+
+            #typical menu event loop
+            for event in pygame.event.get(): #******************************************************* gotta add finished button collision in here! ************************************************#
+                if(event.type == pygame.QUIT):
+                    pygame.quit()
+                if(event.type == pygame.MOUSEMOTION):
+                    mousepos = event.pos[:]
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    #do collision in here!]
+                    if(self.get_collision(mousepos,JSchangeL)):
+                        print("You changed JSname to left")
+                    if(self.get_collision(mousepos,JSchangeR)):
+                        print("You changed JSname to right")
+
+            #SANITY CHECK!!!
+            self.clock.tick(10)
+
+            #update the display
+            pygame.display.flip()
+
     def GameMenu(self,PMStatus = False,PMPos = [[0,0],[0,0],[0,0]]):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
         global screen
@@ -1902,6 +1959,9 @@ class Menu():
 
 class GameLoop(): #********************** Maybe not so WIP??? *********************************#
     def __init__(self,players):
+        #um...  our key configs for each player?  (left, right, jump)
+        self.keyconfig = [[pygame.K_a, pygame.K_d, pygame.K_SPACE],[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP]]
+        
         #init our objs
         self.squares = CourseSquares()
         self.triangles = CourseTriangles()
@@ -1921,7 +1981,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         for x in range(0,players):#note: I store all variable ATTRIBUTES about GD figures inside the object instance.
             exec("self.gd" + str(x) + " = GD_Figure()")
             exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",30])")
-            exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading variable name which tracks the Y speeds of the GD figure (used in jumping)
+            exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading list name which tracks the Y speeds of the GD figure (used in jumping)
             exec("self.gd" + str(x) + ".gdcoordslist = []")
             exec("self.gd" + str(x) + ".jumping = 0")
             exec("self.gd" + str(x) + ".touchingground = 0")
@@ -2023,8 +2083,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.fgeffects.__init__()
         self.avgY = 1
         #give us a starting position
-        exec("self.y10y = [len(self.squaresCourse) - 12,0]")
+        exec("self.y10y = [4,0]")
         exec("self.x10x = [0,0]")
+        #list of all keys pressed at the moment
+        keys = []
         #start some music #************************************************************************need to reenable this **********************************************************
         #exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
         #pygame.mixer.music.play()
@@ -2322,6 +2384,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     
                 if(False not in self.bool):
                     self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
+                    for CryingOutLoud in range(0,self.players):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
 
                 if(self.framecountdown < 1):
                     break
@@ -2330,7 +2394,11 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 for event in pygame.event.get():
                     if(event.type == pygame.QUIT):
                         pygame.quit()
+                    if(event.type == pygame.KEYUP):
+                        keys.remove(event.key)
                     if(event.type == pygame.KEYDOWN):
+                        if(event.key not in keys):
+                            keys.append(event.key)
                         if(event.key == pygame.K_ESCAPE):
                              self.returnstatement = self.menu.GameMenu(False) #start a basic UI
                              if(self.returnstatement == "level menu"): #based on our UI input, do something!
@@ -2339,25 +2407,33 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                                 return self.returnstatement
                              elif(self.returnstatement == "resume"):
                                 timelib.sleep(1)
-                        if(event.key == pygame.K_SPACE):
-                            if(self.gd0.form == 'cube' and self.gd0.nojump == 0):
-                                #we check, have we collided with any bounceballs?
-                                exec("self.gdcollision = self.gd0.checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd0.getcoords(),self.gd0.gravity)[0]")
-                                if("bounceballP1" in self.gdcollision):
-                                    self.gd0.Yspeed = self.balljumpsizes[0]
-                                if("bounceballP2" in self.gdcollision):
-                                    self.gd0.Yspeed = self.balljumpsizes[1]
-                                if("bounceballP3" in self.gdcollision):
-                                    self.gd0.Yspeed = self.balljumpsizes[2]
-                                if("bounceballP4" in self.gdcollision):
-                                    self.gd0.Yspeed = 0
-                                    self.gd0.gravity = self.gd0.gravity * -1
-                                    self.gd0.nojump = 10
-                            if(self.gd0.form == 'cube' and self.gd0.touchingground == 1):
-                                self.gd0.Yspeed = self.jumpsizes[0] * self.unit
-                                self.gd0.touchingground = 0
-                            elif(self.gd0.form == 'ship' and self.gd0.Yspeed > -1.5):
-                                self.gd0.Yspeed -= 0.05
+
+                #hmmm... let's try a more flexible approach to this... (key detection)
+                for CryingOutLoud in range(0,self.players):
+                    if(self.keyconfig[CryingOutLoud][2] in keys):
+                        exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
+                        exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
+                        exec("self.selectedYspeed = self.gd" + str(CryingOutLoud) + ".Yspeed")
+                        exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
+                        exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
+                        if(self.selectedform == "cube" and self.selectednojump == 0):
+                            #we check, have we collided with any bounceballs?
+                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                            if("bounceballP1" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
+                            if("bounceballP2" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
+                            if("bounceballP3" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
+                            if("bounceballP4" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
+                        if(self.selectedform == 'cube' and self.selectedtouchingground == 1):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
+                            exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.05")
 
                 #display handling and some misc stuff
                 self.framecount += 1
@@ -2452,6 +2528,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
 migameloop = GameLoop(1) #a short game loop engine
 mimenu = Menu()
+PlayerNumber = 1
+
+#mimenu.ControlsConfigure(2)
 
 while True:
     choice1 = mimenu.FrontMenu()
@@ -2460,18 +2539,31 @@ while True:
         if(milevelchoice != "EX    IT"):
             migameloop.LoadLevel(milevelchoice)
             while True:
-                migameloop.__init__(1)
+                migameloop.__init__(PlayerNumber)
                 returnstatement = migameloop.GameLoop(milevelchoice)
                 if(returnstatement == "level menu"):
-                    break
+                    milevelchoice = mimenu.LevelMenu()
+                    if(milevelchoice == "EX    IT"):
+                        break
                 elif(returnstatement == "practice mode"):
-                    break # go back to level menu
+                    break # go back to main menu
                 elif(returnstatement == "resume"):
                     pass
                 elif(returnstatement == "dead"):
                     pass
     elif(choice1 == "settings"):
-        mimenu.SettingsMenu()
+        #start the settings menu
+        settingsout = mimenu.SettingsMenu()
+        #set our player number variable to what we set it to in the SettingsMenu()
+        index = 0
+        while "player #" not in settingsout[index]:
+            index += 1
+        PlayerNumber = settingsout[index][2]
+        #set our volume to what we chose
+        index = 0
+        while "volume" not in settingsout[index]:
+            index += 1
+        pygame.mixer.music.set_volume(settingsout[index][2])
 
 
 choice = "BackOnTrack"
