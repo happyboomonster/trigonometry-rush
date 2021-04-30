@@ -1607,6 +1607,7 @@ class Menu():
                         
     def FrontMenu(self):  #I'm finally working on a front menu!!! (mostly done, just some animation, etc needed)
         running = True
+        
         leveleditor = [[0,0,2,0,1,1,1,0,0,0],
                        [0,0,0,2,0,0,0,1,0,0],
                        [2,0,0,2,0,0,1,1,1,0],
@@ -1617,6 +1618,18 @@ class Menu():
                        [0,1,0,0,0,0,0,2,0,0],
                        [1,0,0,0,0,0,0,0,2,2],
                        [0,0,0,0,0,0,0,0,2,2]]
+        
+        controlconfigure = [[0,0,0,2,2,0,0,0,0,0],
+                            [0,0,0,0,2,2,0,0,0,0],
+                            [0,0,0,0,0,0,2,0,0,0],
+                            [0,0,0,0,0,2,0,0,0,0],
+                            [0,1,1,1,1,1,1,1,1,0],
+                            [1,0,3,3,0,0,3,0,0,1],
+                            [1,3,3,3,3,0,0,0,3,1],
+                            [1,3,3,3,3,0,3,0,0,1],
+                            [1,0,3,3,0,0,0,0,3,1],
+                            [0,1,1,1,1,1,1,1,1,0]]
+        
         self.Trigonometry = self.oxygeneI.render("TRIGONOMETRY",1,[0,255,10])
         self.Rush = self.oxygeneI.render("RUSH",1,[0,255,60])
         mousepos = [0,0]
@@ -1626,6 +1639,7 @@ class Menu():
         settingsbutton = [0,0,10,10]
         editorbutton = [120,55,130,65]
         skinsbutton = [65,55,75,65]
+        controlsbutton = [190,100,200,110]
 
         #next few variables are for animating lines along the ground
         linepositions = [0,20,40,60,80,100,120,140,160,180,200]
@@ -1659,6 +1673,8 @@ class Menu():
             self.Draw('polygon',[[100,100,100],[[1,9],[2,9],[5,6],[6,7],[9,4],[6,5],[6,5],[5,2],[3,4],[4,5],[1,8]]])
             #draw level editor button (currently SHOULD do nothing...)
             self.draw_image(leveleditor,[120,55],[[0,0,255],[255,0,0],[0,0,0]])
+            #draw configure buttons button (that sounds goofy)
+            self.draw_image(controlconfigure,[190,100],[[255,0,0],[0,255,0],[0,0,255]])
             #draw game logo
             screen.blit(self.Trigonometry, [20,10])
             screen.blit(self.Rush, [100,26])
@@ -1678,6 +1694,8 @@ class Menu():
                         return "editor"
                     elif(self.get_collision(mousepos,skinsbutton)):
                         return "skins"
+                    elif(self.get_collision(mousepos,controlsbutton)):
+                        return "configure"
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
             
@@ -1845,6 +1863,32 @@ class Menu():
         #button collision boxes
         JSchangeL = [0,0,10,10]
         JSchangeR = [190,0,200,10]
+        JSLbutton = [30,55,40,65]
+        JSRbutton = [75,55,85,65]
+        JSJbutton = [150,55,160,65]
+        returnbutton = [0,10,10,20]
+
+        #what keys have we pressed???
+        keys = []
+
+        #return button image
+        returnimage = [[0,0,0,1,0,0,0,0,0,0],
+                       [0,0,1,0,0,0,0,0,0,0],
+                       [0,1,1,1,1,1,1,1,0,0],
+                       [0,0,1,0,0,0,0,0,1,0],
+                       [0,0,0,1,0,0,0,0,0,1],
+                       [0,0,0,0,0,0,0,0,0,1],
+                       [0,0,0,0,0,0,0,0,0,1],
+                       [0,0,0,0,0,0,0,0,0,1],
+                       [0,0,0,0,0,0,0,0,1,0],
+                       [0,0,0,0,0,0,1,1,0,0]]
+
+        #what button are we currently configuring?  ("JSLbutton","JSRbutton","JSJbutton")
+        configuringbutton = ''
+
+        configuredkeys = []
+        for x in range(0,numjoysticks):
+            configuredkeys.append([0,0,0])
 
         #what Joystick are we currently configuring?
         JSnum = 0
@@ -1856,14 +1900,20 @@ class Menu():
 
         #mouse position variable
         mousepos = [0,0]
+
+        #when do we exit our loop???
+        running = True
         
-        while True:
+        while running:
             #clear our screen
             screen.fill([255,255,0])
             
             #draw some JS Name change controls (change which Joystick we're configuring)
             pygame.draw.polygon(screen, [255,255,255],[[0,5],[10,0],[10,10],[0,5]])
             pygame.draw.polygon(screen, [255,255,255],[[200,5],[190,0],[190,10],[200,5]])
+
+            #draw the exit button
+            self.draw_image(returnimage,[0,10],[[255,0,0],[0,255,0],[0,0,255]])
 
             #draw our current JS name we're configuring
             screen.blit(self.pusab.render("Js# " + str(JSnum),0,[100,100,100]), [50,0])
@@ -1878,8 +1928,13 @@ class Menu():
             screen.blit(RightSurface,[70,70])
             screen.blit(JumpSurface,[145,70])
 
+            #draw the key's current value
+            screen.blit(pygame.transform.scale(self.oxygeneI.render("KEY " + hex(configuredkeys[JSnum][0]).upper(),0,[255,0,0]),[63,20]),[0,90])
+            screen.blit(pygame.transform.scale(self.oxygeneI.render("KEY " + hex(configuredkeys[JSnum][1]).upper(),0,[255,0,0]),[58,20]),[65,90])
+            screen.blit(pygame.transform.scale(self.oxygeneI.render("KEY " + hex(configuredkeys[JSnum][2]).upper(),0,[255,0,0]),[63,20]),[135,90])
+
             #typical menu event loop
-            for event in pygame.event.get(): #******************************************************* gotta add finished button collision in here! ************************************************#
+            for event in pygame.event.get():
                 if(event.type == pygame.QUIT):
                     pygame.quit()
                 if(event.type == pygame.MOUSEMOTION):
@@ -1887,15 +1942,40 @@ class Menu():
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     #do collision in here!]
                     if(self.get_collision(mousepos,JSchangeL)):
-                        print("You changed JSname to left")
+                        if(JSnum != 0):
+                            JSnum -= 1
                     if(self.get_collision(mousepos,JSchangeR)):
-                        print("You changed JSname to right")
+                        if(JSnum < numjoysticks - 1):
+                            JSnum += 1
+                    if(self.get_collision(mousepos,JSLbutton)):
+                        configuringbutton = "JSLbutton"
+                    if(self.get_collision(mousepos,JSRbutton)):
+                        configuringbutton = "JSRbutton"
+                    if(self.get_collision(mousepos,JSJbutton)):
+                        configuringbutton = "JSJbutton"
+                    if(self.get_collision(mousepos,returnbutton)):
+                        running = False
+                if(event.type == pygame.KEYDOWN):
+                    if(event.key not in keys):
+                        keys.append(event.key)
+                if(event.type == pygame.KEYUP):
+                    keys.remove(event.key)
+
+            if(keys != []):
+                if(configuringbutton == "JSLbutton"):
+                    configuredkeys[JSnum][0] = keys[0]
+                elif(configuringbutton == "JSRbutton"):
+                    configuredkeys[JSnum][1] = keys[0]
+                elif(configuringbutton == "JSJbutton"):
+                    configuredkeys[JSnum][2] = keys[0]
 
             #SANITY CHECK!!!
             self.clock.tick(10)
 
             #update the display
             pygame.display.flip()
+
+        return configuredkeys
 
     def GameMenu(self,PMStatus = False,PMPos = [[0,0],[0,0],[0,0]]):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
@@ -1958,9 +2038,9 @@ class Menu():
         return self.out
 
 class GameLoop(): #********************** Maybe not so WIP??? *********************************#
-    def __init__(self,players):
+    def __init__(self,players,keyconfig):
         #um...  our key configs for each player?  (left, right, jump)
-        self.keyconfig = [[pygame.K_a, pygame.K_d, pygame.K_SPACE],[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP]]
+        self.keyconfig = keyconfig
         
         #init our objs
         self.squares = CourseSquares()
@@ -2433,7 +2513,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                             exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
                         elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.05")
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.25")
 
                 #display handling and some misc stuff
                 self.framecount += 1
@@ -2525,12 +2605,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             self.attemptpos[0] = self.attemptpos[0] - 1
 
 
-
-migameloop = GameLoop(1) #a short game loop engine
+keyconfig = [[pygame.K_a, pygame.K_d, pygame.K_SPACE],[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP]]
+migameloop = GameLoop(1,keyconfig) #a short game loop engine
 mimenu = Menu()
 PlayerNumber = 1
-
-#mimenu.ControlsConfigure(2)
 
 while True:
     choice1 = mimenu.FrontMenu()
@@ -2539,7 +2617,7 @@ while True:
         if(milevelchoice != "EX    IT"):
             migameloop.LoadLevel(milevelchoice)
             while True:
-                migameloop.__init__(PlayerNumber)
+                migameloop.__init__(PlayerNumber,keyconfig)
                 returnstatement = migameloop.GameLoop(milevelchoice)
                 if(returnstatement == "level menu"):
                     milevelchoice = mimenu.LevelMenu()
@@ -2564,6 +2642,8 @@ while True:
         while "volume" not in settingsout[index]:
             index += 1
         pygame.mixer.music.set_volume(settingsout[index][2])
+    elif(choice1 == "configure"):
+        keyconfig = mimenu.ControlsConfigure(10)
 
 
 choice = "BackOnTrack"
