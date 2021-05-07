@@ -1559,9 +1559,9 @@ class Menu():
                         self.offset = -e * 4
                         self.incomingoffset = 200 - (e * 4)
                     self.needtoblit = self.Draw('text',[self.levellist[self.position],[255,255,255],10])
-                    screen.blit(self.needtoblit,[(100 - len(list(self.compliment[self.position])) * 10 / 2) + self.incomingoffset, 40])
+                    screen.blit(self.needtoblit,[(100 - len(list(self.levellist[self.position])) * 10 / 2) + self.incomingoffset, 40])
                     self.needtoblit = self.Draw('text',[self.levellist[self.oldpos],[255,255,255],10])
-                    screen.blit(self.needtoblit,[(100 - len(list(self.compliment[self.oldpos])) * 10 / 2) + self.offset, 40])
+                    screen.blit(self.needtoblit,[(100 - len(list(self.levellist[self.oldpos])) * 10 / 2) + self.offset, 40])
                     pygame.display.flip()
                     self.clock.tick(60)
                 self.direction = ' '
@@ -1977,7 +1977,7 @@ class Menu():
 
         return configuredkeys
 
-    def GameMenu(self,PMStatus = False,PMPos = [[0,0],[0,0],[0,0]]):
+    def GameMenu(self,PMStatus = False):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
         global screen
         InMenu = True
@@ -2153,6 +2153,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.portalsCourse = conglomeration[4][:]
 
     def GameLoop(self,choice):
+        #something needed for PM
+        state = 1
+        #We're NOT starting in Practice Mode...
+        PMStatus = False
         #set key repeat
         pygame.key.set_repeat(5,5)
         #when we exit the loop, we need to give out something to tell what we wanted to do
@@ -2165,6 +2169,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #give us a starting position
         exec("self.y10y = [4,0]")
         exec("self.x10x = [0,0]")
+        #PMtouchingground list
+        touchingground = []
         #list of all keys pressed at the moment
         keys = []
         #start some music #************************************************************************need to reenable this **********************************************************
@@ -2172,376 +2178,422 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #pygame.mixer.music.play()
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squaresCourse[0])")
-        for f in range(0,self.LevelLength - 20):
-            for e in range(1,int(10 / float(self.gamespeed)) + 1):
-                #are we heading left or right?
-                if(self.direction == 'left'):
-                    self.y = int((e * -1) * self.gamespeed)
-                    self.x = f
-                    exec("self.x10x = [self.x,self.y]")
-                elif(self.direction == 'right'):
-                    self.y = int(e * self.gamespeed)
-                    self.x = f
-                    exec("self.x10x = [self.x,self.y]")
+        #we've got to switch to While loop!...
+        move = 0
+        #PM position record
+        PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+        while(move < len(self.squaresCourse[0]) * 10):
+            move += self.gamespeed
+            e = int(move % 10)
+            f = int(move / 10)
+            #are we heading left or right?
+            if(self.direction == 'left'):
+                self.y = int(e * -1) # was int((e * -1) * self.gamespeed)
+                self.x = f
+                exec("self.x10x = [self.x,self.y]")
+            elif(self.direction == 'right'):
+                self.y = int(e) #was e * self.gamespeed
+                self.x = f
+                exec("self.x10x = [self.x,self.y]")
 
-                #based on our direction, make the cube(s) to go a specified x position.
+            #based on our direction, make the cube(s) to go a specified x position.
+            for imrunningoutofvariables in range(0,self.players):
+                if(self.direction == 'right'):
+                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
+                elif(self.direction == 'left'):
+                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(150 - 10 * imrunningoutofvariables) + ")")
+
+            #set some object variables so the course knows which way we're going
+            self.triangles.direction = self.direction
+            self.squares.direction = self.direction
+            self.boosters.direction = self.direction
+            self.bounceballs.direction = self.direction
+            self.portals.direction = self.direction
+
+            #get the average Y position of everyone on the screen
+            for abcdef in range(0,3):
+                self.avgY = 0
+                self.deadplayers = 0
                 for imrunningoutofvariables in range(0,self.players):
-                    if(self.direction == 'right'):
-                        exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
-                    elif(self.direction == 'left'):
-                        exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(150 - 10 * imrunningoutofvariables) + ")")
+                    exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")
+                    if(self.handleddead == True):
+                        self.deadplayers += 1
+                        continue
+                    exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
+                try:
+                    self.avgY = int(self.avgY / (self.players - self.deadplayers))
+                except ZeroDivisionError: #this only occurs when everyone's dead and the frame countdown (30 frames?) starts
+                    self.avgY = 45
 
-                #set some object variables so the course knows which way we're going
-                self.triangles.direction = self.direction
-                self.squares.direction = self.direction
-                self.boosters.direction = self.direction
-                self.bounceballs.direction = self.direction
-                self.portals.direction = self.direction
-
-                #get the average Y position of everyone on the screen
-                for abcdef in range(0,3):
-                    self.avgY = 0
-                    for imrunningoutofvariables in range(0,self.players):
-                        exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
-                    self.avgY = int(self.avgY / self.players)
-
-                    #move our screen and players around a little based on our avgY variable (set above)
-                    if(self.avgY < 30):
-                        if(self.y10y[1] < 9):
-                            self.y10y[1] += 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] += 1")
-                        else:
-                            self.y10y[1] = 0
-                            self.y10y[0] -= 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] += 1")
-                    elif(self.avgY > 60):
-                        if(self.y10y[1] > 0):
-                            self.y10y[1] -= 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] -= 1")
-                        else:
-                            self.y10y[1] = 9
-                            self.y10y[0] += 1
-                            for p in range(0,self.players):
-                                exec("self.gd" + str(p) + ".pos[1] -= 1")
-
-                #move the effects every third frame (this could almost go in DrawEVERYTHING())
-                if(self.x10x[1] % 3 == 0):
-                    if(self.direction == 'right'):
-                        self.effects.moveeffects('left')
+                #move our screen and players around a little based on our avgY variable (set above)
+                if(self.avgY < 30):
+                    if(self.y10y[1] < 9):
+                        self.y10y[1] += 1
+                        for p in range(0,self.players):
+                            exec("self.gd" + str(p) + ".pos[1] += 1")
                     else:
-                        self.effects.moveeffects('right')
+                        self.y10y[1] = 0
+                        self.y10y[0] -= 1
+                        for p in range(0,self.players):
+                            exec("self.gd" + str(p) + ".pos[1] += 1")
+                elif(self.avgY > 60):
+                    if(self.y10y[1] > 0):
+                        self.y10y[1] -= 1
+                        for p in range(0,self.players):
+                            exec("self.gd" + str(p) + ".pos[1] -= 1")
+                    else:
+                        self.y10y[1] = 9
+                        self.y10y[0] += 1
+                        for p in range(0,self.players):
+                            exec("self.gd" + str(p) + ".pos[1] -= 1")
 
-                #draw the WHOLE screen
-                self.DrawEVERYTHING(self.x10x,self.y10y,choice)
+            #move the effects every third frame (this could almost go in DrawEVERYTHING())
+            if(self.x10x[1] % 3 == 0):
+                if(self.direction == 'right'):
+                    self.effects.moveeffects('left')
+                else:
+                    self.effects.moveeffects('right')
 
-                #some quick rotation handling for when falling
-                for imrunningoutofvariables in range(0,self.players):
-                    exec("self.selectedrotating = self.gd" + str(imrunningoutofvariables) + ".rotating")
-                    exec("self.selectedgravity = self.gd" + str(imrunningoutofvariables) + ".gravity")
-                    exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
-                    if(self.selectedrotating == 1):
-                        for c in range(0,self.gamespeed):
-                            exec("self.gd" + str(imrunningoutofvariables) + ".rotate(self.selectedgravity,self.selectedform)")
+            #draw the WHOLE screen
+            self.DrawEVERYTHING(self.x10x,self.y10y,choice)
 
-                #(JUMPING) collision stuff begins here.
-                for imrunningoutofvariables in range(0,self.players):
-                    exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.append(self.gd" + str(imrunningoutofvariables) + ".Yspeed)")
-                    exec("self.selectedshipspeeds = self.gd" + str(imrunningoutofvariables) + ".shipspeeds")
-                    exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
-                    exec("self.selectedYspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed")
-                    exec("self.selectedtouchingground = self.gd" + str(imrunningoutofvariables) + ".touchingground")
-                    exec("self.selectedpos = self.gd" + str(imrunningoutofvariables) + ".pos")
-                    exec("self.selectedgravity = self.gd" + str(imrunningoutofvariables) + ".gravity")
-                    if(len(self.selectedshipspeeds) > 120): #make sure our lists aren't so long it slows doooowwwwwnnnnn the computer =)
-                        exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.pop(0)")
-                    for c in range(0,self.gamespeed): #move all GD figures what they're supposed to be moved
-                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,self.gd" + str(imrunningoutofvariables) + ".Yspeed],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+            #some quick rotation handling for when falling
+            for imrunningoutofvariables in range(0,self.players):
+                exec("self.selectedrotating = self.gd" + str(imrunningoutofvariables) + ".rotating")
+                exec("self.selectedgravity = self.gd" + str(imrunningoutofvariables) + ".gravity")
+                exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
+                if(self.selectedrotating == 1):
                     for c in range(0,self.gamespeed):
-                        self.gdcollision = []
-                        if(self.selectedform == 'cube' or self.selectedform == 'ball'):
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                            if('ground' in self.gdcollision):
-                                if(self.selectedgravity == 1):
-                                   exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.ceil(self.selectedpos[1])")
-                                else:
-                                   exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.floor(self.selectedpos[1])")
-                                for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
-                                    self.currentshipspeed = 0
-                                    for d in range(0,len(self.selectedshipspeeds)):
-                                        if(self.selectedshipspeeds[d] != 0):
-                                            self.currentshipspeed = self.selectedshipspeeds[d]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                                    if('ground' in self.gdcollision):
-                                        if(self.currentshipspeed > 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                                        elif(self.currentshipspeed < 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 0")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 0")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
-                            elif(self.selectedtouchingground == 0):
-                                if(self.selectedYspeed < 2.6):
-                                    exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.876 / 9.5 * self.unit")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 1")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
-                                for i in range(0,int(((self.selectedYspeed + 1) * self.gamespeed) / 2)):
-                                    self.currentshipspeed = 0
-                                    for d in range(0,len(self.selectedshipspeeds)):
-                                        if(self.selectedshipspeeds[d] != 0):
-                                            self.currentshipspeed = self.selectedshipspeeds[imrunningoutofvariables]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                                    if('ground' in self.gdcollision):
-                                        if(self.currentshipspeed > 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                                        elif(currentshipspeed < 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            #this checks if we are still on the ground or no.
-                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                            if('ground' not in self.gdcollision):
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
-                            else:
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
-                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                        elif(self.selectedform == 'arrow'):
-                            exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 1")
-                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
-                        elif(self.selectedform == 'ship'):
-                            exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 1")
-                            #are we still on the ground or NO?
-                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                            if('ground' not in self.gdcollision):
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0 - self.selectedYspeed * 40)")
-                            else:
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
-                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                            #actual gravity stuff begins
-                            exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                            if('ground' in self.gdcollision):
-                                exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
-                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 0")
-                                self.selectedYspeed = 0
-                            elif(self.selectedtouchingground == 0):
-                                if(self.selectedYspeed < 1.5):
-                                    exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.876 / 10 * self.unit / 1.5")
-                            if(self.selectedYspeed == 0):
-                                for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
-                                    currentshipspeed = 0
-                                    for d in range(0,len(self.selectedshipspeeds)):
-                                        if(self.selectedshipspeeds[d] != 0):
-                                            currentshipspeed = self.selectedshipspeeds[d]
-                                    exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                                    if('ground' in self.gdcollision):
-                                        if(currentshipspeed > 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                                        elif(currentshipspeed < 0):
-                                            exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                   #and ends here
+                        exec("self.gd" + str(imrunningoutofvariables) + ".rotate(self.selectedgravity,self.selectedform)")
 
-                #some death detection
-                for CryingOutLoud in range(0,self.players):
-                    exec("self.handledtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
-                    exec("self.handledYspeed = self.gd"  + str(CryingOutLoud) + ".Yspeed")
-                    exec("self.handledform = self.gd" + str(CryingOutLoud) + ".form")
-                    exec("self.handledpos = self.gd" + str(CryingOutLoud) + ".pos")
-                    exec("self.handledgravity = self.gd" + str(CryingOutLoud) + ".gravity")
-                    exec("self.handlednojump = self.gd" + str(CryingOutLoud) + ".nojump")
-                    exec("self.handleddead = self.gd" + str(CryingOutLoud) + ".dead")
-                    if(self.handledform == 'cube' or self.handledform == 'ball'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                        if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                        elif('slamleft' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                        elif('slamright' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left' or 'slamdown' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                        elif('slamright' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                        elif(self.handledpos[1] > 160 or self.handledpos[1] < -60):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                    elif(self.handledform == 'arrow'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+            #(JUMPING) collision stuff begins here.
+            for imrunningoutofvariables in range(0,self.players):
+                exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.append(self.gd" + str(imrunningoutofvariables) + ".Yspeed)")
+                exec("self.selectedshipspeeds = self.gd" + str(imrunningoutofvariables) + ".shipspeeds")
+                exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
+                exec("self.selectedYspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed")
+                exec("self.selectedtouchingground = self.gd" + str(imrunningoutofvariables) + ".touchingground")
+                exec("self.selectedpos = self.gd" + str(imrunningoutofvariables) + ".pos")
+                exec("self.selectedgravity = self.gd" + str(imrunningoutofvariables) + ".gravity")
+                if(len(self.selectedshipspeeds) > 120): #make sure our lists aren't so long it slows doooowwwwwnnnnn the computer =)
+                    exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.pop(0)")
+                for c in range(0,self.gamespeed): #move all GD figures what they're supposed to be moved
+                    exec("self.gd" + str(imrunningoutofvariables) + ".move([0,self.gd" + str(imrunningoutofvariables) + ".Yspeed],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                for c in range(0,self.gamespeed):
+                    self.gdcollision = []
+                    if(self.selectedform == 'cube' or self.selectedform == 'ball'):
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                         if('ground' in self.gdcollision):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                    elif(self.handledform == 'ship'):
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                        if('slamleft' in self.gdcollision and self.direction == 'right'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                        elif('slamright' in self.gdcollision and self.direction == 'left'):
-                            exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                            exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                            if(self.selectedgravity == 1):
+                               exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.ceil(self.selectedpos[1])")
+                            else:
+                               exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.floor(self.selectedpos[1])")
+                            for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
+                                self.currentshipspeed = 0
+                                for d in range(0,len(self.selectedshipspeeds)):
+                                    if(self.selectedshipspeeds[d] != 0):
+                                        self.currentshipspeed = self.selectedshipspeeds[d]
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                if('ground' in self.gdcollision):
+                                    if(self.currentshipspeed > 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                                    elif(self.currentshipspeed < 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 0")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 0")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
+                        elif(self.selectedtouchingground == 0):
+                            if(self.selectedYspeed < 2.6):
+                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.876 / 9.5 * self.unit")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 1")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
+                            for i in range(0,int(((self.selectedYspeed + 1) * self.gamespeed) / 2)):
+                                self.currentshipspeed = 0
+                                for d in range(0,len(self.selectedshipspeeds)):
+                                    if(self.selectedshipspeeds[d] != 0):
+                                        self.currentshipspeed = self.selectedshipspeeds[d]
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                if('ground' in self.gdcollision):
+                                    if(self.currentshipspeed > 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                                    elif(currentshipspeed < 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                        #this checks if we are still on the ground or no.
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        if('ground' not in self.gdcollision):
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
+                        else:
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                    elif(self.selectedform == 'arrow'):
+                        exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 1")
+                        exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
+                    elif(self.selectedform == 'ship'):
+                        exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 1")
+                        #are we still on the ground or NO?
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        if('ground' not in self.gdcollision):
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0 - self.selectedYspeed * 40)")
+                        else:
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                        #actual gravity stuff begins
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        if('ground' in self.gdcollision):
+                            exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 0")
+                            self.selectedYspeed = 0
+                        elif(self.selectedtouchingground == 0):
+                            if(self.selectedYspeed < 1.5):
+                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.876 / 10 * self.unit / 1.5")
+                        if(self.selectedYspeed == 0):
+                            for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
+                                currentshipspeed = 0
+                                for d in range(0,len(self.selectedshipspeeds)):
+                                    if(self.selectedshipspeeds[d] != 0):
+                                        currentshipspeed = self.selectedshipspeeds[d]
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                if('ground' in self.gdcollision):
+                                    if(currentshipspeed > 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                                    elif(currentshipspeed < 0):
+                                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+               #and ends here
 
-                    #this is triangle death detection
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                    if('triangle' in self.gdcollision):
+            #some death detection
+            for CryingOutLoud in range(0,self.players):
+                exec("self.handledtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
+                exec("self.handledYspeed = self.gd"  + str(CryingOutLoud) + ".Yspeed")
+                exec("self.handledform = self.gd" + str(CryingOutLoud) + ".form")
+                exec("self.handledpos = self.gd" + str(CryingOutLoud) + ".pos")
+                exec("self.handledgravity = self.gd" + str(CryingOutLoud) + ".gravity")
+                exec("self.handlednojump = self.gd" + str(CryingOutLoud) + ".nojump")
+                exec("self.handleddead = self.gd" + str(CryingOutLoud) + ".dead")
+                if(self.handledform == 'cube' or self.handledform == 'ball'):
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                    elif('slamleft' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'right'):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                    elif('slamright' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left' or 'slamdown' in self.gdcollision and self.handledgravity == 1 and self.direction == 'left'):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                    elif('slamright' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left'):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                    elif(self.handledpos[1] > 160 or self.handledpos[1] < -60):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                elif(self.handledform == 'arrow'):
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    if('ground' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                elif(self.handledform == 'ship'):
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    if('slamleft' in self.gdcollision and self.direction == 'right'):
+                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
+                    elif('slamright' in self.gdcollision and self.direction == 'left'):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
-                    #portal collision and what happens
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                    if('portal#1' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
-                    if('portal#2' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".form = 'ship'")
-                        exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                    if('portal#3' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".form = 'ball'")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                    if('portal#4' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".mini = True")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
-                    if('portal#5' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                    if('portal#8' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
-                    if('portal#9' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
+                #this is triangle death detection
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                if('triangle' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                    exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
-                    #booster collision handling
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                    exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
-                    if('bouncepadP1' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
-                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                    elif('bouncepadP2' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[1] * self.unit")
-                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                    elif('bouncepadP3' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[2] * self.unit")
-                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                    elif('bouncepadP4' in self.gdcollision):
-                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                        exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[3] * self.unit")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                #portal collision and what happens
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                if('portal#1' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
+                if('portal#2' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".form = 'ship'")
+                    exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                if('portal#3' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".form = 'ball'")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                if('portal#4' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".mini = True")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
+                if('portal#5' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                if('portal#8' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
+                if('portal#9' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
 
-                    #update dead lists
-                    exec("self.deadlist[CryingOutLoud][1] = self.gd" + str(CryingOutLoud) + ".dead")
+                #booster collision handling
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
+                if('bouncepadP1' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                elif('bouncepadP2' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[1] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                elif('bouncepadP3' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[2] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                elif('bouncepadP4' in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[3] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
 
-                    #check, can we jump another blue bounceball yet, or have we not passed enough frames?
-                    if(self.handlednojump > 0):
-                        exec("self.gd" + str(CryingOutLoud) + ".nojump = self.gd" + str(CryingOutLoud) + ".nojump - 1")
+                #update dead lists
+                exec("self.deadlist[CryingOutLoud][1] = self.gd" + str(CryingOutLoud) + ".dead")
 
-                    #are we an arrow? if so, get our frames in place!
-                    if(self.handledform == 'arrow'):
-                        exec("self.gd" + str(CryingOutLoud) + ".setrotate(90 * 3)")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                #check, can we jump another blue bounceball yet, or have we not passed enough frames?
+                if(self.handlednojump > 0):
+                    exec("self.gd" + str(CryingOutLoud) + ".nojump = self.gd" + str(CryingOutLoud) + ".nojump - 1")
 
-                    #are we rolling along the ground?
-                    elif(self.handledform == 'ball' and self.handledtouchingground == 1):
-                        exec("self.gd" + str(CryingOutLoud) + ".rotating = 1")
-                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
+                #are we an arrow? if so, get our frames in place!
+                if(self.handledform == 'arrow'):
+                    exec("self.gd" + str(CryingOutLoud) + ".setrotate(90 * 3)")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
 
-                self.bool = []
-                for pq in range(0,self.players):
-                    self.bool.append(self.deadlist[pq][1])
-                    
-                if(False not in self.bool):
-                    self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
-                    for CryingOutLoud in range(0,self.players):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                #are we rolling along the ground?
+                elif(self.handledform == 'ball' and self.handledtouchingground == 1):
+                    exec("self.gd" + str(CryingOutLoud) + ".rotating = 1")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
 
-                if(self.framecountdown < 1):
-                    break
-
-                #PUT EVENT LOOP SOMEWHERE IN HERE!
-                for event in pygame.event.get():
-                    if(event.type == pygame.QUIT):
-                        pygame.quit()
-                    if(event.type == pygame.KEYUP):
-                        keys.remove(event.key)
-                    if(event.type == pygame.KEYDOWN):
-                        if(event.key not in keys):
-                            keys.append(event.key)
-                        if(event.key == pygame.K_ESCAPE):
-                             self.returnstatement = self.menu.GameMenu(False) #start a basic UI
-                             if(self.returnstatement == "level menu"): #based on our UI input, do something!
-                                 return self.returnstatement
-                             elif(self.returnstatement == "practice mode"):
-                                return self.returnstatement
-                             elif(self.returnstatement == "resume"):
-                                timelib.sleep(1)
-
-                #hmmm... let's try a more flexible approach to this... (key detection)
+            self.bool = []
+            for pq in range(0,self.players):
+                self.bool.append(self.deadlist[pq][1])
+                
+            if(False not in self.bool):
+                self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
                 for CryingOutLoud in range(0,self.players):
-                    if(self.keyconfig[CryingOutLoud][2] in keys):
-                        exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
-                        exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
-                        exec("self.selectedYspeed = self.gd" + str(CryingOutLoud) + ".Yspeed")
-                        exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
-                        exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
-                        if(self.selectedform == "cube" and self.selectednojump == 0):
-                            #we check, have we collided with any bounceballs?
-                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                            if("bounceballP1" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
-                            if("bounceballP2" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
-                            if("bounceballP3" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
-                            if("bounceballP4" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
-                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
-                        if(self.selectedform == 'cube' and self.selectedtouchingground == 1):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
-                            exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                        elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.25")
-
-                #display handling and some misc stuff
-                self.framecount += 1
-                self.time = self.framecount / float(self.fps)
-                pygame.display.flip()
-                self.clock.tick(self.fps)
-                if(int(self.clock.get_fps()) < self.fps / 4 * 3 and self.framecount > 20 and self.lastframe + 20 < self.framecount):
-                    self.lastframe = self.framecount
-                    print("SLOW DOOOOOOOWWWWNNN!")
-
-                #erase the screen with whatever bgcolor is for next frame
-                screen.fill(self.bgcolor)
-
-                #exactly what are our highs and lows in FPS drops/overshoots?
-                self.tmpfps = self.clock.get_fps()#we don't need to init this variable.
-                if(self.tmpfps > self.fpsextremes[1] and self.tmpfps != 0):
-                    self.fpsextremes[1] = self.tmpfps
-                if(self.tmpfps < self.fpsextremes[0] and self.tmpfps != 0):
-                    self.fpsextremes[0] = self.tmpfps
-
-                #set the window title with FPS
-                if(self.frameskip != 0):
-                    pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps / self.frameskip)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
-                else:
-                    pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
 
             if(self.framecountdown < 1):
-                break #everyone's really dead!
+                if(PMStatus == False):
+                    break
+                else:
+                    self.framecountdown = 30
+                    move = PMpos[0]
+                    self.y10y = PMpos[1][:]
+                    self.gd0.pos = PMpos[2][:]
+                    self.gd0.dead = False
+                    self.direction = PMpos[3]
+                    self.gd0.Yspeed = PMpos[4]
+
+            #PM tracker...
+            if(PMStatus == True):
+                #if we JUST started the loop, make a valid bookmark pos
+                if(self.framecount == 1):
+                    PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+                touchingground.append(self.gd0.touchingground)
+                if(len(touchingground) > 200):
+                    touchingground.pop(0)
+                if(self.framecount % 100 == 0): #after a few jumps, we record our new position
+                    PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+                
+            #PUT EVENT LOOP SOMEWHERE IN HERE!
+            for event in pygame.event.get():
+                if(event.type == pygame.QUIT):
+                    pygame.quit()
+                if(event.type == pygame.KEYUP):
+                    if(event.key in keys):
+                        keys.remove(event.key)
+                if(event.type == pygame.KEYDOWN):
+                    if(event.key not in keys):
+                        keys.append(event.key)
+                    if(event.key == pygame.K_ESCAPE):
+                        self.returnstatement = self.menu.GameMenu(PMStatus) #start a basic UI
+                        if(self.returnstatement == "level menu"): #based on our UI input, do something!
+                            return self.returnstatement
+                        elif(self.returnstatement == "practice mode"):
+                            if(self.players == 1 and PMStatus == False):  #finally, I'm gonna try implement Practice Mode!!!
+                                PMStatus = True
+                            elif(PMStatus == True):
+                                PMStatus = False
+                            else:
+                                #you naughty boy, did you try Practice Mode with more than 1 player???
+                                screen.fill([0,0,0])
+                                ErrorA = pygame.transform.scale(self.pusab.render("You can't use Practice Mode",1,[255,0,0]),[194,40])
+                                ErrorB = pygame.transform.scale(self.pusab.render("with more than 1 Player!",1,[255,0,0]),[194,40])
+                                ErrorC = pygame.transform.scale(self.pusab.render("Resuming in 4 seconds...",1,[255,0,0]),[194,40])
+                                screen.blit(ErrorA,[3,0])
+                                screen.blit(ErrorB,[3,40])
+                                screen.blit(ErrorC,[3,80])
+                                pygame.display.flip()
+                                timelib.sleep(4)
+                        elif(self.returnstatement == "resume"):
+                            timelib.sleep(1)
+
+            #hmmm... let's try a more flexible approach to this... (key detection)
+            for CryingOutLoud in range(0,self.players):
+                if(self.keyconfig[CryingOutLoud][2] in keys):
+                    exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
+                    exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
+                    exec("self.selectedYspeed = self.gd" + str(CryingOutLoud) + ".Yspeed")
+                    exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
+                    exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
+                    if(self.selectedform == "cube" and self.selectednojump == 0):
+                        #we check, have we collided with any bounceballs?
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        if("bounceballP1" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
+                        if("bounceballP2" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
+                        if("bounceballP3" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
+                        if("bounceballP4" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                            exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                            exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
+                    if(self.selectedform == 'cube' and self.selectedtouchingground == 1):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.25")
+
+            #display handling and some misc stuff
+            self.framecount += 1
+            self.time = self.framecount / float(self.fps)
+            pygame.display.flip()
+            self.clock.tick(self.fps)
+            if(int(self.clock.get_fps()) < self.fps / 4 * 3 and self.framecount > 20 and self.lastframe + 20 < self.framecount):
+                self.lastframe = self.framecount
+                print("SLOW DOOOOOOOWWWWNNN!")
+
+            #erase the screen with whatever bgcolor is for next frame
+            screen.fill(self.bgcolor)
+
+            #exactly what are our highs and lows in FPS drops/overshoots?
+            self.tmpfps = self.clock.get_fps()#we don't need to init this variable.
+            if(self.tmpfps > self.fpsextremes[1] and self.tmpfps != 0):
+                self.fpsextremes[1] = self.tmpfps
+            if(self.tmpfps < self.fpsextremes[0] and self.tmpfps != 0):
+                self.fpsextremes[0] = self.tmpfps
+
+            #set the window title with FPS
+            if(self.frameskip != 0):
+                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps / self.frameskip)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
+            else:
+                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
 
         #return something
         return self.returnstatement
@@ -2567,6 +2619,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
         #gdlistcoords handling (for showing a trail behind GD_Cube:
         for imrunningoutofvariables in range(0,self.players):
+            exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")  #do we skip drawing this one?
+            if(self.handleddead == True):
+                continue
             exec("self.handledtouchingground = self.gd" + str(imrunningoutofvariables) + ".touchingground")
             exec("self.handledYspeed = self.gd"  + str(imrunningoutofvariables) + ".Yspeed")
             exec("self.handledform = self.gd" + str(imrunningoutofvariables) + ".form")
@@ -2606,29 +2661,38 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
 
 keyconfig = [[pygame.K_a, pygame.K_d, pygame.K_SPACE],[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP]]
+for x in range(0,8):
+    keyconfig.append([0,0,0])
 migameloop = GameLoop(1,keyconfig) #a short game loop engine
 mimenu = Menu()
 PlayerNumber = 1
+Exit = False
 
 while True:
     choice1 = mimenu.FrontMenu()
+    Exit = False
     if(choice1 == 'play'):
         milevelchoice = mimenu.LevelMenu()
         if(milevelchoice != "EX    IT"):
-            migameloop.LoadLevel(milevelchoice)
-            while True:
-                migameloop.__init__(PlayerNumber,keyconfig)
-                returnstatement = migameloop.GameLoop(milevelchoice)
-                if(returnstatement == "level menu"):
-                    milevelchoice = mimenu.LevelMenu()
-                    if(milevelchoice == "EX    IT"):
-                        break
-                elif(returnstatement == "practice mode"):
-                    break # go back to main menu
-                elif(returnstatement == "resume"):
-                    pass
-                elif(returnstatement == "dead"):
-                    pass
+            while not Exit:
+                migameloop.LoadLevel(milevelchoice)
+                while True:
+                    migameloop.__init__(PlayerNumber,keyconfig)
+                    returnstatement = migameloop.GameLoop(milevelchoice)
+                    if(returnstatement == "level menu"):
+                        milevelchoice = mimenu.LevelMenu()
+                        if(milevelchoice == "EX    IT"):
+                            Exit = True
+                            break
+                        else:
+                            break
+                    elif(returnstatement == "practice mode"):
+                        Exit = True
+                        break # go back to main menu
+                    elif(returnstatement == "resume"):
+                        pass
+                    elif(returnstatement == "dead"):
+                        pass
     elif(choice1 == "settings"):
         #start the settings menu
         settingsout = mimenu.SettingsMenu()
