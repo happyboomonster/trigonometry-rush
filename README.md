@@ -34,13 +34,21 @@ cube frames, rotation and a few other things.  Then I made a class for
 A) The Bricks in the level B) The spikes and other inanimate things that
 hurt you C) The "bounceballs" (I can't think of a better name) D) The
 BouncePads E) The Portals...  Then I made a Menu and GameLoop class to link
-all the stuff I made together.
+all the stuff I made together.  Also, I forgot to mention that there are a
+few more classes that just fade into the background, and don't need to be tampered
+with much.  1) BGeffects:  This draws some dark squares and circles in the
+background, which move slowly and give a better arena scrolling feel.
+2) PostProcessingEffects:  This can add some interesting effects.  I haven't
+really developed it much, but it has a lot of potential.  Everything has to be done
+by caching what's already onscreen, modifying it, and then pasting it back on the
+screen.  3) FGeffects:  This is a class which lets you put moving shapes on
+the screen which A) run for a certain number of frames B) can grow or shrink in size
+over time C) can change color over time
 
-What I want to add:  Changeable cube costumes, and a menu for that.  
-A front menu [WHAT, I know...  I don't have a front menu yet  =(  ].  
-Controller and custom control setup support.  
-Optomisations that speed up my horrible code!  =) .  
-Make it easier for people to make levels.  
+What I want to add:  Changeable cube costumes, and a menu for that 
+Controller support  
+Optomisations that speed up my horrible code!  =) 
+Make it easier for people to make levels (level editor GUI)
 
 
 Attribution to various people:
