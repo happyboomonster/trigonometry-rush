@@ -1,5 +1,5 @@
-#Main Trigonometry Dash program/script
-#    Copyright (C) 2021  Lincoln V.
+#Main Trigonometry Rush program/script
+#    Copyright (C) 2021  Lincoln V, Karsten V.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import random
 import sys
 import math
 import pickle
+import os
 
 pygame.init()
 pygame.font.init()
@@ -40,6 +41,10 @@ except TypeError:
     PYTHON2 = False
     PYTHON3 = True
 
+print("Getting current execution path...")
+execpath = os.path.dirname(sys.argv[0])
+print("Exec Path:  " + execpath)
+
 class GD_Figure():
     def __init__(self):
         self.pos = [0,0]
@@ -56,7 +61,7 @@ class GD_Figure():
         self.mini = False
         self.Yspeed = 0
         #more variable setup beneath frames
-        self.frames = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        self.cubeframes = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -125,8 +130,43 @@ class GD_Figure():
                            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
 
+        self.UFOframes = []
+        self.robotframes = []
+
         #cubeframe setups
-        self.cubeframe = self.draw_16x16(self.frames,[0,0])
+        self.cubeframe = self.draw_16x16(self.cubeframes,[0,0])
+        self.cubecenterpos = self.cubeframe.get_rect().center
+        self.cubecenteredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
+
+        #arrowframe setups
+        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[0,0]),180)
+        self.arrowcenterpos = self.arrowframe.get_rect().center
+        self.arrowcenteredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
+
+        #shipframe setups
+        self.shipframe = pygame.transform.flip(pygame.transform.rotate(self.draw_16x16(self.shipframes,[0,0]),90),False,True)
+        self.shipcenterpos = self.shipframe.get_rect().center
+        self.shipcenteredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
+
+        #ballframe setups
+        self.ballframe = pygame.transform.flip(pygame.transform.rotate(self.draw_16x16(self.ballframes,[0,0]),90),False,True)
+        self.ballcenterpos = self.ballframe.get_rect().center
+        self.ballcenteredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+
+    def extrainit(self):
+        self.pos = [0,0]
+        self.jumping = 0
+        self.jumpingcounter = 0
+        self.angle = 0
+        self.amount = 0
+        self.pixels = 0
+        self.oldpos = [0,0]
+        self.form = 'cube'
+        self.mini = False
+        self.Yspeed = 0
+        
+        #cubeframe setups
+        self.cubeframe = self.draw_16x16(self.cubeframes,[0,0])
         self.cubecenterpos = self.cubeframe.get_rect().center
         self.cubecenteredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
 
@@ -1455,6 +1495,9 @@ class PostProcessing_Effects():
 
 class Menu():
     def __init__(self):
+        #req'd by skinsmenu
+        self.skintypes = ['arrow','ball','cube','robot','ship','UFO'] #this list must be in alphabetical order.
+        
         self.levellist = ["TestLevel01","Stereo Madness", "Back on Track", "Polargeist"]
         self.compliment = ["Assets/Levels/TestLevel01/OutputLevel.pkl","StereoMadness", "Assets/Levels/BackOnTrack/OutputLevel.pkl", "Polargeist"]
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",20)
@@ -1640,6 +1683,7 @@ class Menu():
         editorbutton = [120,55,130,65]
         skinsbutton = [65,55,75,65]
         controlsbutton = [190,100,200,110]
+        exitbutton = [10,0,20,10]
 
         #next few variables are for animating lines along the ground
         linepositions = [0,20,40,60,80,100,120,140,160,180,200]
@@ -1680,11 +1724,16 @@ class Menu():
             screen.blit(self.Rush, [100,26])
             #draw a line near the screen bottom
             pygame.draw.line(screen, [255,0,0], [0,110],[200,110],2)
+            #draw an exit button
+            pygame.draw.circle(screen, [100,100,100], [16,5],5)
+            pygame.draw.line(screen,[255,255,0],[12,2],[18,8],1)
+            pygame.draw.line(screen,[255,255,0],[18,2],[12,8],1)
 
             #event loop
             for event in pygame.event.get():
                 if(event.type == pygame.QUIT):
                     pygame.quit()
+                    return "exit"
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     if(self.get_collision(mousepos,playbutton)):
                         return "play"
@@ -1696,14 +1745,15 @@ class Menu():
                         return "skins"
                     elif(self.get_collision(mousepos,controlsbutton)):
                         return "configure"
+                    elif(self.get_collision(mousepos,exitbutton)):
+                        pygame.quit()
+                        return "exit"
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
             
             #flip display and cap framelimit
             self.clock.tick(10)
             pygame.display.flip()
-
-        return 0
 
     def DrawSettings(self,settingslist,pagenumber,selectedoption):
         for x in range(0,4):
@@ -1977,6 +2027,212 @@ class Menu():
 
         return configuredkeys
 
+    def load(self, filename):
+        mifile = open(filename, "r")
+        milist = []
+        for x in range(0,16):
+            milist.append(mifile.readline())
+        mistr = ""
+        for x in range(0,16):
+            mistr = mistr + milist[x]
+        exec(mistr)
+        return skin
+
+    def SkinsMenu(self, PlayersNum):  #got to get a Skins menu working!
+        #[positivenumber,positivenumber2] means rotate from positivenumber to positivenumber2 and then back to positivenumber again
+
+        #movement patterns...  [motiontype,[movementStart,movementFinish]]
+        #   MotionType:
+        #       this can be the following: "rocking", "rotating", "moving"
+        #           Rocking:  rotates back and forth between movementStart degrees and movementFinish degrees
+        #           Rotating:  rotates from movementStart degrees to movementFinish degrees.  Restarts back at movementStart.
+        #           Moving:  moves from position movementStart (x,y setup) to position movementFinish and back again.
+        #matches up with the skintypes list if you're wondering...
+        movementtypes = [['rotating',[0,359]],['rocking',[-25,25]],['rotating',[0,359]],['rocking',[-45,45]],['moving',[[-4,0],[4,0]]],['moving',[[0,2],[0,-4]]]]
+
+        #find all skins available in list format...and clip the list sizes so I don't run out of space for skins on the screen!
+        skinsavailable = os.listdir(execpath + "/Assets/Skins/")
+        for skinname in skinsavailable:
+            exec(str(skinname) + "skins = " + str(os.listdir(execpath + "/Assets/Skins/" + str(skinname))))
+
+        listnames = []
+
+        for skinname in skinsavailable:
+            exec("subskins = " + str(skinname) + "skins")
+            exec("skinshape" + str(skinname) + " = []")
+            listnames.append("skinshape" + str(skinname))
+            for subskinname in subskins:
+                exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "/Assets/Skins/" + str(skinname) + "/" +  str(subskinname) + "'))")
+
+        listlens = []
+        for listname in listnames:
+            exec("listlens.append(len(" + str(listname) + "))")
+
+        CurrentPlayer = 0
+        CurrentShape = 0  #the index for the SkinTypes list above
+
+        #back button image
+        backimage = [[0,0,0,1,0,0,0,0,0,0],
+                     [0,0,1,0,0,0,0,0,0,0],
+                     [0,1,1,1,1,1,1,1,0,0],
+                     [0,0,1,0,0,0,0,0,1,0],
+                     [0,0,0,1,0,0,0,0,0,1],
+                     [0,0,0,0,0,0,0,0,0,1],
+                     [0,0,0,0,0,0,0,0,0,1],
+                     [0,0,0,0,0,0,0,0,0,1],
+                     [0,0,0,0,0,0,0,0,1,0],
+                     [0,0,0,0,0,0,1,1,0,0]]
+
+        #all players in this game need to have temporary color setups...
+        self.colorlist = []
+        for x in range(0,10):
+            self.colorlist.append([[0,0,0],[0,0,0],[0,0,0]])
+
+        #all players in this game need to have skin returns...
+        self.skinlist = []
+        self.subskinlist = []
+        self.skinselected = [] #what skin have we currently selected: [player1[arrow,ball,cube...]player2[arrow,ball,cube...]] etc.
+        self.subskinselected = []
+        for asdfg in self.skintypes:
+            try:
+                exec("self.subskinlist.append(skinshape" + str(asdfg) + "[0])")
+            except IndexError: #placed here to catch problems where there are no skins inside a given skin folder.
+                pass
+            self.subskinselected.append(0)
+            
+        for b in range(0,10):
+            self.skinlist.append(self.subskinlist[:])
+            self.skinselected.append(self.subskinselected[:])
+
+        #button collision boxes
+        PlayerMinus = [10,0,20,10]  #change which player we're messing with skins for
+        PlayerPlus = [180,0,190,10]
+        Back = [0,0,10,10]          #the EXIT button
+        ShapeMinus = [0,10,10,20]  #buttons collsion for changing skins
+        ShapePlus = [190,10,200,20]
+        ColorAButtons = [[0,90,25,100],[25,90,50,100],[50,90,75,100],[75,90,100,100],[100,90,125,100],[125,90,150,100],[150,90,175,100],[175,90,200,100]]
+        ColorBButtons = [[0,100,25,110],[25,100,50,110],[50,100,75,110],[75,100,100,110],[100,100,125,110],[125,100,150,110],[150,100,175,110],[175,100,200,110]]
+        ColorCButtons = [[0,110,25,120],[25,110,50,120],[50,110,75,120],[75,110,100,120],[100,110,125,120],[125,110,150,120],[150,110,175,120],[175,110,200,120]]
+
+        #skins collision boxes are generated live on the fly.
+
+        #our mouse position
+        mousepos = [0,0]
+
+        #how many skins we can draw per row
+        SPR = 11 # (180 / 16)
+
+        #how many rows of skins can we fit on one screen?
+        RPS = 3 # (50 / 16)
+        
+        while True:
+            #fill our screen with...RED for once!
+            screen.fill([255,0,0])
+
+            #All of the drawing should happen here...
+            self.draw_image(backimage,[0,0],[[255,0,255],[0,255,0],[0,0,255]]) #draw the exit button
+            #draw 2 minus buttons
+            pygame.draw.polygon(screen,[255,255,0],[[10,5],[20,0],[20,10],[10,5]])
+            pygame.draw.polygon(screen,[255,255,0],[[0,15],[10,10],[10,20],[0,15]])
+            #draw 2 plus buttons
+            pygame.draw.polygon(screen,[255,255,0],[[180,0],[180,10],[190,5],[180,0]])
+            pygame.draw.polygon(screen,[255,255,0],[[190,10],[190,20],[200,15],[190,10]])
+            #draw our current color
+            pygame.draw.rect(screen,self.colorlist[CurrentPlayer][0],[[190,0],[3,10]],0)
+            pygame.draw.rect(screen,self.colorlist[CurrentPlayer][1],[[193,0],[3,10]],0)
+            pygame.draw.rect(screen,self.colorlist[CurrentPlayer][2],[[196,0],[4,10]],0)
+            #draw some text based on what we're selecting at the moment
+            tmpsurface = pygame.transform.scale(self.pusab.render(self.skintypes[CurrentShape],1,[255,255,255]),[len(list(self.skintypes[CurrentShape])) * 10,10])
+            screen.blit(tmpsurface,[100 - (len(list(self.skintypes[CurrentShape])) / 2) * 10,10])
+            tmpsurface = pygame.transform.scale(self.oxygeneI.render("JS# " + str(CurrentPlayer),1,[0,0,255]),[len(list("JS# " + str(CurrentPlayer))) * 5,10])
+            screen.blit(tmpsurface,[100 - (len(list("JS# " + str(CurrentPlayer))) * 5 / 2),0])
+            #draw a grey square where all our wonderful skins appear
+            pygame.draw.rect(screen,[100,100,100],[10,30,180,50])
+            #draw our color selector
+            tmpnumber = 0
+            for y in range(0,8):
+                #Get our colors  (8 in total)
+                if(tmpnumber & 0b1 == 0b1):
+                    tmpR = 255
+                else:
+                    tmpR = 0
+                if(tmpnumber & 0b10 == 0b10):
+                    tmpG = 255
+                else:
+                    tmpG = 0
+                if(tmpnumber & 0b100 == 0b100):
+                    tmpB = 255
+                else:
+                    tmpB = 0
+                pygame.draw.rect(screen,[tmpR,tmpG,tmpB],[tmpnumber * 25,90,25,30])
+                #increase our color generator number
+                tmpnumber += 1
+            pygame.draw.line(screen,[100,100,100],[0,100],[200,100])
+            pygame.draw.line(screen,[100,100,100],[0,110],[200,110])
+            #draw all our skins for the menu...
+            #CurrentShape index will tell us what we're currently focused on.
+            #I also handle creating live collision boxes for the skins here...
+            skincollision = []
+            exec('focusedlist = skinshape' + str(self.skintypes[CurrentShape]))
+            color = self.colorlist[CurrentPlayer] #color palette that all skins will be drawn in this frame...
+            for drawingskins in range(0,len(focusedlist)):
+                x = ((drawingskins % SPR) * 16) + 10
+                if(drawingskins == 0):
+                    y = 30
+                else:
+                    y = ((drawingskins / SPR) * 16) + 30
+                self.draw_image(focusedlist[drawingskins],[x,y],color) #draw a skin
+                if(drawingskins == self.skinselected[CurrentPlayer][CurrentShape]):
+                    pygame.draw.rect(screen, [255,0,255], [x,y,16,16],1)
+                skincollision.append([x,y,x + 16,y + 16]) #add a collision box for a skin...
+
+            #event loop
+            for event in pygame.event.get():
+                if(event.type == pygame.MOUSEMOTION):
+                    mousepos = event.pos[:]
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    if(self.get_collision(mousepos,PlayerMinus)):
+                        if(CurrentPlayer > 0):
+                            CurrentPlayer -= 1
+                    elif(self.get_collision(mousepos,PlayerPlus)):
+                        if(CurrentPlayer < PlayersNum - 1):
+                            CurrentPlayer += 1
+                    elif(self.get_collision(mousepos,Back)):
+                        return [self.colorlist, self.skinlist]  #we're gonna need to return one or two other things here in the future...
+                    elif(self.get_collision(mousepos,ShapeMinus)):
+                        if(CurrentShape > 0):
+                            CurrentShape -= 1
+                    elif(self.get_collision(mousepos,ShapePlus)):
+                        if(CurrentShape < len(self.skintypes) - 1):
+                            CurrentShape += 1
+                    else:  #this is a timetaking process...
+                        for colorABC in range(0,3):
+                            for colors in range(0,8):  #ALL those dumb color buttons...why did I have to make so many??? In retrospect, there was probably an easier way to do this...
+                                if(colorABC == 0):
+                                    if(self.get_collision(mousepos,ColorAButtons[colors])):
+                                        self.colorlist[CurrentPlayer][colorABC] = [(colors & 0b1) * 255,((colors & 0b10) >> 1) * 255,((colors & 0b100) >> 2) * 255]
+                                elif(colorABC == 1):
+                                    if(self.get_collision(mousepos,ColorBButtons[colors])):
+                                        self.colorlist[CurrentPlayer][colorABC] = [(colors & 0b1) * 255,((colors & 0b10) >> 1) * 255,((colors & 0b100) >> 2) * 255]
+                                else:
+                                    if(self.get_collision(mousepos,ColorCButtons[colors])):
+                                        self.colorlist[CurrentPlayer][colorABC] = [(colors & 0b1) * 255,((colors & 0b10) >> 1) * 255,((colors & 0b100) >> 2) * 255]
+                    #handle skin button collision
+                    loopcounter = 0
+                    for skitbox in skincollision:
+                        if(self.get_collision(mousepos,skitbox)):
+                            #which skin type are we currently selecting???
+                            try:
+                                exec("self.skinlist[CurrentPlayer][CurrentShape] = skinshape" + self.skintypes[CurrentShape] + "[" + str(loopcounter) + "]")
+                            except IndexError:  #just in case we didn't put a skin in a skins directory...
+                                pass
+                            self.skinselected[CurrentPlayer][CurrentShape] = loopcounter #update the square surrounding the selected skin
+                        loopcounter += 1
+                                        
+            #flip the display and implement a sanity check (menus don't need to hog that much resources, do they?)
+            pygame.display.flip()
+            self.clock.tick(10)
+
     def GameMenu(self,PMStatus = False):
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
         global screen
@@ -2038,7 +2294,7 @@ class Menu():
         return self.out
 
 class GameLoop(): #********************** Maybe not so WIP??? *********************************#
-    def __init__(self,players,keyconfig):
+    def __init__(self,players,keyconfig,playercolors,playerskins,skinlist):
         #um...  our key configs for each player?  (left, right, jump)
         self.keyconfig = keyconfig
         
@@ -2138,6 +2394,15 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #pusab font
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
 
+        #get all our player's colors
+        for x in range(0,self.players):
+            for s in range(0,len(playerskins[x])):
+                exec("self.gd" + str(x) + "." + str(skinlist[s]) + "frames = playerskins[" + str(x) + "]" + "[" + str(s)  + "]")
+            exec("self.gd" + str(x) + ".colorA = playercolors[" + str(x) + "][0][:]")
+            exec("self.gd" + str(x) + ".colorB = playercolors[" + str(x) + "][1][:]")
+            exec("self.gd" + str(x) + ".colorC = playercolors[" + str(x) + "][2][:]")
+            exec("self.gd" + str(x) + ".extrainit()")
+
         ###############*********** End Of GameLoop Init *******************###################
 
     def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - see Assets/Levels/README.md for more info on this...
@@ -2173,16 +2438,16 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         touchingground = []
         #list of all keys pressed at the moment
         keys = []
-        #start some music #************************************************************************need to reenable this **********************************************************
-        #exec("pygame.mixer.music.load('Assets/Music/" + str(choice) + ".ogg')")
-        #pygame.mixer.music.play()
+        #start some music
+        exec("pygame.mixer.music.load('Assets/Music/BackOnTrack.ogg')")#************************************************************************need to change this **********************************************************
+        pygame.mixer.music.play()
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squaresCourse[0])")
         #we've got to switch to While loop!...
         move = 0
         #PM position record
         PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
-        while(move < len(self.squaresCourse[0]) * 10):
+        while(move < (len(self.squaresCourse[0]) * 10 - 21 * 10)):
             move += self.gamespeed
             e = int(move % 10)
             f = int(move / 10)
@@ -2352,7 +2617,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             self.selectedYspeed = 0
                         elif(self.selectedtouchingground == 0):
                             if(self.selectedYspeed < 1.5):
-                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.876 / 10 * self.unit / 1.5")
+                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.03")
                         if(self.selectedYspeed == 0):
                             for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
                                 currentshipspeed = 0
@@ -2568,7 +2833,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
                     elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.25")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.1")
 
             #display handling and some misc stuff
             self.framecount += 1
@@ -2663,21 +2928,95 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 keyconfig = [[pygame.K_a, pygame.K_d, pygame.K_SPACE],[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP]]
 for x in range(0,8):
     keyconfig.append([0,0,0])
-migameloop = GameLoop(1,keyconfig) #a short game loop engine
+playerskins = []
+for x in range(0,10):
+    playerskins.append([[[0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
+                             [0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,1],
+                             [0,0,0,0,0,0,0,0,1,1,2,2,2,2,2,1],
+                             [0,0,0,0,0,0,0,1,2,2,2,2,2,2,1,0],
+                             [0,0,0,0,0,0,0,0,1,2,2,2,2,2,1,0],
+                             [0,0,0,0,0,0,0,0,0,1,2,2,2,2,1,0],
+                             [0,0,0,0,0,0,0,0,0,0,1,2,2,1,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+                        [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,1,2,1,1,1,2,0,0,0,0,0],
+                           [0,0,0,0,0,2,1,1,1,1,1,0,0,0,0,0],
+                           [0,0,0,0,1,1,1,2,2,1,1,2,0,0,0,0],
+                           [0,0,0,0,2,1,1,2,2,1,1,1,0,0,0,0],
+                           [0,0,0,0,0,1,1,1,1,1,2,0,0,0,0,0],
+                           [0,0,0,0,0,2,1,1,1,2,1,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+                        [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,2,2,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,2,2,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0],
+                  [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+                        [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+                          [0,2,0,0,0,3,1,2,2,1,3,0,0,0,0,0],
+                          [0,2,2,0,1,3,1,2,2,1,3,1,1,0,0,0],
+                          [0,2,2,2,1,3,1,1,1,1,3,1,1,1,0,0],
+                          [0,2,2,1,1,3,3,3,3,3,3,1,1,0,0,0],
+                          [0,2,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]])
+playercolors = []
+for x in range(0,10):
+    playercolors.append([[random.randint(0,255),random.randint(0,255),random.randint(0,255)],[random.randint(0,255),random.randint(0,255),random.randint(0,255)],[random.randint(0,255),random.randint(0,255),random.randint(0,255)]])
 mimenu = Menu()
+migameloop = GameLoop(1,keyconfig,playercolors,playerskins,mimenu.skintypes)
 PlayerNumber = 1
 Exit = False
 
 while True:
     choice1 = mimenu.FrontMenu()
     Exit = False
-    if(choice1 == 'play'):
+    if(choice1 == 'exit'):
+        exit()
+    elif(choice1 == 'play'):
         milevelchoice = mimenu.LevelMenu()
         if(milevelchoice != "EX    IT"):
             while not Exit:
                 migameloop.LoadLevel(milevelchoice)
                 while True:
-                    migameloop.__init__(PlayerNumber,keyconfig)
+                    migameloop.__init__(PlayerNumber,keyconfig,playercolors,playerskins,mimenu.skintypes)
                     returnstatement = migameloop.GameLoop(milevelchoice)
                     if(returnstatement == "level menu"):
                         milevelchoice = mimenu.LevelMenu()
@@ -2707,7 +3046,11 @@ while True:
             index += 1
         pygame.mixer.music.set_volume(settingsout[index][2])
     elif(choice1 == "configure"):
-        keyconfig = mimenu.ControlsConfigure(10)
+        keyconfig = mimenu.ControlsConfigure(PlayerNumber)
+    elif(choice1 == "skins"):
+        skinstuff = mimenu.SkinsMenu(PlayerNumber)
+        playercolors = skinstuff[0][:]
+        playerskins = skinstuff[1][:]
 
 
 choice = "BackOnTrack"
