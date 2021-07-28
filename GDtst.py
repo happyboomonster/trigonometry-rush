@@ -101,8 +101,6 @@ class GD_Figure():
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
                           [0,2,0,0,0,3,1,2,2,1,3,0,0,0,0,0],
                           [0,2,2,0,1,3,1,2,2,1,3,1,1,0,0,0],
@@ -111,7 +109,9 @@ class GD_Figure():
                           [0,2,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],]
 
         self.ballframes = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -153,6 +153,9 @@ class GD_Figure():
         self.ballcenterpos = self.ballframe.get_rect().center
         self.ballcenteredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
 
+        #mini setup
+        self.minicenteredpos = [4,4]
+
     def extrainit(self):
         self.pos = [0,0]
         self.jumping = 0
@@ -187,57 +190,21 @@ class GD_Figure():
 
     def sety(self,y):
         self.pos = [self.pos[0],y]
-        if(self.mini == False):
-            if(gd.form == 'cube'):
-                centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-            elif(gd.form == 'arrow'):
-                centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-            elif(gd.form == 'ship'):
-                centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-            elif(gd.form == 'ball'):
-                centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
                 
     def setx(self,x):
         self.pos = [x,self.pos[1]]
-        if(self.mini == False):
-            if(self.form == 'cube'):
-                centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-            elif(self.form == 'arrow'):
-                centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-            elif(self.form == 'ship'):
-                centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-            elif(self.form == 'ball'):
-                centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+
 
     def move(self,move,gravity):
-        #gravity = 1: normal  #gravity = -1:  upside-down
-        if(gravity == 1 or gravity == -1):
-            self.oldpos = self.pos[:]
-            self.pos[0] = self.pos[0] + move[0] * gravity
-            self.pos[1] = self.pos[1] + move[1] * gravity
-            if(self.mini == False):
-                if(self.form == 'cube'):
-                    centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-                elif(self.form == 'arrow'):
-                    centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-                elif(self.form == 'ship'):
-                    centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-                elif(self.form == 'ball'):
-                    centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
+        #gravity = 1: normal  #gravity = -1:  upside-down  note:  DO-NOT-GIVE-0-AS-A-GRAVITY-VALUE!
+        self.oldpos = self.pos[:]
+        self.pos[0] = self.pos[0] + move[0] * gravity
+        self.pos[1] = self.pos[1] + move[1] * gravity
 
     def goto(self,goto):
         self.oldpos = self.pos[:]
         self.pos[0] = goto[0]
         self.pos[1] = goto[1]
-        if(self.mini == False):
-            if(self.form == 'cube'):
-                centeredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
-            elif(self.form == 'arrow'):
-                centeredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
-            elif(self.form == 'ship'):
-                centeredpos = [self.shipcenterpos[0] + self.pos[0],self.shipcenterpos[1] + self.pos[1]]
-            elif(self.form == 'ball'):
-                centeredpos = [self.ballcenterpos[0] + self.pos[0],self.ballcenterpos[1] + self.pos[1]]
 
     def rotate(self,gravity,figureshape ='cube'):
         if(figureshape == 'cube' or figureshape == 'ball'):
@@ -262,48 +229,56 @@ class GD_Figure():
         global screen
         if(figureshape == 'cube'):
             self.rotatedimage = pygame.transform.rotate(self.cubeframe,int(self.angle)).convert_alpha()
-            if(self.mini == True):
+            if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing.
                 self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
-            self.extramove = [self.cubecenteredpos[0] - self.rotatedimage.get_rect().center[0],self.cubecenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+                self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            else:
+                self.extramove = [self.cubecenteredpos[0] - self.rotatedimage.get_rect().center[0],self.cubecenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'arrow'):
             self.rotatedimage = pygame.transform.rotate(self.arrowframe,int(self.angle)).convert_alpha()
-            if(self.mini == True):
+            if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing.
                 self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
-            self.extramove = [self.arrowcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.arrowcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(pygame.transform.rotate(self.arrowframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+                self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            else:
+                self.extramove = [self.arrowcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.arrowcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'ship'):
             self.rotatedimage = pygame.transform.rotate(self.shipframe,int(self.angle)).convert_alpha()
-            if(self.mini == True):
+            if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing.
                 self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
-            self.extramove = [self.shipcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.shipcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(pygame.transform.rotate(self.shipframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+                self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            else:
+                self.extramove = [self.shipcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.shipcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'ball'):
             self.rotatedimage = pygame.transform.rotate(self.ballframe,int(self.angle)).convert_alpha()
-            if(self.mini == True):
+            if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing. (AND re-center due to surface size changes)
                 self.rotatedimage = pygame.transform.scale(self.rotatedimage, [8,8])
-            self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(pygame.transform.rotate(self.ballframe,self.angle).convert_alpha(),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+                self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            else:
+                self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
 
     def getcoords(self,figureshape='cube'):
         if(self.mini == False):
             if(figureshape == 'arrow'):
-                return [int(self.pos[0]) + 5,int(self.pos[1]) + 5,int(self.pos[0]) + 10,int(self.pos[1]) + 8]
+                return [int(self.pos[0]) + 5,int(self.pos[1]) + 5,int(self.pos[0]) + 11,int(self.pos[1]) + 11]
 
             elif(figureshape == 'ship'):
-                return [int(self.pos[0] + 1.5),int(self.pos[1] + 5),int(self.pos[0] + 14.5),int(self.pos[1] + 10)]
+                return [int(self.pos[0] + 1),int(self.pos[1] + 6),int(self.pos[0] + 14),int(self.pos[1] + 10)]
 
             elif(figureshape == 'ball' or figureshape == 'cube'):
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
         else: #GLITCHY!!!
             if(figureshape == 'arrow'):
-                return [int(self.pos[0]) + 2,int(self.pos[1]) + 2,int(self.pos[0]) + 5,int(self.pos[1]) + 4]
+                return [int(self.pos[0]) + 2,int(self.pos[1]) + 2,int(self.pos[0]) + 6,int(self.pos[1]) + 6]
 
             elif(figureshape == 'ship'):
-                return [int(self.pos[0] + 0.75),int(self.pos[1] + 2.5),int(self.pos[0] + 7.25),int(self.pos[1] + 5)]
+                return [int(self.pos[0]),int(self.pos[1] + 2),int(self.pos[0] + 7),int(self.pos[1] + 5)]
 
             elif(figureshape == 'ball' or figureshape == 'cube'):
-                return [int(self.pos[0] + 2),int(self.pos[1] + 2),int(self.pos[0] + 6),int(self.pos[1] + 10)]
+                return [int(self.pos[0] + 2),int(self.pos[1] + 2),int(self.pos[0] + 6),int(self.pos[1] + 6)]
 
     def update(self):
         pygame.display.flip()
@@ -369,9 +344,9 @@ class GD_Figure():
                     #triangle collision!
                     self.trianglecoords = []
                     self.trianglecoords.append(collidecoords[x][0] + 2)
-                    self.trianglecoords.append(collidecoords[x][1] + 2)
+                    self.trianglecoords.append(collidecoords[x][1] + 1)
                     self.trianglecoords.append(collidecoords[x][2] - 2)
-                    self.trianglecoords.append(collidecoords[x][3] - 2)
+                    self.trianglecoords.append(collidecoords[x][3] - 1)
                     if(self.trianglecoords[0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(self.trianglecoords[2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
                             if(self.trianglecoords[3] > gdcoords[1]): #is the top of GD above the bottom of block?
@@ -2089,6 +2064,21 @@ class Menu():
             self.colorlist.append([[0,0,0],[0,0,0],[0,0,0]])
 
         #all players in this game need to have skin returns...
+        self.blankskin = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
         self.skinlist = []
         self.subskinlist = []
         self.skinselected = [] #what skin have we currently selected: [player1[arrow,ball,cube...]player2[arrow,ball,cube...]] etc.
@@ -2097,7 +2087,8 @@ class Menu():
             try:
                 exec("self.subskinlist.append(skinshape" + str(asdfg) + "[0])")
             except IndexError: #placed here to catch problems where there are no skins inside a given skin folder.
-                pass
+                self.subskinlist.append(self.blankskin[:])
+                print("IndexError in SkinList init!  This usually happens when there's no skins in a given folder.")
             self.subskinselected.append(0)
             
         for b in range(0,10):
@@ -2225,7 +2216,7 @@ class Menu():
                             try:
                                 exec("self.skinlist[CurrentPlayer][CurrentShape] = skinshape" + self.skintypes[CurrentShape] + "[" + str(loopcounter) + "]")
                             except IndexError:  #just in case we didn't put a skin in a skins directory...
-                                pass
+                                print("IndexError in SkinList set!")
                             self.skinselected[CurrentPlayer][CurrentShape] = loopcounter #update the square surrounding the selected skin
                         loopcounter += 1
                                         
@@ -2816,6 +2807,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     exec("self.selectedYspeed = self.gd" + str(CryingOutLoud) + ".Yspeed")
                     exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
                     exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
+                    exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
                     if(self.selectedform == "cube" and self.selectednojump == 0):
                         #we check, have we collided with any bounceballs?
                         exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
@@ -2829,11 +2821,14 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                             exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                             exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
                             exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
-                    if(self.selectedform == 'cube' and self.selectedtouchingground == 1):
+                    if(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == False):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5):
+                    elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5): #physics for mini ship might need to be updated eventually...
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.1")
+                    elif(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == True):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[1] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
 
             #display handling and some misc stuff
             self.framecount += 1
@@ -2887,6 +2882,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")  #do we skip drawing this one?
             if(self.handleddead == True):
                 continue
+            exec("self.handledmini = self.gd" + str(imrunningoutofvariables) + ".mini")
             exec("self.handledtouchingground = self.gd" + str(imrunningoutofvariables) + ".touchingground")
             exec("self.handledYspeed = self.gd"  + str(imrunningoutofvariables) + ".Yspeed")
             exec("self.handledform = self.gd" + str(imrunningoutofvariables) + ".form")
@@ -2894,10 +2890,12 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             exec("self.handledgdcoordslist = self.gd" + str(imrunningoutofvariables) + ".gdcoordslist")
             exec("self.handledjumping = self.gd" + str(imrunningoutofvariables) + ".jumping")
             if(self.handledtouchingground == 0 and self.handledjumping == 1 and self.handledYspeed != 0):
-                if(self.handledform == 'cube' or self.handledform == 'ship' or self.handledform == 'ball'):
-                    self.handledgdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 8],[100,100,100]])
-                elif(self.handledform == 'arrow'):
-                    gdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 4],[100,100,100]])
+                if((self.handledform == 'cube' or self.handledform == 'ship' or self.handledform == 'ball') and self.handledmini == False):
+                    self.handledgdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 8],[100,100,100]]) #append coordinate to a GD_Figure
+                elif(self.handledform == 'arrow' and self.handledmini == False):
+                    self.handledgdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 4],[100,100,100]])
+                elif(self.handledmini == True):
+                    self.handledgdcoordslist.append([[self.handledpos[0] + 2,self.handledpos[1] + 3],[100,100,100]])
             self.tmpdec = 0
             for b in range(0,len(self.handledgdcoordslist)):
                 if(self.handledgdcoordslist[b + self.tmpdec][0][0] < 0 and self.direction == 'right'):
