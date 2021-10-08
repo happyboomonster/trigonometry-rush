@@ -409,6 +409,9 @@ class CourseSquares(): # all done
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
 
         #SQUARES legend:  1 = block  2 = half-block (upper half) 3 = half-block (lower half)
@@ -498,14 +501,14 @@ class CourseSquares(): # all done
 
     def draw_arena(self,currentmap,coords,speccoords):
         if(self.direction == 'right'):
-            for x in range(0,21):
-                for y in range(0,12):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
         elif(self.direction == 'left'):
-            for x in range(0,21):
-                for y in range(0,12):
-                    newx = 20 - x
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
@@ -547,6 +550,9 @@ class CoursePortals():
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
         #Portals legend:1-9? form changer? (uh-oh)  we might need to go above 9 objs for this one...
 
         self.BackOnTrack = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -630,17 +636,17 @@ class CoursePortals():
 
     def draw_arena(self,currentmap,coords,speccoords):
         if(self.direction == 'right'):
-            for x in range(0,21):
-                for y in range(0,12):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] < 8):
                             self.draw_tile(self.tiles[1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
                         else:
                             self.draw_tile(self.tiles[0],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
         elif(self.direction == 'left'):
-            for x in range(0,21):
-                for y in range(0,12):
-                    newx = 20 - x
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] < 8):
@@ -679,6 +685,9 @@ class CourseBounceballs(): # all done
         self.colorB = [0,255,255]
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
 
         #BOUNCEBALLS legend: 1 = jump bouncer 2 = big jump bouncer 3 = megajump bouncer 4 = reverse gravity!!!
         self.BackOnTrack = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -774,8 +783,8 @@ class CourseBounceballs(): # all done
 
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed):
         if(self.direction == 'right'):
-            for x in range(0,21):
-                for y in range(0,12):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
                         #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
@@ -814,9 +823,9 @@ class CourseBounceballs(): # all done
                                     fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
                                     fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
         if(self.direction == 'left'):
-            for x in range(0,21):
-                for y in range(0,12):
-                    newx = 20 - x
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
@@ -880,6 +889,10 @@ class CourseBoosters():  #all done
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
+        
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
         
         self.BackOnTrack = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1021,8 +1034,8 @@ class CourseBoosters():  #all done
 
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed):
         if(self.direction == 'right'):
-            for x in range(0,21):
-                for y in range(0,12):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
                         #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
@@ -1051,9 +1064,9 @@ class CourseBoosters():  #all done
                                 randomizer = random.randint(0,10)
                                 fgeffects.addeffect('pixel',[[4,1],[[x *  10 + speccoords[0] + randomizer,y * 10 + speccoords[1] + 1],[(x * 10 + speccoords[0] - time * gamespeed + randomizer),y * 10 + speccoords[1] + 10]],[effectcolor,[0,0,0]],[time / gamespeed,currentframe + 1]])
         elif(self.direction == 'left'):
-            for x in range(0,21):
-                for y in range(0,12):
-                    newx = 20 - x
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
@@ -1138,6 +1151,10 @@ class CourseTriangles(): # all done
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
+        
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
 
         #TRIANGLE legend: 1 = upward triangle  2 = downward triangle  3 = rightward triangle  4 = leftward triangle  5 = upward halftriangle  6 = downward halftriangle  7 = rightward halftriangles  8 = leftward halftriangle
@@ -1275,14 +1292,14 @@ class CourseTriangles(): # all done
 
     def draw_arena(self,currentmap,coords,speccoords): #incresing the Y on coords moves the map up, while decreasing the Y on speccoords moves the map up...
         if(self.direction == 'right'):
-            for x in range(0,21):
-                for y in range(0,12):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
         elif(self.direction == 'left'):
-            for x in range(0,21):
-                for y in range(0,12):
-                    newx = 20 - x
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
@@ -1310,6 +1327,135 @@ class CourseTriangles(): # all done
                         elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
                             self.collidecoords.append([newx * 10 + speccoords[0] + 4,newy * 10 + speccoords[1] + 4,newx * 10 + speccoords[0] + 6,newy * 10 + speccoords[1] + 6,1,'triangle'])
         return self.collidecoords
+
+class CourseAnimation(): #************************************************************************** NEEDS MORE WORK DONE HERE REALLY NEEDS IT ATTENTION ********************************************************************************#
+    def __init__(self):
+        self.colorA = [255,0,0]
+        self.colorB = [0,255,0]
+        self.colorC = [0,0,255]
+
+        self.screen_w = 21
+        self.screen_h = 13
+
+        self.direction == 'right'
+
+        self.tiles = [
+            [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0],
+             [0,0,0,0,0,3,2,2,2,2,3,0,0,0,0,0],
+             [0,0,0,0,3,2,2,2,2,2,2,3,0,0,0,0],
+             [0,0,0,0,3,2,2,1,1,2,2,3,0,0,0,0],
+             [0,0,0,0,3,2,2,1,1,2,2,3,0,0,0,0],
+             [0,0,0,0,3,2,2,2,2,2,2,3,0,0,0,0],
+             [0,0,0,0,0,3,2,2,2,2,3,0,0,0,0,0],
+             [0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+            [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+            [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+
+            [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,3,1,1,2,1,0,0,0,0,0,0,0,0],
+             [0,0,1,0,0,0,0,0,2,0,0,0,3,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,1,0,0,0,0,0,3,0,0,3,0,0],
+             [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0],
+             [0,0,0,1,0,0,0,1,1,3,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0],
+             [0,0,0,3,0,0,0,0,2,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,2,0,0,0,0,2,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+            ]
+
+        self.tileattributes = [ #[rotateleft or right, beginpos, endpos, currentpos, speedPerFrame] OR [displace, [beginx,y], [endx,y], [currentx,y], pixelsOfTime(begins as soon as tile is onscreen)]
+            ['rotate left',0,359,50,1],
+            ['rotate right',0,359,50,2],
+            ['rotate left',0,359,50,3],
+            ['displace',[200,60],[100,110],[200,60],50]
+            ]
+
+    def draw_tile(tile,attributeindex,basecoords):
+        if(self.tileattributes[attributeindex][0] == 'rotate right'): #long and complicated script that handles modifying active states of animated game tiles, and then draws them.
+            self.tileattributes[attributeindex][3] += self.tileattributes[attributeindex][4] #handle right rotation for said tile type
+            if(self.tileattributes[attributeindex][3] >= self.tileattributes[attributeindex][2]):
+            self.tileattributes[attributeindex][3] = self.tileattributes[attributeindex][1]
+            pos = basecoords
+            if(self.direction == 'left'):
+                pos = [200 - basecoords[0],basecoords[1]]
+        elif(self.tileattributes[attributeindex][0] == 'rotate left'):
+            self.tileattributes[attributeindex][3] -= self.tileattributes[attributeindex][4] #handle rotation for left rotating tile
+            if(self.tileattributes[attributeindex][3] <= self.tileattributes[attributeindex][1]):
+                self.tileattributes[attributeindex][3] = self.tileattributes[attributeindex][2]
+            pos = basecoords #pos is the drawing coordinates for rotating tiles
+            if(self.direction == 'left'):
+                pos = [200 - basecoords[0],basecoords[1]]
+        elif(self.tileattributes[attributeindex][0] == 'displace'):
+            if(self.direction == 'right'): #having a map that moves right versus left makes a HUGE difference, and can tank FPS to a point if your computer is slow.
+                timepx = basecoords[0] - (200 - self.tileattributes[attributeindex][4])
+
+                end = [self.tileattributes[attributeindex][2]]
+                start = [self.tileattributes[attributeindex][1]]
+                PXinterval = [(end[0] - start[0]) * 1.0 / self.tileattributes[attributeindex][4],(end[1] - start[1]) * 1.0 / self.tileattributes[attributeindex][4]]
+
+                self.tileattributes[attributeindex][3][0] = int(PXinterval[0] * timepx) + basecoords[0] #update our animated tile's position
+                self.tileattributes[attributeindex][3][1] = int(PXinterval[1] * timepx) + basecoords[1]
+            else:
+                timepx = self.tileattributes[attributeindex][4] - basecoords[0]
+                newstart = [200 - self.tileattributes[attributeindex][1][0],self.tileattributes[attributeindex][1][1]]
+                newend = [200 - self.tileattributes[attributeindex][2][0],self.tileattributes[attributeindex][2][1]]
+
+                #calculate the amount of pixels moved per (this sounds weird) one pixel scrolled on the course down to a DECIMAL.
+                PXinterval = [(newend[0] - newstart[0]) * 1.0 / self.tileattributes[attributeindex][4],(newend[1] - newstart[1]) * 1.0 / self.tileattributes[attributeindex][4]]
+                self.tileattributes[attributeindex][3][0] = int(PXinterval[0] * timepx) + (200 - basecoords[0]) #update our animated tile's position
+                self.tileattributes[attributeindex][3][1] = int(PXinterval[1] * timepx) + basecoords[1]
+
+    def draw_arena(self,arena,coords,speccoords):
+        for x in range(0,self.screen_w):
+            for y in range(0,screen_h):
+                if(arena[y + coords[1]][x + coords[0]] != 0):
+                    self.draw_tile(self.tiles[arena[y + coords[1]][x + coords[0]]],arena[y + coords[1]][x + coords[0]],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
 
 
 
@@ -1467,6 +1613,114 @@ class PostProcessing_Effects():
                     self.pygametexture.set_at([0,y],self.textures[x][y])
                     self.newpygametexture = pygame.transform.scale(self.pygametexture,[1,120 + x * 8])
                 screen.blit(self.newpygametexture,[x * forwardorbackward + self.warpbeginning,0 - x * 4])
+
+class MenuEngine():
+    def __init__(self,images,placement):
+        self.images = images[:]
+        self.buttons = []
+        self.buttonplacement = placement[:]
+        for x in range(0,len(self.images)):
+            self.buttons.append([self.buttonplacement[x][0],self.buttonplacement[x][1],self.images[x].get_width(),self.images[x].get_height()])
+
+    def getcollision(self,cursorpos):
+        collision = []
+        for x in range(0,len(self.buttons)): #check all buttons in the self.buttons list.
+            if(cursorpos[0] > self.buttons[x][0]):
+                if(cursorpos[0] < self.buttons[x][2]):
+                    if(cursorpos[1] > self.buttons[x][1]):
+                        if(cursorpos[1] < self.buttons[x][3]):
+                            collision.append(x) #append the button's number to the collision list IF it did indeed collide with the mousepointer/cursor
+        return collision
+
+    def drawimages(self,images):
+        for x in range(0,len(self.images)):
+            screen.blit(images[x],[self.buttons[x][0],self.buttons[x][1]])
+
+class LevelEditor():
+    def __init__(self):
+        self.imageset = [] #our list for holding all the images that correspond to various hitboxes
+        #exit button, change name button, save button 
+        self.buttonplacement = [[0,0],[20,0],[180,0]] #0-2
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Exit.png"))
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/LevelName.png"))
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Save.png"))
+        #Up arrow
+        self.buttonplacement.append([90,30]) #3
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Up.png"))
+        #Down arrow
+        self.buttonplacement.append([90,90]) #4
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Down.png"))
+        #Left arrow
+        self.buttonplacement.append([0,60]) #5
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Left.png"))
+        #Right arrow
+        self.buttonplacement.append([190,60]) #6
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Right.png"))
+        #Switch building blocks left
+        self.buttonplacement.append([0,110]) #7
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Left.png"))
+        #Switch building blocks right
+        self.buttonplacement.append([190,110]) #8
+        self.imageset.append(pygame.image.load("Assets/LevelEditor/Right.png"))
+        #add ALL the block placement collision boxes... #s9-99
+        for y in range(0,5):
+            for x in range(0,18):
+                self.buttonplacement.append([x * 10 + 10,y * 10 + 40])
+                self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        #add ALL the settings buttons #s100-119
+        for x in range(0,20):
+            self.buttonplacement.append([x * 10,20])
+            self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        #add all the block buttons #s 120-137
+        for x in range(0,18):
+            self.buttonplacement.append([x * 10 + 10,110])
+            self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+
+        self.menuengine = MenuEngine(self.imageset,self.buttonplacement)
+
+        #get ready for LevelEditor() loop
+        self.bgcolor = [0,0,0]
+
+    def LevelEditor(self):
+        running = True
+
+        while running:
+            screen.fill(self.bgcolor)
+            self.menuengine.drawimages(self.imageset)
+            
+            for event in pygame.event.get():
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    collision = self.menuengine.getcollision(event.pos)
+                    if(0 in collision): #exit button
+                        running = False
+                    elif(1 in collision): #change name button
+                        pass
+                    elif(2 in collision): #save button
+                        pass
+                    elif(3 in collision): #up arrow
+                        pass
+                    elif(4 in collision): #down arrow
+                        pass
+                    elif(5 in collision): #left arrow
+                        pass
+                    elif(6 in collision): #right arrow
+                        pass
+                    elif(7 in collision): #switch building blocks left
+                        pass
+                    elif(8 in collision): #switch building blocks right
+                        pass
+                    for x in range(9,100): #have we placed a block somewhere?
+                        if(x in collision):
+                            pass
+                    for x in range(100,120): #settings buttons
+                        if(x in collision):
+                            pass
+                    for x in range(120,138): #block option buttons
+                        if(x in collision):
+                            pass
+
+            #I always forget to do this when developing in Pygame...
+            pygame.display.flip()
 
 class Menu():
     def __init__(self):
@@ -2298,6 +2552,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.effects = BGEffects()
         self.fgeffects = FGEffects()
         self.postprocessing = PostProcessing_Effects()
+        self.animation = CourseAnimation()
 
         #how many players are dead yet???
         self.deadlist = []
@@ -2998,6 +3253,7 @@ for x in range(0,10):
 playercolors = []
 for x in range(0,10):
     playercolors.append([[random.randint(0,255),random.randint(0,255),random.randint(0,255)],[random.randint(0,255),random.randint(0,255),random.randint(0,255)],[random.randint(0,255),random.randint(0,255),random.randint(0,255)]])
+mileveleditor = LevelEditor()
 mimenu = Menu()
 migameloop = GameLoop(1,keyconfig,playercolors,playerskins,mimenu.skintypes)
 PlayerNumber = 1
@@ -3049,6 +3305,8 @@ while True:
         skinstuff = mimenu.SkinsMenu(PlayerNumber)
         playercolors = skinstuff[0][:]
         playerskins = skinstuff[1][:]
+    elif(choice1 == "editor"):
+        mileveleditor.LevelEditor()
 
 
 choice = "BackOnTrack"
