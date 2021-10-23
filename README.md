@@ -25,8 +25,8 @@ you have to spend a little more time creating levels than when using Python 2)
 NOTE:  You need Pygame 2 or later installed!
 
 Creating Levels:
-Please refer to the README in the "leveldesign" folder.  More to come in
-a little?
+I now have a working level editor, so use that. It may be a little buggy...
+But I did what I could and it was waaaay faster than the previous method.
 
 Program Structure:
 Basically, I made a few classes.  One for the Cube sprite, including position,
@@ -45,10 +45,9 @@ screen.  3) FGeffects:  This is a class which lets you put moving shapes on
 the screen which A) run for a certain number of frames B) can grow or shrink in size
 over time C) can change color over time
 
-What I want to add:  Changeable cube costumes, and a menu for that 
+What I want to add:
 Controller support  
 Optomisations that speed up my horrible code!  =) 
-Make it easier for people to make levels (level editor GUI)
 
 
 Attribution to various people:

@@ -315,7 +315,7 @@ class GD_Figure():
         for x in range(0,len(collidecoords)):
             if(collidecoords[x][5] == 'ground'):  #this is for block collision ONLY.
                 if(collidecoords[x][4] == 1):
-                    #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],10,10],1) #*****************************************for debug*************************************
+                    #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],10,10],1)
                     #inside a collision list, we get [x,y,x2,y2,Collision Type:(1 = Ground,2 = Death), in GDcoords, we have just [x,y,x2,y2] though.
                     if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
@@ -452,27 +452,27 @@ class CourseSquares(): # all done
                  [1,1,1,1,1,1,1,1,1,1],
                  [1,1,1,1,1,1,1,1,1,1]],
 
-                [[2,2,2,2,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,1,1,1,2,0,0,0,0,0],
-                 [2,2,2,2,2,0,0,0,0,0]],
+                [[2,2,2,2,2,2,2,2,2,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,2,2,2,2,2,2,2,2,2],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0]],
 
-                [[0,0,0,0,0,2,2,2,2,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,1,1,1,2],
-                 [0,0,0,0,0,2,2,2,2,2]]]
+                [[0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [2,2,2,2,2,2,2,2,2,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,2,2,2,2,2,2,2,2,2]]]
 
 
     def draw_tile(self,tile,coords):
@@ -482,12 +482,12 @@ class CourseSquares(): # all done
             else:
                 for x in range(0,len(tile[0])):
                     for y in range(0,len(tile)):
-                        if(tile[x][y] != 0):
-                            if(tile[x][y] == 1):
+                        if(tile[y][x] != 0):
+                            if(tile[y][x] == 1):
                                 pygame.draw.line(screen,self.colorA,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                            elif(tile[x][y] == 2):
+                            elif(tile[y][x] == 2):
                                 pygame.draw.line(screen,self.colorB,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                            elif(tile[x][y] == 3):
+                            elif(tile[y][x] == 3):
                                 pygame.draw.line(screen,self.colorC,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
                 break
 
@@ -762,14 +762,14 @@ class CourseBounceballs(): # all done
     def draw_tile(self,tile,coords):
             for x in range(0,len(tile[0])):
                 for y in range(0,len(tile)):
-                    if(tile[x][y] != 0):
-                        if(tile[x][y] == 1):
+                    if(tile[y][x] != 0):
+                        if(tile[y][x] == 1):
                             pygame.draw.line(screen,self.colorA,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                        elif(tile[x][y] == 2):
+                        elif(tile[y][x] == 2):
                             pygame.draw.line(screen,self.colorB,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                        elif(tile[x][y] == 3):
+                        elif(tile[y][x] == 3):
                             pygame.draw.line(screen,self.colorC,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                        elif(tile[x][y] == 4):
+                        elif(tile[y][x] == 4):
                             pygame.draw.line(screen,self.colorD,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
 
     def setcolors(self,colorA,colorB,colorC,colorD):
@@ -846,7 +846,20 @@ class CourseBounceballs(): # all done
                             if(currentframe % time - 8 == 0 and time >= 8):
                                 fgeffects.addeffect('circle',[[1,10],[[newx * 10 + 7 + speccoords[0],newy * 10 + 5 + speccoords[1]],[newx * 10 + 7 + speccoords[0] + (time / 2) * gamespeed,newy * 10 + 5 + speccoords[1]]],[effectcolor,effectcolor],[time / 2,currentframe + 1]])
                                 fgeffects.addeffect('circle',[[10,1],[[newx * 10 + 8 + speccoords[0] + time / 2,newy * 10 + 5 + speccoords[1]],[newx * 10 + speccoords[0] + 8 + (time * gamespeed),newy * 10 + 5 + speccoords[1]]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
-                            
+
+    def lackluster_draw_arena(self,currentmap,coords,speccoords): #more basic version of draw_arena(). used in class LevelEditor()
+        if(self.direction == 'right'):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
+        if(self.direction == 'left'):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
+                    newy = y
+                    if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords):
         self.collidecoords = []
@@ -922,105 +935,105 @@ class CourseBoosters():  #all done
 
         #BOUNCERS legend: 1 = jump bouncer 2 = big jump bouncer 3 = megajump bouncer 4 = reverse gravity!!! 5-8 = upsidedown variants
         self.tiles = [[[0,0,0,0,0,0,0,0,0,0],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
-                         [0,0,0,0,0,0,0,0,0,1],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,1,1,1,1,1,1,1,1,0]],
+
+                         [[0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,2,2,2,2,2,2,2,2,0],
+                         [2,2,2,2,2,2,2,2,2,2]],
+
+                         [[0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,3,3,3,3,3,3,0,0],
+                         [0,3,3,3,3,3,3,3,3,0],
+                         [3,3,3,3,3,3,3,3,3,3]],
+
+                         [[0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,4,4,4,4,4,4,0,0],
+                         [0,4,4,4,4,4,4,4,4,0],
+                         [0,4,4,4,4,4,4,4,4,0],
+                         [4,4,4,4,4,4,4,4,4,4]],
+
+
+                      [[0,1,1,1,1,1,1,1,1,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
                          [0,0,0,0,0,0,0,0,0,0]],
 
-                         [[0,0,0,0,0,0,0,0,0,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,2,2],
-                         [0,0,0,0,0,0,0,0,0,2]],
-
-                         [[0,0,0,0,0,0,0,0,0,3],
-                         [0,0,0,0,0,0,0,0,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,3,3,3],
-                         [0,0,0,0,0,0,0,0,3,3],
-                         [0,0,0,0,0,0,0,0,0,3]],
-
-                         [[0,0,0,0,0,0,0,0,0,4],
-                         [0,0,0,0,0,0,0,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,4,4,4,4],
-                         [0,0,0,0,0,0,0,4,4,4],
-                         [0,0,0,0,0,0,0,0,0,4]],
-
-
-                      [[0,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
-                         [1,0,0,0,0,0,0,0,0,0],
+                         [[2,2,2,2,2,2,2,2,2,2],
+                         [0,2,2,2,2,2,2,2,2,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
                          [0,0,0,0,0,0,0,0,0,0]],
 
-                         [[2,0,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,2,0,0,0,0,0,0,0,0],
-                         [2,0,0,0,0,0,0,0,0,0]],
+                         [[3,3,3,3,3,3,3,3,3,3],
+                         [0,3,3,3,3,3,3,3,3,0],
+                         [0,0,3,3,3,3,3,3,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0]],
 
-                         [[3,0,0,0,0,0,0,0,0,0],
-                         [3,3,0,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,3,0,0,0,0,0,0,0],
-                         [3,3,0,0,0,0,0,0,0,0],
-                         [3,0,0,0,0,0,0,0,0,0]],
-
-                         [[4,0,0,0,0,0,0,0,0,0],
-                         [4,4,4,0,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,4,0,0,0,0,0,0],
-                         [4,4,4,0,0,0,0,0,0,0],
-                         [4,0,0,0,0,0,0,0,0,0]]]
+                         [[4,4,4,4,4,4,4,4,4,4],
+                         [0,4,4,4,4,4,4,4,4,0],
+                         [0,4,4,4,4,4,4,4,4,0],
+                         [0,0,4,4,4,4,4,4,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0],
+                         [0,0,0,0,0,0,0,0,0,0]]]
 
     def draw_tile(self,tile,coords):
         for x in range(0,len(tile[0])):
             for y in range(0,len(tile)):
-                if(tile[x][y] != 0):
-                    if(tile[x][y] == 1):
+                if(tile[y][x] != 0):
+                    if(tile[y][x] == 1):
                         pygame.draw.line(screen,self.colorA,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                    elif(tile[x][y] == 2):
+                    elif(tile[y][x] == 2):
                         pygame.draw.line(screen,self.colorB,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                    elif(tile[x][y] == 3):
+                    elif(tile[y][x] == 3):
                         pygame.draw.line(screen,self.colorC,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-                    elif(tile[x][y] == 4):
+                    elif(tile[y][x] == 4):
                         pygame.draw.line(screen,self.colorD,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
 
     def setcolors(self,colorA,colorB,colorC,colorD):
@@ -1095,7 +1108,20 @@ class CourseBoosters():  #all done
                             for z in range(0,gamespeed):
                                 randomizer = random.randint(0,10)
                                 fgeffects.addeffect('pixel',[[4,1],[[newx *  10 + speccoords[0] + randomizer,newy * 10 + speccoords[1] + 1],[newx * 10 + speccoords[0] + time + randomizer,newy * 10 + speccoords[1] + 10]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
-                            
+
+    def lackluster_draw_arena(self,currentmap,coords,speccoords): #more basic version of draw_arena(). used in class LevelEditor()
+        if(self.direction == 'right'):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
+        elif(self.direction == 'left'):
+            for x in range(0,self.screen_w):
+                for y in range(0,self.screen_h):
+                    newx = self.screen_w - (x + 1)
+                    newy = y
+                    if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords):
         self.collidecoords = []
@@ -1183,7 +1209,29 @@ class CourseTriangles(): # all done
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-        self.tiles = [[[0,0,0,0,0,0,0,0,2,2],
+        self.tiles = [[[0,0,0,0,2,2,0,0,0,0],
+                 [0,0,0,2,1,1,2,0,0,0],
+                 [0,0,2,1,1,1,1,2,0,0],
+                 [0,0,2,1,1,1,1,2,0,0],
+                 [0,0,2,1,1,1,1,2,0,0],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2]],
+
+                [[2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [2,1,1,1,1,1,1,1,1,2],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [0,2,1,1,1,1,1,1,2,0],
+                 [0,0,2,1,1,1,1,2,0,0],
+                 [0,0,2,1,1,1,1,2,0,0],
+                 [0,0,0,2,1,1,2,0,0,0],
+                 [0,0,0,0,2,2,0,0,0,0]],
+
+                [[0,0,0,0,0,0,0,0,2,2],
                  [0,0,0,0,0,2,2,2,1,1],
                  [0,0,2,2,2,1,1,1,1,1],
                  [0,2,1,1,1,1,1,1,1,1],
@@ -1205,49 +1253,16 @@ class CourseTriangles(): # all done
                  [1,1,1,2,2,2,0,0,0,0],
                  [2,2,2,0,0,0,0,0,0,0]],
 
-                [[2,1,1,1,1,1,1,1,1,2],
-                 [2,1,1,1,1,1,1,1,1,2],
-                 [2,1,1,1,1,1,1,1,1,2],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [0,0,2,1,1,1,1,2,0,0],
-                 [0,0,2,1,1,1,1,2,0,0],
-                 [0,0,0,2,1,1,2,0,0,0],
-                 [0,0,0,0,2,2,0,0,0,0]],
-
-                 [[0,0,0,0,2,2,0,0,0,0],
+                [[0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,2,2,0,0,0,0],
                  [0,0,0,2,1,1,2,0,0,0],
                  [0,0,2,1,1,1,1,2,0,0],
-                 [0,0,2,1,1,1,1,2,0,0],
-                 [0,0,2,1,1,1,1,2,0,0],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [0,2,1,1,1,1,1,1,2,0],
-                 [2,1,1,1,1,1,1,1,1,2],
-                 [2,1,1,1,1,1,1,1,1,2]],
-
-                [[0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,2],
-                 [0,0,0,0,0,0,0,0,2,1],
-                 [0,0,0,0,0,0,0,2,1,1],
-                 [0,0,0,0,0,0,2,1,1,1],
-                 [0,0,0,0,0,0,2,1,1,1],
-                 [0,0,0,0,0,0,0,2,1,1],
-                 [0,0,0,0,0,0,0,0,2,1],
-                 [0,0,0,0,0,0,0,0,0,2],
-                 [0,0,0,0,0,0,0,0,0,0]],
-
-                [[0,0,0,0,0,0,0,0,0,0],
-                 [2,0,0,0,0,0,0,0,0,0],
-                 [1,2,0,0,0,0,0,0,0,0],
-                 [1,1,2,0,0,0,0,0,0,0],
-                 [1,1,1,2,0,0,0,0,0,0],
-                 [1,1,1,2,0,0,0,0,0,0],
-                 [1,1,2,0,0,0,0,0,0,0],
-                 [1,2,0,0,0,0,0,0,0,0],
-                 [2,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0]],
+                 [0,2,1,1,1,1,1,1,2,0]],
 
                 [[0,2,1,1,1,1,1,1,2,0],
                  [0,0,2,1,1,1,1,2,0,0],
@@ -1259,27 +1274,38 @@ class CourseTriangles(): # all done
                  [0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,0,0,0,0,0,0],
                  [0,0,0,0,0,0,0,0,0,0]],
+                      
+                [[0,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,2],
+                 [0,0,0,0,0,0,0,0,2,1],
+                 [0,0,0,0,0,0,0,2,1,1],
+                 [0,0,0,0,0,0,2,1,1,1],
+                 [0,0,0,0,0,0,2,1,1,1],
+                 [0,0,0,0,0,0,0,2,1,1],
+                 [0,0,0,0,0,0,0,0,2,1],
+                 [0,0,0,0,0,0,0,0,0,2],
+                 [0,0,0,0,0,0,0,0,0,0]],
 
                 [[0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,0,0,0,0,0,0],
-                 [0,0,0,0,2,2,0,0,0,0],
-                 [0,0,0,2,1,1,2,0,0,0],
-                 [0,0,2,1,1,1,1,2,0,0],
-                 [0,2,1,1,1,1,1,1,2,0]]]
+                 [2,0,0,0,0,0,0,0,0,0],
+                 [1,2,0,0,0,0,0,0,0,0],
+                 [1,1,2,0,0,0,0,0,0,0],
+                 [1,1,1,2,0,0,0,0,0,0],
+                 [1,1,1,2,0,0,0,0,0,0],
+                 [1,1,2,0,0,0,0,0,0,0],
+                 [1,2,0,0,0,0,0,0,0,0],
+                 [2,0,0,0,0,0,0,0,0,0],
+                 [0,0,0,0,0,0,0,0,0,0]]]
 
     def draw_tile(self,tile,coords):
         for x in range(0,len(tile[0])):
             for y in range(0,len(tile)):
-                if(tile[x][y] != 0):
-                    if(tile[x][y] == 1):
+                if(tile[y][x] != 0):
+                    if(tile[y][x] == 1):
                         screen.set_at([x + coords[0],y + coords[1]],self.colorA)
-                    elif(tile[x][y] == 2):
+                    elif(tile[y][x] == 2):
                         screen.set_at([x + coords[0],y + coords[1]],self.colorB)
-                    elif(tile[x][y] == 3):
+                    elif(tile[y][x] == 3):
                         screen.set_at([x + coords[0],y + coords[1]],self.colorC)
 
     def setcolors(self,colorA,colorB,colorC):
@@ -1337,7 +1363,7 @@ class CourseAnimation(): #******************************************************
         self.screen_w = 21
         self.screen_h = 13
 
-        self.direction == 'right'
+        self.direction = 'right'
 
         self.tiles = [
             [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -1409,21 +1435,35 @@ class CourseAnimation(): #******************************************************
              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
             ]
 
-        self.tileattributes = [ #[rotateleft or right, beginpos, endpos, currentpos, speedPerFrame] OR [displace, [beginx,y], [endx,y], [currentx,y], pixelsOfTime(begins as soon as tile is onscreen)]
-            ['rotate left',0,359,50,1],
-            ['rotate right',0,359,50,2],
-            ['rotate left',0,359,50,3],
-            ['displace',[200,60],[100,110],[200,60],50]
+        self.tileattributes = [ #[rotateleft or right, beginpos, endpos, currentpos, speedPerFrame, collisiontype] OR [displace, [beginx,y], [endx,y], [currentx,y], pixelsOfTime(begins as soon as tile is onscreen), collisiontype]
+            ['rotate left',0,359,50,1,'triangle'], #collisiontypes: 'triangle','ground'
+            ['rotate right',0,359,50,2,'triangle'],
+            ['rotate left',0,359,50,3,'triangle'],
+            ['displace',[200,60],[100,110],[200,60],50,'triangle']
             ]
+        
+    def blit_tile(self,tile,pos,rotate):
+        xsize = len(tile[0])
+        colors = [[0,0,0],[255,0,0],[0,255,0],[0,0,255]]
+        ysize = len(tile)
+        tmpsurface = pygame.Surface([xsize,ysize])
+        for x in range(0,xsize):
+            for y in range(0,ysize):
+                tmpsurface.set_at([x,y],colors[tile[y][x]])
+        tmpsurfaceII = pygame.transform.rotate(tmpsurface,rotate)
+        newx = pos[0] - (tmpsurfaceII.get_width() - tmpsurface.get_width()) / 2
+        newy = pos[1] - (tmpsurfaceII.get_height() - tmpsurface.get_height()) / 2
+        screen.blit(tmpsurfaceII,[newx,newy])
 
-    def draw_tile(tile,attributeindex,basecoords):
+    def draw_tile(self,tile,attributeindex,basecoords):
         if(self.tileattributes[attributeindex][0] == 'rotate right'): #long and complicated script that handles modifying active states of animated game tiles, and then draws them.
             self.tileattributes[attributeindex][3] += self.tileattributes[attributeindex][4] #handle right rotation for said tile type
             if(self.tileattributes[attributeindex][3] >= self.tileattributes[attributeindex][2]):
-            self.tileattributes[attributeindex][3] = self.tileattributes[attributeindex][1]
+                self.tileattributes[attributeindex][3] = self.tileattributes[attributeindex][1]
             pos = basecoords
             if(self.direction == 'left'):
                 pos = [200 - basecoords[0],basecoords[1]]
+            self.blit_tile(tile,pos,self.tileattributes[attributeindex][3])
         elif(self.tileattributes[attributeindex][0] == 'rotate left'):
             self.tileattributes[attributeindex][3] -= self.tileattributes[attributeindex][4] #handle rotation for left rotating tile
             if(self.tileattributes[attributeindex][3] <= self.tileattributes[attributeindex][1]):
@@ -1431,6 +1471,7 @@ class CourseAnimation(): #******************************************************
             pos = basecoords #pos is the drawing coordinates for rotating tiles
             if(self.direction == 'left'):
                 pos = [200 - basecoords[0],basecoords[1]]
+            self.blit_tile(tile,pos,self.tileattributes[attributeindex][3])
         elif(self.tileattributes[attributeindex][0] == 'displace'):
             if(self.direction == 'right'): #having a map that moves right versus left makes a HUGE difference, and can tank FPS to a point if your computer is slow.
                 timepx = basecoords[0] - (200 - self.tileattributes[attributeindex][4])
@@ -1450,12 +1491,18 @@ class CourseAnimation(): #******************************************************
                 PXinterval = [(newend[0] - newstart[0]) * 1.0 / self.tileattributes[attributeindex][4],(newend[1] - newstart[1]) * 1.0 / self.tileattributes[attributeindex][4]]
                 self.tileattributes[attributeindex][3][0] = int(PXinterval[0] * timepx) + (200 - basecoords[0]) #update our animated tile's position
                 self.tileattributes[attributeindex][3][1] = int(PXinterval[1] * timepx) + basecoords[1]
+            self.blit_tile(tile,[self.tileattributes[attributeindex][3][0],self.tileattributes[attributeindex][3][1]],0)
 
-    def draw_arena(self,arena,coords,speccoords):
+    def draw_arena(self,arena,coords,speccoords): #note to self, this 2d array method will work
         for x in range(0,self.screen_w):
-            for y in range(0,screen_h):
+            for y in range(0,self.screen_h):
                 if(arena[y + coords[1]][x + coords[0]] != 0):
                     self.draw_tile(self.tiles[arena[y + coords[1]][x + coords[0]]],arena[y + coords[1]][x + coords[0]],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
+
+    def return_collision(self,arena,coords,speccoords):
+        for x in range(0,self.screen_w):
+            for y in range(0,self.screen_h):
+                pass
 
 
 
@@ -1620,7 +1667,7 @@ class MenuEngine():
         self.buttons = []
         self.buttonplacement = placement[:]
         for x in range(0,len(self.images)):
-            self.buttons.append([self.buttonplacement[x][0],self.buttonplacement[x][1],self.images[x].get_width(),self.images[x].get_height()])
+            self.buttons.append([self.buttonplacement[x][0],self.buttonplacement[x][1],self.images[x].get_width() + self.buttonplacement[x][0],self.images[x].get_height() + self.buttonplacement[x][1]])
 
     def getcollision(self,cursorpos):
         collision = []
@@ -1630,6 +1677,7 @@ class MenuEngine():
                     if(cursorpos[1] > self.buttons[x][1]):
                         if(cursorpos[1] < self.buttons[x][3]):
                             collision.append(x) #append the button's number to the collision list IF it did indeed collide with the mousepointer/cursor
+                            return collision
         return collision
 
     def drawimages(self,images):
@@ -1662,31 +1710,251 @@ class LevelEditor():
         #Switch building blocks right
         self.buttonplacement.append([190,110]) #8
         self.imageset.append(pygame.image.load("Assets/LevelEditor/Right.png"))
-        #add ALL the block placement collision boxes... #s9-99
+        #add ALL the block placement collision boxes... #s9-98
         for y in range(0,5):
             for x in range(0,18):
                 self.buttonplacement.append([x * 10 + 10,y * 10 + 40])
                 self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
-        #add ALL the settings buttons #s100-119
+        #add ALL the settings buttons #s99-118
         for x in range(0,20):
             self.buttonplacement.append([x * 10,20])
             self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
-        #add all the block buttons #s 120-137
+        #add all the block buttons #s 119-136
         for x in range(0,18):
             self.buttonplacement.append([x * 10 + 10,110])
             self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
 
-        self.menuengine = MenuEngine(self.imageset,self.buttonplacement)
+        self.menuengine = MenuEngine(self.imageset,self.buttonplacement) #SET UP OUR MENU ENGINE (ESSENTIAL)
+
+        #get a font
+        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",10) #size 10 pixels? I'm not sure what that parameter does...
 
         #get ready for LevelEditor() loop
-        self.bgcolor = [0,0,0]
+        self.clock = pygame.time.Clock() #get a clock set up for FPS cap
+        self.bgcolor = [0,0,0] #background color (everyone's favourite color)
 
-    def LevelEditor(self):
-        running = True
+        self.squares = CourseSquares() #for drawing the arena you are creating (i know, a waste of memory space for redefining bloated objects)
+        self.triangles = CourseTriangles()
+        self.bounceballs = CourseBounceballs()
+        self.boosters = CourseBoosters()
+        self.portals = CoursePortals()
+
+        self.squares.screen_w = 18 #setting width and height of course render viewport
+        self.squares.screen_h = 5
+        self.triangles.screen_w = 18
+        self.triangles.screen_h = 5
+        self.boosters.screen_w = 18
+        self.boosters.screen_h = 5
+        self.bounceballs.screen_w = 18
+        self.bounceballs.screen_h = 5
+        self.portals.screen_w = 18
+        self.portals.screen_h = 5
+
+        #get pygame surfaces for all course tiles
+        OLDcolors = [[0,0,0],[255,0,0],[0,255,0],[0,0,255],[255,255,0]]
+        colors = [[0,0,0],[255,255,0],[0,255,0],[255,0,0],[0,0,255]]
+        self.squarestiles = []
+        self.trianglestiles = []
+        self.bounceballstiles = []
+        self.boosterstiles = []
+        self.portalstiles = []
+
+        #still getting course tiles...
+        for x in range(0,len(self.squares.tiles)):
+            tmpsurface = self.draw_tile([len(self.squares.tiles[x][0]),len(self.squares.tiles[x])],self.squares.tiles[x],colors[:])
+            self.squarestiles.append(tmpsurface)
+        for x in range(0,len(self.triangles.tiles)):
+            tmpsurface = self.draw_tile([len(self.triangles.tiles[x][0]),len(self.triangles.tiles[x])],self.triangles.tiles[x],colors[:])
+            self.trianglestiles.append(tmpsurface)
+        for x in range(0,len(self.bounceballs.tiles)):
+            tmpsurface = self.draw_tile([len(self.bounceballs.tiles[x][0]),len(self.bounceballs.tiles[x])],self.bounceballs.tiles[x],colors[:])
+            self.bounceballstiles.append(tmpsurface)
+        for x in range(0,len(self.boosters.tiles)):
+            tmpsurface = self.draw_tile([len(self.boosters.tiles[x][0]),len(self.boosters.tiles[x])],self.boosters.tiles[x],colors[:])
+            self.boosterstiles.append(tmpsurface)
+        for x in range(0,len(self.portals.tiles)):
+            tmpsurface = self.draw_tile([len(self.portals.tiles[x][0]),len(self.portals.tiles[x])],self.portals.tiles[x],colors[:])
+            self.portalstiles.append(tmpsurface)
+
+        #if we don't have 18 tiles to be selected from, then fill them with fillers.
+        if(len(self.squarestiles) < 18):
+            for x in range(0,18 - len(self.squarestiles)):
+                self.squarestiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        if(len(self.trianglestiles) < 18):
+            for x in range(0,18 - len(self.trianglestiles)):
+                self.trianglestiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        if(len(self.bounceballstiles) < 18):
+            for x in range(0,18 - len(self.bounceballstiles)):
+                self.bounceballstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        if(len(self.boosterstiles) < 18):
+            for x in range(0,18 - len(self.boosterstiles)):
+                self.boosterstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+        if(len(self.portalstiles) < 18):
+            for x in range(0,18 - len(self.portalstiles)):
+                self.portalstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+
+        #create an arena for the blocks to be made in
+        self.portals.arena = self.create_arena()
+        self.triangles.arena = self.create_arena()
+        self.squares.arena = self.create_arena()
+        self.bounceballs.arena = self.create_arena()
+        self.boosters.arena = self.create_arena()
+
+        self.keys = [[97,"a"], #key bindings for pygame key numbers to text
+            [98,"b"],
+            [99,"c"],
+            [100,"d"],
+            [101,"e"],
+            [102,"f"],
+            [103,"g"],
+            [104,"h"],
+            [105,"i"],
+            [106,"j"],
+            [107,"k"],
+            [108,"l"],
+            [109,"m"],
+            [110,"n"],
+            [111,"o"],
+            [112,"p"],
+            [113,"q"],
+            [114,"r"],
+            [115,"s"],
+            [116,"t"],
+            [117,"u"],
+            [118,"v"],
+            [119,"w"],
+            [120,"x"],
+            [121,"y"],
+            [122,"z"],
+            [48,"0"],
+            [49,"1"],
+            [50,"2"],
+            [51,"3"],
+            [52,"4"],
+            [53,"5"],
+            [54,"6"],
+            [55,"7"],
+            [56,"8"],
+            [57,"9"],
+            [35,"#"],
+            [91,"("],
+            [40,"["],
+            [93,")"],
+            [41,"]"],
+            [45,"-"],
+            [43,"+"],
+            [63,"?"],
+            [39,"'"],
+            [34,'"'],
+            [47,"/"],
+            [32," "],
+            [46,"."],
+            [95,"_"]]
+
+    def create_arena(self): #creates a 20x20 arena grid
+        tmparenaP = [] #temporary arena Piece
+        for x in range(0,20):
+            tmparenaP.append(0)
+        tmparena = []
+        for x in range(0,20):
+            tmparena.append(tmparenaP[:])
+        return tmparena[:]
+
+    def resize_arena(self,arena,coords): #checks when the arena is too small and we're gonna get a IndexError. Resizes it from there. #remember, 5*18 arena size!!!
+        if(coords[0] + 18 > len(arena[0])):
+            for x in range(0,len(arena)):
+                arena[x].append(0)
+        if(coords[1] + 5 > len(arena)):
+            tmpline = []
+            for x in range(0,len(arena[0])):
+                tmpline.append(0)
+            arena.append(tmpline[:])
+        return arena[:]
+
+    def draw_tile(self,size,tile,colors): #draws a tile of any size and scales it to 10x10
+        tmpsurface = pygame.Surface([10,10])
+        scalex = 10.0 / size[0]
+        scaley = 10.0 / size[1]
+        for x in range(0,size[0]):
+            for y in range(0,size[1]):
+                xcor = int(scalex * x)
+                ycor = int(scaley * y)
+                tmpsurface.set_at([xcor,ycor],colors[tile[y][x]])
+        return tmpsurface
+
+    def akey(self,keynum):
+        for x in range(0,len(self.keys)):
+            if(keynum == self.keys[x][0]):
+                return self.keys[x][1]
+
+    def ListToStr(self,milist):
+        tmpstr = ""
+        for x in range(0,len(milist)):
+            tmpstr = tmpstr + str(milist[x])
+        return tmpstr
+
+    def LevelEditor(self,levelin = False):
+        running = True #this loop's ready to run...
+        selectedblocks = 0 #which block are we selecting from our "block palette" at the moment?
+        blocktypes = ['self.squarestiles','self.trianglestiles','self.bounceballstiles','self.boosterstiles','self.portalstiles'] #list of block engine tiles
+        enginetypes = ['self.squares','self.triangles','self.bounceballs','self.boosters','self.portals'] #list of block engines
+
+        global screen
+
+        #color palette for blocks...
+        colors = [[0,0,0],[255,255,0],[0,255,0],[255,0,0],[0,0,255]]
+
+        for x in range(0,18): #set menu block palette images as a set from one of our block engines
+            exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
+            
+        exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
+
+        self.selectedblock = 0
+        editpos = [0,20 - 8] #where we're currently placing blocks
+
+        #level name stuff
+        levelname = "level"
+        caps = False
+
+        #load in an already made level...?
+        if(levelin != False): #levelin format: [level file,level name]
+            self.arena = pickle.load(levelin[0])
+            self.squares.arena = self.arena[0][:]
+            self.triangles.arena = self.arena[1][:]
+            self.boosters.arena = self.arena[2][:]
+            self.bounceballs.arena = self.arena[3][:]
+            self.portals.arena = self.arena[4][:]
+            levelname = levelin[1]
+
+        #trash can status
+        self.trash = False
+        self.trashimg = pygame.image.load("Assets/LevelEditor/Trash.png")
+        self.imageset[118] = self.trashimg #AND get an image in there...
 
         while running:
-            screen.fill(self.bgcolor)
-            self.menuengine.drawimages(self.imageset)
+            #make sure our arenasizes are large enough to prevent IndexErrors from occurring
+            self.squares.arena = self.resize_arena(self.squares.arena,editpos)
+            self.triangles.arena = self.resize_arena(self.triangles.arena,editpos)
+            self.boosters.arena = self.resize_arena(self.boosters.arena,editpos)
+            self.bounceballs.arena = self.resize_arena(self.bounceballs.arena,editpos)
+            self.portals.arena = self.resize_arena(self.portals.arena,editpos)
+            
+            screen.fill(self.bgcolor) #fill our background with BLACK (an excellent way to start a menu)
+            self.menuengine.drawimages(self.imageset) #draw ALL our menu's images
+
+            #draw the level's name
+            screen.blit(self.pusab.render(levelname,0,[150,150,150]),[100 - len(levelname) * 3,5])
+
+            #blit an image of our currently selected tile
+            screen.blit(self.draw_tile([len(self.tmptiles[self.selectedblock][0]),len(self.tmptiles[self.selectedblock])],self.tmptiles[self.selectedblock],colors),[0,100])
+            screen.blit(self.pusab.render("X: " + str(editpos[0]),0,[0,0,255]),[10,100])
+            screen.blit(self.pusab.render("Y: " + str(editpos[1]),0,[0,255,0]),[10 + 10 * len(list("X: " + str(editpos[0]))),100])
+
+            self.squares.draw_arena(self.squares.arena,editpos,[10,40])
+            self.triangles.draw_arena(self.triangles.arena,editpos,[10,40])
+            self.boosters.lackluster_draw_arena(self.boosters.arena,editpos,[10,40])
+            self.bounceballs.lackluster_draw_arena(self.bounceballs.arena,editpos,[10,40])
+            self.portals.draw_arena(self.portals.arena,editpos,[10,40])
             
             for event in pygame.event.get():
                 if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -1694,44 +1962,125 @@ class LevelEditor():
                     if(0 in collision): #exit button
                         running = False
                     elif(1 in collision): #change name button
-                        pass
-                    elif(2 in collision): #save button
-                        pass
+                        namechanging = True
+                        levelname = ""
+                        while namechanging:
+                            #event loop to get NAME!!!
+                            for event in pygame.event.get():
+                                if(event.type == pygame.KEYDOWN):
+                                    if(event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT):
+                                        caps = True
+                                    elif(event.key == pygame.K_RETURN):
+                                        namechanging = False
+                                    elif(event.key == pygame.K_BACKSPACE):
+                                        if(len(list(levelname)) > 0):
+                                            mitmplist = list(levelname)
+                                            del(mitmplist[len(mitmplist) - 1])
+                                            levelname = self.ListToStr(mitmplist)
+                                    else:
+                                        if(caps == True):
+                                            try:
+                                                tmpletter = self.akey(event.key).upper()
+                                            except AttributeError:
+                                                tmpletter = self.akey(event.key)
+                                        else:
+                                            tmpletter = self.akey(event.key)
+                                        mitmplist = list(levelname)
+                                        mitmplist.append(tmpletter)
+                                        levelname = self.ListToStr(mitmplist)
+                                if(event.type == pygame.KEYUP):
+                                    if(event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT):
+                                        caps = False
+
+                            #draw the level's name
+                            pygame.draw.rect(screen,[0,0,0],[20,0,160,20])
+                            screen.blit(self.pusab.render(levelname,0,[255,255,255]),[100 - len(levelname) * 3,5])
+    
+                            pygame.display.flip() #flipping and ticking
+                            self.clock.tick(10)
+                    #save button
+                    elif(2 in collision):
+                        print("saving level...")
+                        mimetalist = []
+                        mimetalist.append(self.squares.arena[:])
+                        mimetalist.append(self.triangles.arena[:])
+                        mimetalist.append(self.boosters.arena[:])
+                        mimetalist.append(self.bounceballs.arena[:])
+                        print("50%...")
+                        mimetalist.append(self.portals.arena[:])
+                        os.system("mkdir " + '"' + str(execpath) + "/Assets/Levels/" + str(levelname) + '"')
+                        if(PYTHON2):
+                            outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","w+")
+                            pickle.dump(mimetalist,outfilename)
+                        else:
+                            outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","wb+")
+                            pickle.dump(mimetalist,outfilename,2)
+                        print("Complete!!! - success")
                     elif(3 in collision): #up arrow
-                        pass
+                        if(editpos[1] > 0):
+                            editpos[1] -= 1
                     elif(4 in collision): #down arrow
-                        pass
+                        editpos[1] += 1
                     elif(5 in collision): #left arrow
-                        pass
+                        if(editpos[0] > 0):
+                            editpos[0] -= 1
                     elif(6 in collision): #right arrow
-                        pass
+                        editpos[0] += 1
                     elif(7 in collision): #switch building blocks left
-                        pass
+                        if(selectedblocks > 0):
+                            selectedblocks -= 1
+                        for x in range(0,18):
+                            exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
                     elif(8 in collision): #switch building blocks right
-                        pass
-                    for x in range(9,100): #have we placed a block somewhere?
+                        if(selectedblocks < (len(blocktypes)- 1)):
+                            selectedblocks += 1
+                        for x in range(0,18):
+                            exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
+                    for x in range(9,99): #have we placed a block somewhere?
                         if(x in collision):
-                            pass
-                    for x in range(100,120): #settings buttons
+                            tiley = int((x - 9) / 18)
+                            tilex = int((x - 9) % 18)
+                            if(self.trash == False):
+                                exec(str(enginetypes[selectedblocks]) + ".arena[" + str(tiley + editpos[1]) + "]" + "[" + str(tilex + editpos[0]) + "] = " + str(self.selectedblock + 1))
+                            else:
+                                for x in range(0,len(enginetypes)):
+                                    exec(str(enginetypes[x]) + ".arena[" + str(tiley + editpos[1]) + "][" + str(tilex + editpos[0]) + "] = 0")
+                    for x in range(99,119): #settings buttons
                         if(x in collision):
-                            pass
-                    for x in range(120,138): #block option buttons
+                            if(x == 118):
+                                self.trash = True
+                    for x in range(119,137): #block buttons
                         if(x in collision):
-                            pass
+                            blocknum = x - 119
+                            self.trash = False
+                            exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
+                            if(blocknum < len(self.tmptiles)):
+                                self.selectedblock = blocknum
 
             #I always forget to do this when developing in Pygame...
             pygame.display.flip()
+            self.clock.tick(10)
 
 class Menu():
     def __init__(self):
         #req'd by skinsmenu
         self.skintypes = ['arrow','ball','cube','robot','ship','UFO'] #this list must be in alphabetical order.
         
-        self.levellist = ["TestLevel01","Stereo Madness", "Back on Track", "Polargeist"]
-        self.compliment = ["Assets/Levels/TestLevel01/OutputLevel.pkl","StereoMadness", "Assets/Levels/BackOnTrack/OutputLevel.pkl", "Polargeist"]
+        #self.levellist = ["TestLevel01", "Back on Track"] #DEPRICATED!!!
+        #self.compliment = ["Assets/Levels/TestLevel01/OutputLevel.pkl", "Assets/Levels/Back On Track/OutputLevel.pkl"]
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",20)
         self.oxygeneI = pygame.font.Font("Assets/Fonts/OXYGENE1.TTF",20)
         self.clock = pygame.time.Clock()
+
+        #smart level caching rather than preprogrammed...
+        self.levelsavailable = os.listdir(execpath + "/Assets/Levels/") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
+        self.levelpaths = []
+        self.levelnames = []
+        for x in range(0,len(self.levelsavailable)):
+            self.levelpaths.append("Assets/Levels/" + str(self.levelsavailable[x]) + "/OutputLevel.pkl") #get the path to the level
+            self.levelnames.append(str(self.levelsavailable[x])) #get a good name for the level
+        self.levellist = self.levelnames
+        self.compliment = self.levelpaths
 
     def Draw(self,shape,extraparams):
         global screen
@@ -1771,6 +2120,33 @@ class Menu():
                           [0,0,0,0,0,0,0,0,1,0],
                           [0,0,0,0,0,0,0,1,0,0],
                           [0,0,0,0,0,1,1,1,0,0]]
+
+        self.leveleditor = [[0,0,2,0,1,1,1,0,0,0],
+                       [0,0,0,2,0,0,0,1,0,0],
+                       [2,0,0,2,0,0,1,1,1,0],
+                       [0,2,2,2,0,1,0,1,1,1],
+                       [0,0,0,0,1,0,0,0,1,0],
+                       [0,0,0,1,0,2,0,0,0,0],
+                       [0,0,1,0,0,0,2,0,0,0],
+                       [0,1,0,0,0,0,0,2,0,0],
+                       [1,0,0,0,0,0,0,0,2,2],
+                       [0,0,0,0,0,0,0,0,2,2]]
+        self.leveleditbutton = [190,0,200,10]
+        self.EditFlag = False
+
+        #exit?
+        self.ExitFlag = False
+
+        #smart level caching rather than preprogrammed...
+        self.levelsavailable = os.listdir(execpath + "/Assets/Levels/") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
+        self.levelpaths = []
+        self.levelnames = []
+        for x in range(0,len(self.levelsavailable)):
+            self.levelpaths.append("Assets/Levels/" + str(self.levelsavailable[x]) + "/OutputLevel.pkl") #get the path to the level
+            self.levelnames.append(str(self.levelsavailable[x])) #get a good name for the level
+        self.levellist = self.levelnames
+        self.compliment = self.levelpaths
+        
         while self.NotInGame:
             #handling all these problematic events!
             for event in pygame.event.get():
@@ -1794,7 +2170,12 @@ class Menu():
                             self.direction = 'left'
                     #have we clicked that "back" button?
                     if(self.get_collision(self.mousepos,self.backbutton)):
-                        return "EX    IT"
+                        self.ExitFlag = True
+                        self.NotInGame = False
+                    #have we clicked the levelEditor button?
+                    if(self.get_collision(self.mousepos,self.leveleditbutton)):
+                        self.EditFlag = True
+                        self.NotInGame = False
 
             #handling some event variables
             #do we need to scroll left?
@@ -1850,12 +2231,14 @@ class Menu():
 
             #draw an exit button
             self.draw_image(self.backimage,[0,0],[[255,0,0],[0,255,0],[0,0,255]])
+            #draw level edit button
+            self.draw_image(self.leveleditor,[190,0],[[255,0,0],[0,255,0],[0,0,255]])
 
             #FOR PETE'S SAKE, UPDATE THE DISPLAY!
             pygame.display.flip()
             self.clock.tick(10)
 
-        return self.compliment[self.position]
+        return [self.compliment[self.position],self.EditFlag,self.levellist[self.position],self.ExitFlag]
 
     def draw_image(self,image,position,colors):
         for x in range(0,len(image[0])):
@@ -2560,9 +2943,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.menu = Menu()
 
         #create as many players as we want! (and set up their variables)
-        for x in range(0,players):#note: I store all variable ATTRIBUTES about GD figures inside the object instance.
+        for x in range(0,players): #note: I store all variable ATTRIBUTES about GD figures inside the object instance.
             exec("self.gd" + str(x) + " = GD_Figure()")
-            exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",30])")
+            exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",60])")
             exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading list name which tracks the Y speeds of the GD figure (used in jumping)
             exec("self.gd" + str(x) + ".gdcoordslist = []")
             exec("self.gd" + str(x) + ".jumping = 0")
@@ -2679,6 +3062,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.avgY = 1
         #give us a starting position
         exec("self.y10y = [4,0]")
+        for y in range(0,len(self.squaresCourse)):
+            if(self.squaresCourse[y][5] != 0):
+                exec("self.y10y = [y - 12,0]")
         exec("self.x10x = [0,0]")
         #PMtouchingground list
         touchingground = []
@@ -2722,7 +3108,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             self.portals.direction = self.direction
 
             #get the average Y position of everyone on the screen
-            for abcdef in range(0,3):
+            for abcdef in range(0,4):
                 self.avgY = 0
                 self.deadplayers = 0
                 for imrunningoutofvariables in range(0,self.players):
@@ -2963,13 +3349,14 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
                 elif('bouncepadP3' in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[2] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[2] * self.unit")
                     exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
                 elif('bouncepadP4' in self.gdcollision):
                     exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
                     exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = padjumpsizes[3] * self.unit")
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[3] * self.unit")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
 
                 #update dead lists
@@ -3263,18 +3650,30 @@ while True:
     choice1 = mimenu.FrontMenu()
     Exit = False
     if(choice1 == 'exit'):
-        exit()
+        pygame.quit() #KILLS the game
     elif(choice1 == 'play'):
-        milevelchoice = mimenu.LevelMenu()
-        if(milevelchoice != "EX    IT"):
+        milevel = mimenu.LevelMenu()
+        milevelchoice = milevel[0]
+        if(milevel[3] == False and milevel[1] == False):
             while not Exit:
                 migameloop.LoadLevel(milevelchoice)
                 while True:
                     migameloop.__init__(PlayerNumber,keyconfig,playercolors,playerskins,mimenu.skintypes)
                     returnstatement = migameloop.GameLoop(milevelchoice)
                     if(returnstatement == "level menu"):
-                        milevelchoice = mimenu.LevelMenu()
-                        if(milevelchoice == "EX    IT"):
+                        milevel = mimenu.LevelMenu()
+                        milevelchoice = milevel[0]
+                        if(milevel[3] == True):
+                            Exit = True
+                            break
+                        elif(milevel[1] == True): #we want to edit a certain level...?
+                            pygame.key.set_repeat(300,300)
+                            if(PYTHON2):
+                                milevelfile = open(milevelchoice,"r")
+                            else:
+                                milevelfile = open(milevelchoice,"rb")
+                            mileveleditor.LevelEditor([milevelfile,milevel[2]])
+                            pygame.key.set_repeat(5,5)
                             Exit = True
                             break
                         else:
@@ -3284,8 +3683,16 @@ while True:
                         break # go back to main menu
                     elif(returnstatement == "resume"):
                         pass
-                    elif(returnstatement == "dead"):
+                    elif(returnstatement == "dead"): #need to increment attempt counter here!!!
                         pass
+        elif(milevel[1] == True): #we want to edit a certain level...?
+            pygame.key.set_repeat(300,300)
+            if(PYTHON2):
+                milevelfile = open(milevelchoice,"r")
+            else:
+                milevelfile = open(milevelchoice,"rb")
+            mileveleditor.LevelEditor([milevelfile,milevel[2]])
+            pygame.key.set_repeat(5,5)
     elif(choice1 == "settings"):
         #start the settings menu
         settingsout = mimenu.SettingsMenu()
@@ -3306,506 +3713,7 @@ while True:
         playercolors = skinstuff[0][:]
         playerskins = skinstuff[1][:]
     elif(choice1 == "editor"):
+        pygame.key.set_repeat(300,300)
         mileveleditor.LevelEditor()
-
-
-choice = "BackOnTrack"
-#a not so quick, beautiful test, which is slowly turning into a game loop (AUUGH!) - not anymore!  To be removed in a little...  Say, 2 commits?
-background = CourseSquares()
-triangles = CourseTriangles()
-boosters = CourseBoosters()
-bounceballs = CourseBounceballs()
-portals = CoursePortals()
-effects = BGEffects()
-fgeffects = FGEffects()
-postprocessing = PostProcessing_Effects()
-#a font
-attemptfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
-#moving / init our GD Figure
-gd = GD_Figure()
-gd.goto([50,90])
-#create some RANDOM effect shapes!
-for x in range(0,20):
-    size = random.randint(5,100)
-    shape = random.randint(0,1)
-    if(shape == 1):
-        shape = "circle"
-    else:
-        shape = "square"
-    speed = random.randint(1,5)
-    effects.createeffect([random.randint(0,100),random.randint(0,180)],shape,size,speed)
-#create a pygame clock object
-clock = pygame.time.Clock()
-#we've only tried to attempt once yet!
-attempts = 1
-#we're not dead yet?!?
-dead = False
-#jumpsizes [stdjump,MiniJump]  ***P5 is green orb, P6 is black. P7 is dash orb, and P8 is dash/reverse gravity orb.
-jumpsizes = [-1.94,-1.41]
-#padjumpsizes [P1,P2,P3,P4,MiniP1,MiniP2,MiniP3,MiniP4]
-padjumpsizes = [-1.79,-2.77,-3.65,1.37,-1.32,-2.13,-2.71,1.37]
-#balljumpsizes = [P1,P2,P3,P4,P5,P6,P7,P8,MiniVariants 1 - 8] 
-balljumpsizes = [-1.37,-1.91,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
-#fps info / presets
-fps = 52
-fpsextremes = [fps,fps]
-#key repeat
-pygame.key.set_repeat(5,5)
-#frameskip variable
-frameskip = 0
-#how much a jump unit is?
-unit = 1.0
-#background color
-bgcolor = [0,0,0]
-#a very misleading variable name which tracks the Y speeds of the GD figure (used in jumping)
-shipspeeds = []
-while True:
-    jumping = 0
-    if(dead == True):
-        attempts += 1
-    else:
-        attempts = 1
-    #create a font surface for the attempts
-    attemptfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
-    attemptpos = [30,40]
-    GDYspeed = 0.5
-    gd.goto([0,90])
-    touchingground = 0
-    dead = False
-    gravity = 1
-    rotating = 0
-    direction = 'right'
-    nojump = 0
-    time = 0.0
-    gd.setrotate(0)
-    lastframe = 0
-    fgeffects.__init__()
-    framecount = 0
-    gd.sety(90)
-    screen.fill([0,0,0])
-    gd.form = 'cube'
-    gamespeed = 2
-    gdcoordslist = []
-    exec("y10y = [0,len(bounceballs." + str(choice) + ") - 18]")
-    pygame.mixer.music.load("Assets/Music/BackOnTrack.ogg")
-    pygame.mixer.music.play()
-    exec("LevelLength = len(background." + str(choice) + "[0])")
-    for f in range(0,LevelLength - 20):
-        for e in range(1,int(10 / float(gamespeed)) + 1):
-            #are we heading left or right?
-            if(direction == 'left'):
-                y = int((e * -1) * gamespeed)
-                x = f
-            elif(direction == 'right'):
-                y = int(e * gamespeed)
-                x = f
-
-            #based on our direction, make the cube to to a specified x position.
-            if(direction == 'right'):
-                gd.setx(50)
-            elif(direction == 'left'):
-                gd.setx(150)
-
-            ##                    #move our screen and players around a little
-            if(gd.pos[1] < 30):
-                if(y10y[0] < 9):
-                    y10y[0] += 1
-                    exec("gd.pos[1] += 1")
-                else:
-                    y10y[0] = 0
-                    y10y[1] -= 1
-                    exec("gd.pos[1] += 1")
-            elif(gd.pos[1] > 60):
-                if(y10y[0] > 0):
-                    y10y[0] -= 1
-                    exec("gd.pos[1] -= 1")
-                else:
-                    y10y[0] = 9
-                    y10y[1] += 1
-                    exec("gd.pos[1] -= 1")
-
-            #gdlistcoords handling (for showing a trail behind GD_Cube:
-            if(touchingground == 0 and jumping == 1 and GDYspeed != 0):
-                if(gd.form == 'cube' or gd.form == 'ship' or gd.form == 'ball'):
-                    gdcoordslist.append([[gd.pos[0] + 4,gd.pos[1] + 8],[100,100,100]])
-                elif(gd.form == 'arrow'):
-                    gdcoordslist.append([[gd.pos[0] + 4,gd.pos[1] + 4],[100,100,100]])
-            tmpdec = 0
-            for b in range(0,len(gdcoordslist)):
-                if(gdcoordslist[b + tmpdec][0][0] < 0 and direction == 'right'):
-                    gdcoordslist.pop(0)
-                    tmpdec -= 1
-                elif(gdcoordslist[b + tmpdec][0][0] > 200 and direction == 'left'):
-                    gdcoordslist.pop(0)
-                    tmpdec -= 1
-            for b in range(0,len(gdcoordslist) - 1):
-                pygame.draw.line(screen,gdcoordslist[b][1],gdcoordslist[b][0],gdcoordslist[b + 1][0],int((b / 10) * gamespeed))
-            for b in range(0,len(gdcoordslist)):
-                gdcoordslist[b][0][0] = gdcoordslist[b][0][0] - gamespeed
-                if(gd.form != 'arrow'):
-                    if(gdcoordslist[b][1][0] > 4):
-                        gdcoordslist[b][1][0] -= 5
-                    if(gdcoordslist[b][1][1] > 4):
-                        gdcoordslist[b][1][1] -= 5
-                    if(gdcoordslist[b][1][2] > 4):
-                        gdcoordslist[b][1][2] -= 5
-                
-
-            #set some object variables so the course knows which way we're going
-            triangles.direction = direction
-            background.direction = direction
-            boosters.direction = direction
-            bounceballs.direction = direction
-            portals.direction = direction
-
-            #move the effects every third frame
-            if(y % 3 == 0):
-                if(direction == 'right'):
-                    effects.moveeffects('left')
-                else:
-                    effects.moveeffects('right')
-
-            #this needs to be skipped for now in class GameLoop()...
-            if(touchingground == 1 and gravity == 1 and direction == 'right'):
-                #create a square effect that's always gonna start a few frames after creation (for GDcube)
-                fgeffects.addeffect('pixel',[[1,4],[[gd.getcoords()[0],gd.getcoords()[3] - 1],[gd.getcoords()[0] - random.randint(5,15),gd.getcoords()[3] - random.randint(5,10)]],[[255,255,0],bgcolor],[30 / gamespeed,framecount + 1]])
-            elif(touchingground == 1 and gravity == -1 and direction == 'right'):
-                #create a square effect that's always gonna start a few frames after creation (for GDcube)
-                fgeffects.addeffect('pixel',[[1,4],[[gd.getcoords()[0],gd.getcoords()[1] + 1],[gd.getcoords()[0] - random.randint(5,15),gd.getcoords()[1] + random.randint(5,10)]],[[255,255,0],bgcolor],[30 / gamespeed,framecount + 1]])
-            elif(touchingground == 1 and gravity == 1 and direction == 'left'):
-                #create a square effect that's always gonna start a few frames after creation (for GDcube)
-                fgeffects.addeffect('pixel',[[1,4],[[gd.getcoords()[2],gd.getcoords()[3] - 1],[gd.getcoords()[2] + random.randint(5,15),gd.getcoords()[3] - random.randint(5,10)]],[[255,255,0],bgcolor],[30 / gamespeed,framecount + 1]])
-            elif(touchingground == 1 and gravity == -1 and direction == 'left'):
-                #create a square effect that's always gonna start a few frames after creation (for GDcube)
-                fgeffects.addeffect('pixel',[[1,4],[[gd.getcoords()[2],gd.getcoords()[1] + 1],[gd.getcoords()[2] + random.randint(5,15),gd.getcoords()[1] + random.randint(5,10)]],[[255,255,0],bgcolor],[30 / gamespeed,framecount + 1]])
-
-            #draw the GD figure and the BGEffects
-            effects.draweffects()
-            gd.draw(gd.form)
-
-            #draw the various components of the arena
-            exec("background.draw_arena(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
-            exec("portals.draw_arena(portals." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
-            exec("triangles.draw_arena(triangles." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]])")
-            exec("boosters.draw_arena(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]],fgeffects,framecount,40,gamespeed)")
-            exec("bounceballs.draw_arena(bounceballs." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]],fgeffects,framecount,30,gamespeed)")
-
-            #draw the FGEffects
-            fgeffects.draweffects(framecount)
-
-            #NOTE: EXTREMELY slow postprocessing command - comment out for slow machines!
-            #postprocessing.draweffect(['vertical warp',180,200])
-            #postprocessing.draweffect(['vertical warp',25,0])
-
-            #take care of displaying attempt message
-            attemptsurface = pygame.transform.scale(attemptfont.render("Attempt " + str(attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(attempts))),25])
-
-            if(attemptpos[0] > -150):
-                screen.blit(attemptsurface,attemptpos)
-                attemptpos[0] = attemptpos[0] - 1
-
-            #some quick rotation handling for when falling
-            if(rotating == 1):
-                for c in range(0,gamespeed):
-                    gd.rotate(gravity,gd.form)
-
-            #(JUMPING) collision stuff begins here.
-            shipspeeds.append(GDYspeed)
-            if(len(shipspeeds) > 120):
-                shipspeeds.pop(0)
-            for c in range(0,gamespeed):
-                gd.move([0,GDYspeed],gravity)
-            for c in range(0,gamespeed):
-                if(gd.form == 'cube' or gd.form == 'ball'):
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                    if('ground' in gdcollision):
-                        for i in range(0,int((GDYspeed + 1) * gamespeed)):
-                            currentshipspeed = 0
-                            for imrunningoutofvariables in range(0,len(shipspeeds)):
-                                if(shipspeeds[imrunningoutofvariables] != 0):
-                                    currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                            if('ground' in gdcollision):
-                                if(currentshipspeed > 0):
-                                    gd.move([0,-1],gravity)
-                                elif(currentshipspeed < 0):
-                                    gd.move([0,1],gravity)
-                        GDYspeed = 0
-                        gd.setrotate(0)
-                        touchingground = 1
-                        jumping = 0
-                        rotating = 0
-                    elif(touchingground == 0):
-                        if(GDYspeed < 2.6):
-                            GDYspeed = GDYspeed + 0.876 / 9.5 * unit
-                        rotating = 1
-                        touchingground = 0
-                        for i in range(0,int(((GDYspeed + 1) * gamespeed) / 2)):
-                            currentshipspeed = 0
-                            for imrunningoutofvariables in range(0,len(shipspeeds)):
-                                if(shipspeeds[imrunningoutofvariables] != 0):
-                                    currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                            if('ground' in gdcollision):
-                                if(currentshipspeed > 0):
-                                    gd.move([0,-1],gravity)
-                                elif(currentshipspeed < 0):
-                                    gd.move([0,1],gravity)
-                    #this checks if we are still on the ground or no.
-                    gd.move([0,1],gravity)
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                    if('ground' not in gdcollision):
-                        touchingground = 0
-                    else:
-                        touchingground = 1
-                    gd.move([0,-1],gravity)
-                elif(gd.form == 'arrow'):
-                    GDYspeed = 1
-                    rotating = 0
-                elif(gd.form == 'ship'):
-                    jumping = 1
-                    #are we still on the ground or NO?
-                    gd.move([0,1],gravity)
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                    if('ground' not in gdcollision):
-                        touchingground = 0
-                        gd.setrotate(0 - GDYspeed * 40)
-                    else:
-                        touchingground = 1
-                    gd.move([0,-1],gravity)
-                    #actual gravity stuff begins
-                    exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                    if('ground' in gdcollision):
-                        gd.setrotate(0)
-                        touchingground = 1
-                        GDYspeed = 0
-                    elif(touchingground == 0):
-                        if(GDYspeed < 1.5):
-                            GDYspeed = GDYspeed + 0.876 / 10 * unit / 1.5
-                    if(GDYspeed == 0):
-                        for i in range(0,int((GDYspeed + 1) * gamespeed)):
-                            currentshipspeed = 0
-                            for imrunningoutofvariables in range(0,len(shipspeeds)):
-                                if(shipspeeds[imrunningoutofvariables] != 0):
-                                    currentshipspeed = shipspeeds[imrunningoutofvariables]
-                            exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                            if('ground' in gdcollision):
-                                if(currentshipspeed > 0):
-                                    gd.move([0,-1],gravity)
-                                elif(currentshipspeed < 0):
-                                    gd.move([0,1],gravity)
-           #and ends here
-
-            #some death detection
-            if(gd.form == 'cube' or gd.form == 'ball'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                if('slamleft' in gdcollision and gravity == 1 and direction == 'right' or 'slamdown' in gdcollision and gravity == 1 and direction == 'right'):
-                    dead = True
-                    #pass
-                elif('slamleft' in gdcollision and gravity == -1 and direction == 'right' or 'slamup' in gdcollision and gravity == -1 and direction == 'right'):
-                    dead = True
-                    #pass
-                elif('slamright' in gdcollision and gravity == 1 and direction == 'left' or 'slamdown' in gdcollision and gravity == 1 and direction == 'left'):
-                    dead = True
-                    #pass
-                elif('slamright' in gdcollision and gravity == -1 and direction == 'left' or 'slamup' in gdcollision and gravity == -1 and direction == 'left'):
-                    dead = True
-                elif(gd.getcoords()[1] > 160 or gd.getcoords()[1] < -40):
-                    dead = True
-            elif(gd.form == 'arrow'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                if('ground' in gdcollision):
-                    dead = True
-            elif(gd.form == 'ship'):
-                exec("gdcollision = gd.checkcollision(background.return_collision(background." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-                if('slamleft' in gdcollision and direction == 'right'):
-                    dead = True
-                    #pass
-                elif('slamright' in gdcollision and direction == 'left'):
-                    dead = True
-
-            #this is triangle death detection
-            exec("gdcollision = gd.checkcollision(triangles.return_collision(triangles." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-            if('triangle' in gdcollision):
-                dead = True
-
-            #portal collision and what happens
-            exec("gdcollision = gd.checkcollision(portals.return_collision(portals." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-            if('portal#5' in gdcollision):
-                gd.form = 'arrow'
-                jumping = 1
-            if('portal#1' in gdcollision):
-                gd.form = 'cube'
-                jumping = 0
-            if('portal#2' in gdcollision):
-                gd.form = 'ship'
-                rotating = 0
-                gd.setrotate(0)
-                jumping = 1
-            if('portal#3' in gdcollision):
-                gd.form = 'ball'
-                jumping = 1
-                GDYspeed = 0
-            if('portal#4' in gdcollision):
-                gd.mini = True
-                jumping = 0
-
-            #booster collision handling
-            exec("gdcollision = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-            exec("gravity = gd.checkcollision(boosters.return_collision(boosters." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[1]")
-            if('bouncepadP1' in gdcollision):
-                GDYspeed = padjumpsizes[0] * unit
-                touchingground = 0
-                jumping = 1
-            elif('bouncepadP2' in gdcollision):
-                GDYspeed = padjumpsizes[1] * unit
-                touchingground = 0
-                jumping = 1
-            elif('bouncepadP3' in gdcollision):
-                GDYspeed = padjumpsizes[2] * unit
-                touchingground = 0
-                jumping = 1
-            elif('bouncepadP4' in gdcollision):
-                touchingground = 0
-                gd.move([0,7],gravity)
-                GDYspeed = padjumpsizes[3] * unit
-                jumping = 1
-
-            #check, can we jump another blue bounceball yet, or have we not passed enough frames?
-            if(nojump > 0):
-                nojump = nojump - 1
-
-            #we check, have we collided with any bounceballs?
-            exec("gdcollision = gd.checkcollision(bounceballs.return_collision(bounceballs." + str(choice) + ",[x,y10y[1]],[-y,y10y[0]]),gd.getcoords(),gravity)[0]")
-
-            #are we an arrow? if so, get our frames in place!
-            if(gd.form == 'arrow'):
-                gd.setrotate(90 * 3)
-                jumping = 1
-
-            #are we rolling along the ground?
-            elif(gd.form == 'ball' and touchingground == 1):
-                rotating = 1
-                jumping = 0
-
-            #event loop
-            for event in pygame.event.get():
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
-                elif(event.type == pygame.KEYDOWN):
-                    if(event.key == pygame.K_q):
-                        pygame.quit()
-                    if(event.key == pygame.K_SPACE):
-                        if(touchingground == 1 and gd.form == 'cube'):
-                            #gd.beginjump([21,36])
-                            touchingground = 0
-                            GDYspeed = jumpsizes[0] * unit
-                        if(nojump == 0 and gd.form == 'cube'):
-                            if('bounceballP1' in gdcollision):
-                                GDYspeed = balljumpsizes[0]
-                                jumping = 1
-                            elif('bounceballP2' in gdcollision):
-                                GDYspeed = balljumpsizes[1]
-                                jumping = 1
-                            elif('bounceballP3' in gdcollision):
-                                GDYspeed = balljumpsizes[2]
-                                jumping = 1
-                            elif('bounceballP4' in gdcollision):
-                                gravity = gravity * -1
-                                GDYspeed = balljumpsizes[3]
-                                jumping = 1
-                            nojump = 14
-                            touchingground = 0
-                        elif(gd.form == 'arrow'):
-                            GDYspeed = -1
-                            gd.rotate(gravity,gd.form)
-                            jumping = 1
-                        elif(gd.form == 'ship' and GDYspeed > -1.5):
-                            GDYspeed -= 0.876 / 10 * unit / 1.5
-                        elif(gd.form == 'ball' and touchingground == 1):
-                            gravity = gravity * -1
-                            gd.move([0,2],gravity)
-                            jumping = 1
-                            rotating = 0
-
-            #display handling and some misc stuff
-            framecount += 1
-            time = framecount / float(fps)
-            pygame.display.flip()
-            clock.tick(fps)
-            if(int(clock.get_fps()) < fps / 4 * 3 and framecount > 20 and lastframe + 20 < framecount):
-                lastframe = framecount
-                print("SLOWDOOOOOOOWWWWNNN!")
-
-            #erase the screen with whatever bgcolor is for next frame
-            screen.fill(bgcolor)
-
-            #exactly what are our highs and lows in FPS drops/overshoots?
-            tmpfps = clock.get_fps()
-            if(tmpfps > fpsextremes[1]):
-                fpsextremes[1] = tmpfps
-            if(tmpfps < fpsextremes[0]):
-                fpsextremes[0] = tmpfps
-
-            #set the window title with FPS
-            if(frameskip != 0):
-                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(tmpfps / frameskip)) + ' Highest FPS: ' + str(int(fpsextremes[1])) + ' Lowest FPS: ' + str(int(fpsextremes[0])))
-            else:
-                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(tmpfps)) + ' Highest FPS: ' + str(int(fpsextremes[1])) + ' Lowest FPS: ' + str(int(fpsextremes[0])))
-
-            #are we dead?
-            if dead == True:
-                break #up to here in UNIVERSAL loop
-
-        #are we dead?  Reset if true
-        if dead == True:
-            pygame.mixer.music.load("Assets/SFX/Explosion.ogg")
-            pygame.mixer.music.play()
-            
-            #shake & explosion!   #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
-            for imrunningoutofvariables in range(0,15):
-                fgeffects.addeffect('circle',[[0,30 - imrunningoutofvariables * 2],[[gd.getcoords()[0],gd.getcoords()[1]],[gd.getcoords()[0],gd.getcoords()[1]]],[[255,255,0],bgcolor],[9,framecount + 1]])
-            for imrunningoutofvariables in range(0,200):
-                colorrand = random.randint(0,1)
-                if(colorrand == 0):
-                    color = gd.getcolors()[0]
-                else:
-                    color = gd.getcolors()[1]
-                randpos = [random.randint(gd.getcoords()[0] - 50,gd.getcoords()[0] + 60),random.randint(gd.getcoords()[1] - 50,gd.getcoords()[1] + 60)]
-                fgeffects.addeffect('pixel',[[5,1],[[gd.getcoords()[0],gd.getcoords()[1]],randpos],[color,bgcolor],[9,framecount + 1]])
-            for i in range(0,10):
-                for e in range(0,2):
-                    framecount += 1
-                    
-                    if(e == 1):
-                        p = -1
-                        for imrunningoutofvariables in range(0,3):
-                            effects.moveeffects('down')
-                    else:
-                        p = 1
-                        for imrunningoutofvariables in range(0,3):
-                            effects.moveeffects('up')
-
-                    screen.fill(bgcolor)
-                    #draw BGeffects
-                    effects.draweffects()
-                    
-                    #draw the various components of the arena
-                    exec("background.draw_arena(background." + str(choice) + ",[x,len(background." + str(choice) + ") - 18],[-y,(10 - i) * p])")
-                    exec("portals.draw_arena(portals." + str(choice) + ",[x,len(portals."+ str(choice) + ") - 18],[-y,(10 - i) * p])")
-                    exec("triangles.draw_arena(triangles." + str(choice) + ",[x,len(triangles." + str(choice) + ") - 18],[-y,(10 - i) * p])")
-                    exec("boosters.draw_arena(boosters." + str(choice) + ",[x,len(boosters." + str(choice) + ") - 18],[-y,(10 - i) * p],fgeffects,framecount,40,gamespeed)")
-                    exec("bounceballs.draw_arena(bounceballs." + str(choice) + ",[x,len(bounceballs." + str(choice) + ") - 18],[-y,(10 - i) * p],fgeffects,framecount,30,gamespeed)")
-
-                    #draw the FGEffects
-                    fgeffects.draweffects(framecount)
-
-                    #flip display
-                    pygame.display.flip()
-                    clock.tick(15)
-            gd.goto([50,90])
-            gd.setrotate(0)
-            break
-
-#quit pygame
+        pygame.key.set_repeat(5,5)
 pygame.quit()
