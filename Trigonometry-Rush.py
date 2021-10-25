@@ -2989,9 +2989,6 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #init a clock
         self.clock = pygame.time.Clock()
 
-        #we haven't failed yet?!?
-        self.attempts = 1
-
         #jumpsizes [stdjump,MiniJump]  ***P5 is green orb, P6 is black. P7 is dash orb, and P8 is dash/reverse gravity orb.
         self.jumpsizes = [-1.94,-1.41]
 
@@ -3053,7 +3050,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.bounceballsCourse = conglomeration[3][:]
         self.portalsCourse = conglomeration[4][:]
 
-    def GameLoop(self,choice):
+    def GameLoop(self,choice,attempts):
         #something needed for PM
         state = 1
         #We're NOT starting in Practice Mode...
@@ -3159,7 +3156,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     self.effects.moveeffects('right')
 
             #draw the WHOLE screen
-            self.DrawEVERYTHING(self.x10x,self.y10y,choice)
+            self.DrawEVERYTHING(self.x10x,self.y10y,choice,attempts)
 
             #some quick rotation handling for when falling
             for imrunningoutofvariables in range(0,self.players):
@@ -3505,9 +3502,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                 pygame.display.set_caption('Trigonometry Rush V1.0-RC FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
 
         #return something
+        pygame.mixer.music.stop()
         return self.returnstatement
 
-    def DrawEVERYTHING(self,x10x,y10y,choice):
+    def DrawEVERYTHING(self,x10x,y10y,choice,attempts):
         #draw the BGEffects
         self.effects.draweffects()
         
@@ -3566,7 +3564,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                         self.handledgdcoordslist[b][1][2] -= 5
 
         #take care of displaying attempt message
-        self.attemptsurface = pygame.transform.scale(self.pusab.render("Attempt " + str(self.attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(self.attempts))),25])
+        self.attemptsurface = pygame.transform.scale(self.pusab.render("Attempt " + str(attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(attempts))),25])
         if(self.attemptpos[0] > -150):
             screen.blit(self.attemptsurface,self.attemptpos)
             self.attemptpos[0] = self.attemptpos[0] - 1
@@ -3661,12 +3659,14 @@ while True:
     elif(choice1 == 'play'):
         milevel = mimenu.LevelMenu()
         milevelchoice = milevel[0]
+        Attempts = 1
         if(milevel[3] == False and milevel[1] == False):
             while not Exit:
                 migameloop.LoadLevel(milevelchoice)
                 while True:
                     migameloop.__init__(PlayerNumber,keyconfig,playercolors,playerskins,mimenu.skintypes)
-                    returnstatement = migameloop.GameLoop(milevelchoice)
+                    returnstatement = migameloop.GameLoop(milevelchoice,Attempts)
+                    pygame.mixer.music.stop()
                     if(returnstatement == "level menu"):
                         milevel = mimenu.LevelMenu()
                         milevelchoice = milevel[0]
@@ -3691,7 +3691,7 @@ while True:
                     elif(returnstatement == "resume"):
                         pass
                     elif(returnstatement == "dead"): #need to increment attempt counter here!!!
-                        pass
+                        Attempts += 1
         elif(milevel[1] == True): #we want to edit a certain level...?
             pygame.key.set_repeat(300,300)
             if(PYTHON2):
