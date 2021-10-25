@@ -27,11 +27,20 @@ pygame.font.init()
 
 videostuff = pygame.display.Info()
 screen = pygame.display.set_mode([200,120],pygame.HWSURFACE | pygame.HWACCEL | pygame.SCALED)
-pygame.display.set_caption('Geometry Dash Test')
+pygame.display.set_caption('Trigonometry Rush V1.0-RC')
+
+print("Finding OS...")
+myOS = os.name
+if(myOS == 'posix'):
+    print("Found! - Linux")
+    myfolderslash = "/"
+else:
+    print("Found! - Windows")
+    myfolderslash = "\\"
 
 print("Testing Python 2 or 3...")
 try:
-    tmpfile = open("Assets/Levels/TestLevel01/OutputLevel.pkl","r")
+    tmpfile = open("Assets" + myfolderslash + "Levels" + myfolderslash + "TestLevel01" + myfolderslash + "OutputLevel.pkl","r")
     pickle.load(tmpfile)
     print("Python 2 confirmed... Continuing")
     PYTHON2 = True
@@ -1689,45 +1698,45 @@ class LevelEditor():
         self.imageset = [] #our list for holding all the images that correspond to various hitboxes
         #exit button, change name button, save button 
         self.buttonplacement = [[0,0],[20,0],[180,0]] #0-2
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Exit.png"))
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/LevelName.png"))
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Save.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Exit.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "LevelName.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Save.png"))
         #Up arrow
         self.buttonplacement.append([90,30]) #3
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Up.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Up.png"))
         #Down arrow
         self.buttonplacement.append([90,90]) #4
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Down.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Down.png"))
         #Left arrow
         self.buttonplacement.append([0,60]) #5
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Left.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Left.png"))
         #Right arrow
         self.buttonplacement.append([190,60]) #6
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Right.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Right.png"))
         #Switch building blocks left
         self.buttonplacement.append([0,110]) #7
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Left.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Left.png"))
         #Switch building blocks right
         self.buttonplacement.append([190,110]) #8
-        self.imageset.append(pygame.image.load("Assets/LevelEditor/Right.png"))
+        self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Right.png"))
         #add ALL the block placement collision boxes... #s9-98
         for y in range(0,5):
             for x in range(0,18):
                 self.buttonplacement.append([x * 10 + 10,y * 10 + 40])
-                self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         #add ALL the settings buttons #s99-118
         for x in range(0,20):
             self.buttonplacement.append([x * 10,20])
-            self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+            self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         #add all the block buttons #s 119-136
         for x in range(0,18):
             self.buttonplacement.append([x * 10 + 10,110])
-            self.imageset.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+            self.imageset.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
 
         self.menuengine = MenuEngine(self.imageset,self.buttonplacement) #SET UP OUR MENU ENGINE (ESSENTIAL)
 
         #get a font
-        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",10) #size 10 pixels? I'm not sure what that parameter does...
+        self.pusab = pygame.font.Font("Assets" + myfolderslash + "Fonts" + myfolderslash + "PUSAB.ttf",10) #size 10 pixels? I'm not sure what that parameter does...
 
         #get ready for LevelEditor() loop
         self.clock = pygame.time.Clock() #get a clock set up for FPS cap
@@ -1779,19 +1788,19 @@ class LevelEditor():
         #if we don't have 18 tiles to be selected from, then fill them with fillers.
         if(len(self.squarestiles) < 18):
             for x in range(0,18 - len(self.squarestiles)):
-                self.squarestiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.squarestiles.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         if(len(self.trianglestiles) < 18):
             for x in range(0,18 - len(self.trianglestiles)):
-                self.trianglestiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.trianglestiles.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         if(len(self.bounceballstiles) < 18):
             for x in range(0,18 - len(self.bounceballstiles)):
-                self.bounceballstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.bounceballstiles.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         if(len(self.boosterstiles) < 18):
             for x in range(0,18 - len(self.boosterstiles)):
-                self.boosterstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.boosterstiles.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
         if(len(self.portalstiles) < 18):
             for x in range(0,18 - len(self.portalstiles)):
-                self.portalstiles.append(pygame.image.load("Assets/LevelEditor/BlockFiller.png"))
+                self.portalstiles.append(pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "BlockFiller.png"))
 
         #create an arena for the blocks to be made in
         self.portals.arena = self.create_arena()
@@ -1928,7 +1937,7 @@ class LevelEditor():
 
         #trash can status
         self.trash = False
-        self.trashimg = pygame.image.load("Assets/LevelEditor/Trash.png")
+        self.trashimg = pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Trash.png")
         self.imageset[118] = self.trashimg #AND get an image in there...
 
         while running:
@@ -2008,12 +2017,12 @@ class LevelEditor():
                         mimetalist.append(self.bounceballs.arena[:])
                         print("50%...")
                         mimetalist.append(self.portals.arena[:])
-                        os.system("mkdir " + '"' + str(execpath) + "/Assets/Levels/" + str(levelname) + '"')
+                        os.system("mkdir " + '"' + str(execpath) + "" + myfolderslash + "Assets" + myfolderslash + "Levels" + myfolderslash + "" + str(levelname) + '"')
                         if(PYTHON2):
-                            outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","w+")
+                            outfilename = open("Assets" + myfolderslash + "Levels" + myfolderslash + "" + str(levelname) + "" + myfolderslash + "OutputLevel.pkl","w+")
                             pickle.dump(mimetalist,outfilename)
                         else:
-                            outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","wb+")
+                            outfilename = open("Assets" + myfolderslash + "Levels" + myfolderslash + "" + str(levelname) + "" + myfolderslash + "OutputLevel.pkl","wb+")
                             pickle.dump(mimetalist,outfilename,2)
                         print("Complete!!! - success")
                     elif(3 in collision): #up arrow
@@ -2066,18 +2075,16 @@ class Menu():
         #req'd by skinsmenu
         self.skintypes = ['arrow','ball','cube','robot','ship','UFO'] #this list must be in alphabetical order.
         
-        #self.levellist = ["TestLevel01", "Back on Track"] #DEPRICATED!!!
-        #self.compliment = ["Assets/Levels/TestLevel01/OutputLevel.pkl", "Assets/Levels/Back On Track/OutputLevel.pkl"]
-        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",20)
-        self.oxygeneI = pygame.font.Font("Assets/Fonts/OXYGENE1.TTF",20)
+        self.pusab = pygame.font.Font("Assets" + myfolderslash + "Fonts" + myfolderslash + "PUSAB.ttf",20)
+        self.oxygeneI = pygame.font.Font("Assets" + myfolderslash + "Fonts" + myfolderslash + "OXYGENE1.TTF",20)
         self.clock = pygame.time.Clock()
 
         #smart level caching rather than preprogrammed...
-        self.levelsavailable = os.listdir(execpath + "/Assets/Levels/") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
+        self.levelsavailable = os.listdir(execpath + "" + myfolderslash + "Assets" + myfolderslash + "Levels/") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
         self.levelpaths = []
         self.levelnames = []
         for x in range(0,len(self.levelsavailable)):
-            self.levelpaths.append("Assets/Levels/" + str(self.levelsavailable[x]) + "/OutputLevel.pkl") #get the path to the level
+            self.levelpaths.append("Assets" + myfolderslash + "Levels" + myfolderslash + "" + str(self.levelsavailable[x]) + "" + myfolderslash + "OutputLevel.pkl") #get the path to the level
             self.levelnames.append(str(self.levelsavailable[x])) #get a good name for the level
         self.levellist = self.levelnames
         self.compliment = self.levelpaths
@@ -2138,11 +2145,11 @@ class Menu():
         self.ExitFlag = False
 
         #smart level caching rather than preprogrammed...
-        self.levelsavailable = os.listdir(execpath + "/Assets/Levels/") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
+        self.levelsavailable = os.listdir(execpath + "" + myfolderslash + "Assets" + myfolderslash + "Levels" + myfolderslash + "") #get all level folders. (execpath is a global variable [I know, everyone hates them] that shows our execution path)
         self.levelpaths = []
         self.levelnames = []
         for x in range(0,len(self.levelsavailable)):
-            self.levelpaths.append("Assets/Levels/" + str(self.levelsavailable[x]) + "/OutputLevel.pkl") #get the path to the level
+            self.levelpaths.append("Assets" + myfolderslash + "Levels" + myfolderslash + "" + str(self.levelsavailable[x]) + "" + myfolderslash + "OutputLevel.pkl") #get the path to the level
             self.levelnames.append(str(self.levelsavailable[x])) #get a good name for the level
         self.levellist = self.levelnames
         self.compliment = self.levelpaths
@@ -2663,9 +2670,9 @@ class Menu():
         movementtypes = [['rotating',[0,359]],['rocking',[-25,25]],['rotating',[0,359]],['rocking',[-45,45]],['moving',[[-4,0],[4,0]]],['moving',[[0,2],[0,-4]]]]
 
         #find all skins available in list format...and clip the list sizes so I don't run out of space for skins on the screen!
-        skinsavailable = os.listdir(execpath + "/Assets/Skins/")
+        skinsavailable = os.listdir(execpath + "" + myfolderslash + "Assets" + myfolderslash + "Skins" + myfolderslash + "")
         for skinname in skinsavailable:
-            exec(str(skinname) + "skins = " + str(os.listdir(execpath + "/Assets/Skins/" + str(skinname))))
+            exec(str(skinname) + "skins = " + str(os.listdir(execpath + "" + myfolderslash + "Assets" + myfolderslash + "Skins" + myfolderslash + "" + str(skinname))))
 
         listnames = []
 
@@ -2674,7 +2681,7 @@ class Menu():
             exec("skinshape" + str(skinname) + " = []")
             listnames.append("skinshape" + str(skinname))
             for subskinname in subskins:
-                exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "/Assets/Skins/" + str(skinname) + "/" +  str(subskinname) + "'))")
+                exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "" + myfolderslash + "Assets" + myfolderslash + "Skins" + myfolderslash + "" + str(skinname) + myfolderslash +  str(subskinname) + "'))")
 
         listlens = []
         for listname in listnames:
@@ -3021,7 +3028,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         self.direction = 'right'
 
         #pusab font
-        self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",40)
+        self.pusab = pygame.font.Font("Assets" + myfolderslash + "Fonts" + myfolderslash + "PUSAB.ttf",40)
 
         #get all our player's colors
         for x in range(0,self.players):
@@ -3071,7 +3078,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #list of all keys pressed at the moment
         keys = []
         #start some music
-        exec("pygame.mixer.music.load('Assets/Music/BackOnTrack.ogg')")#************************************************************************need to change this **********************************************************
+        exec("pygame.mixer.music.load('Assets" + myfolderslash + "Music" + myfolderslash + "BackOnTrack.ogg')")#**********************need to change this **********************************************************
         pygame.mixer.music.play()
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squaresCourse[0])")
@@ -3493,9 +3500,9 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
             #set the window title with FPS
             if(self.frameskip != 0):
-                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps / self.frameskip)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
+                pygame.display.set_caption('Trigonometry Rush V1.0-RC FPS: ' + str(int(self.tmpfps / self.frameskip)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
             else:
-                pygame.display.set_caption('Geometry Dash Test  FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
+                pygame.display.set_caption('Trigonometry Rush V1.0-RC FPS: ' + str(int(self.tmpfps)) + ' Highest FPS: ' + str(int(self.fpsextremes[1])) + ' Lowest FPS: ' + str(int(self.fpsextremes[0])))
 
         #return something
         return self.returnstatement
