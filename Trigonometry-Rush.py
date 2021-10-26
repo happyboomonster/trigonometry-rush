@@ -2646,15 +2646,32 @@ class Menu():
 
         return configuredkeys
 
+    def myeval(self,skin):
+        tmplist = list(skin)
+        char = ''
+        while True: #get rid of the "skin = " section of the skin file
+            if(tmplist[0] == '='):
+                del(tmplist[0])
+                break
+            del(tmplist[0])
+        mystr = "" #reconnect the chars in the list into a string
+        for x in range(0,len(tmplist)):
+            mystr = mystr + tmplist[x]
+        return mystr #redone skin
+
     def load(self, filename):
         mifile = open(filename, "r")
         milist = []
+        skin = []
         for x in range(0,16):
             milist.append(mifile.readline())
         mistr = ""
         for x in range(0,16):
             mistr = mistr + milist[x]
-        exec(mistr)
+        if(PYTHON2):
+            exec(mistr)
+        else:
+            skin = eval(self.myeval(mistr))
         return skin
 
     def SkinsMenu(self, PlayersNum):  #got to get a Skins menu working!
@@ -2677,8 +2694,11 @@ class Menu():
         listnames = []
 
         for skinname in skinsavailable:
-            exec("subskins = " + str(skinname) + "skins")
             exec("skinshape" + str(skinname) + " = []")
+            if(PYTHON2):
+                exec("subskins = " + str(skinname) + "skins")
+            else:
+                subskins = eval(str(skinname) + "skins")
             listnames.append("skinshape" + str(skinname))
             for subskinname in subskins:
                 exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "" + myfolderslash + "Assets" + myfolderslash + "Skins" + myfolderslash + "" + str(skinname) + myfolderslash +  str(subskinname) + "'))")
@@ -2808,15 +2828,18 @@ class Menu():
             #CurrentShape index will tell us what we're currently focused on.
             #I also handle creating live collision boxes for the skins here...
             skincollision = []
-            exec('focusedlist = skinshape' + str(self.skintypes[CurrentShape]))
+            if(PYTHON2):
+                exec('focusedlist = skinshape' + str(self.skintypes[CurrentShape]))
+            else:
+                focusedlist = eval("skinshape" + str(self.skintypes[CurrentShape]))
             color = self.colorlist[CurrentPlayer] #color palette that all skins will be drawn in this frame...
             for drawingskins in range(0,len(focusedlist)):
-                x = ((drawingskins % SPR) * 16) + 10
+                x = (int(drawingskins % SPR) * 16) + 10
                 if(drawingskins == 0):
                     y = 30
                 else:
-                    y = ((drawingskins / SPR) * 16) + 30
-                self.draw_image(focusedlist[drawingskins],[x,y],color) #draw a skin
+                    y = (int(drawingskins / SPR) * 16) + 30
+                self.draw_image(focusedlist[drawingskins],[int(x),int(y)],color) #draw a skin
                 if(drawingskins == self.skinselected[CurrentPlayer][CurrentShape]):
                     pygame.draw.rect(screen, [255,0,255], [x,y,16,16],1)
                 skincollision.append([x,y,x + 16,y + 16]) #add a collision box for a skin...
