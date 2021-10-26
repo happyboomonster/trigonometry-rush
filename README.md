@@ -15,14 +15,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Hopefully this README is helpful...  First of all, I want to mention that
-this program is in pre-alpha phase (like really pre-alpha), and may not
-even work if you download it and try it...
+this program is in pre-alpha phase, and may not
+even work if you download it and try it... More specifically, I think I have a bit
+more work to do on Windows. On a POSIX platform, things seem to be running
+smoothly enough.
 
 To try out my take on Reverse-Engineering Geometry Dash [is it reverse
-engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3! (Actually,
-Python 3 for the moment mostly works, but due to some...problems with Pickle,
-you have to spend a little more time creating levels than when using Python 2)
-NOTE:  You need Pygame 2 or later installed!
+engineering?  I'm not sure... =) ], run GDtst.py in Python 2 or 3! (I checked
+compatibility again recently...)
+NOTE:  You need Pygame 2.0.0 or later installed!
 
 Creating Levels:
 I now have a working level editor, so use that. It may be a little buggy...
@@ -47,7 +48,8 @@ over time C) can change color over time
 
 What I want to add:
 Controller support  
-Optomisations that speed up my horrible code!  =) 
+Optomisations that speed up my horrible code!  =)
+Animated/motion capable blocks
 
 
 Attribution to various people:

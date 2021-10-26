@@ -1,5 +1,5 @@
 #Main Trigonometry Rush program/script
-#    Copyright (C) 2021  Lincoln V, Karsten V.
+#    Copyright (C) 2021  Lincoln V.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
