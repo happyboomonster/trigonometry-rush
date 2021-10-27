@@ -148,7 +148,7 @@ class GD_Figure():
         self.cubecenteredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
 
         #arrowframe setups
-        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[0,0]),180)
+        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[4,-4]),180)
         self.arrowcenterpos = self.arrowframe.get_rect().center
         self.arrowcenteredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
 
@@ -183,7 +183,7 @@ class GD_Figure():
         self.cubecenteredpos = [self.cubecenterpos[0] + self.pos[0],self.cubecenterpos[1] + self.pos[1]]
 
         #arrowframe setups
-        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[0,0]),180)
+        self.arrowframe = pygame.transform.rotate(self.draw_16x16(self.arrowframes,[4,-4]),180)
         self.arrowcenterpos = self.arrowframe.get_rect().center
         self.arrowcenteredpos = [self.arrowcenterpos[0] + self.pos[0],self.arrowcenterpos[1] + self.pos[1]]
 
@@ -272,7 +272,7 @@ class GD_Figure():
     def getcoords(self,figureshape='cube'):
         if(self.mini == False):
             if(figureshape == 'arrow'):
-                return [int(self.pos[0]) + 5,int(self.pos[1]) + 5,int(self.pos[0]) + 11,int(self.pos[1]) + 11]
+                return [int(self.pos[0]) + 7,int(self.pos[1]) + 7,int(self.pos[0]) + 9,int(self.pos[1]) + 9]
 
             elif(figureshape == 'ship'):
                 return [int(self.pos[0] + 1),int(self.pos[1] + 6),int(self.pos[0] + 14),int(self.pos[1] + 10)]
@@ -281,7 +281,7 @@ class GD_Figure():
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
         else: #GLITCHY!!!
             if(figureshape == 'arrow'):
-                return [int(self.pos[0]) + 2,int(self.pos[1]) + 2,int(self.pos[0]) + 6,int(self.pos[1]) + 6]
+                return [int(self.pos[0]) + 3,int(self.pos[1]) + 3,int(self.pos[0]) + 5,int(self.pos[1]) + 5]
 
             elif(figureshape == 'ship'):
                 return [int(self.pos[0]),int(self.pos[1] + 2),int(self.pos[0] + 7),int(self.pos[1] + 5)]
@@ -648,7 +648,7 @@ class CoursePortals():
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        if(currentmap[coords[1] + y][coords[0] + x] < 8):
+                        if(currentmap[coords[1] + y][coords[0] + x] % 2 == 0):
                             self.draw_tile(self.tiles[1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
                         else:
                             self.draw_tile(self.tiles[0],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
@@ -658,7 +658,7 @@ class CoursePortals():
                     newx = self.screen_w - (x + 1)
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        if(currentmap[coords[1] + y][coords[0] + x] < 8):
+                        if(currentmap[coords[1] + y][coords[0] + x] % 2 == 0):
                             self.draw_tile(self.tiles[1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
                         else:
                             self.draw_tile(self.tiles[0],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
@@ -1693,7 +1693,7 @@ class MenuEngine():
         for x in range(0,len(self.images)):
             screen.blit(images[x],[self.buttons[x][0],self.buttons[x][1]])
 
-class LevelEditor():
+class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: arrow 6: robot 7: gravitycreeper 8: gravity 9: reverse-gravity... (uh-oh) 10: move-right 11: move-left 12: teleport entrance  13: teleport exit 14-17: speeds 0.5,1,2,&3x
     def __init__(self):
         self.imageset = [] #our list for holding all the images that correspond to various hitboxes
         #exit button, change name button, save button 
@@ -1935,11 +1935,26 @@ class LevelEditor():
         #load in an already made level...?
         if(levelin != False): #levelin format: [level file,level name]
             self.arena = pickle.load(levelin[0])
-            self.squares.arena = self.arena[0][:]
-            self.triangles.arena = self.arena[1][:]
-            self.boosters.arena = self.arena[2][:]
-            self.bounceballs.arena = self.arena[3][:]
-            self.portals.arena = self.arena[4][:]
+            try:
+                self.squares.arena = self.arena[0][:]
+            except IndexError: #are there no squares (or anything) in this level data?
+                self.squares.arena = self.create_arena()
+            try:
+                self.triangles.arena = self.arena[1][:]
+            except IndexError:
+                self.triangles.arena = self.create_arena()
+            try:
+                self.boosters.arena = self.arena[2][:]
+            except IndexError:
+                self.boosters.arena = self.create_arena()
+            try:
+                self.bounceballs.arena = self.arena[3][:]
+            except IndexError:
+                self.bounceballs.arena = self.create_arena()
+            try:
+                self.portals.arena = self.arena[4][:]
+            except IndexError:
+                self.portals.arena = self.create_arena()
             levelname = levelin[1]
 
         #trash can status
@@ -2090,8 +2105,7 @@ class LevelEditor():
                                                         pass #we ran out of things we could remove from num, so we don't do anything
                                                     num = self.ListToStr(num)
                                                 elif(event.key == pygame.K_RETURN):
-                                                    num = int(num)
-                                                    self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] = num
+                                                    self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] = int(num)
                                                     self.number = False
                                                 else: #otherwise, add a new number! (provided it's a number, not a letter)
                                                     try:
