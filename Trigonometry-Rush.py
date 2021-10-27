@@ -29,14 +29,17 @@ videostuff = pygame.display.Info()
 screen = pygame.display.set_mode([200,120],pygame.HWSURFACE | pygame.HWACCEL | pygame.SCALED)
 pygame.display.set_caption('Trigonometry Rush V1.0-RC')
 
-print("Finding OS...")
-myOS = os.name
-if(myOS == 'posix'):
-    print("Found! - Linux")
-    myfolderslash = "/"
-else:
-    print("Found! - Windows")
-    myfolderslash = "\\"
+myfolderslash = "/"
+
+def debackslash(string):
+    mystr = list(string)
+    for x in range(0,len(mystr)):
+        if(mystr[x] == "\\"):
+            mystr[x] = "/"
+    catdstring = ""
+    for x in range(0,len(mystr)):
+        catdstring = catdstring + str(mystr[x])
+    return catdstring
 
 print("Testing Python 2 or 3...")
 try:
@@ -53,6 +56,14 @@ except TypeError:
 print("Getting current execution path...")
 execpath = os.path.dirname(sys.argv[0])
 print("Exec Path:  " + execpath)
+
+print("Finding OS...")
+myOS = os.name
+if(myOS == 'posix'):
+    print("Found! - Linux")
+else:
+    print("Found! - Windows")
+    execpath = debackslash(execpath)
 
 class GD_Figure():
     def __init__(self):
