@@ -1902,6 +1902,13 @@ class LevelEditor():
             tmpstr = tmpstr + str(milist[x])
         return tmpstr
 
+    def insertrow(self,arena):
+        tmplist = []
+        for x in range(0,len(arena[0])):
+            tmplist.append(0)
+        arena.insert(0,tmplist)
+        return arena
+
     def LevelEditor(self,levelin = False):
         running = True #this loop's ready to run...
         selectedblocks = 0 #which block are we selecting from our "block palette" at the moment?
@@ -1939,6 +1946,11 @@ class LevelEditor():
         self.trash = False
         self.trashimg = pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Trash.png")
         self.imageset[118] = self.trashimg #AND get an image in there...
+
+        #set block number manually...
+        self.number = False
+        self.numberimg = pygame.image.load("Assets" + myfolderslash + "LevelEditor" + myfolderslash + "Number.png")
+        self.imageset[117] = self.numberimg
 
         while running:
             #make sure our arenasizes are large enough to prevent IndexErrors from occurring
@@ -2028,6 +2040,12 @@ class LevelEditor():
                     elif(3 in collision): #up arrow
                         if(editpos[1] > 0):
                             editpos[1] -= 1
+                        else:
+                            self.squares.arena = self.insertrow(self.squares.arena)
+                            self.triangles.arena = self.insertrow(self.triangles.arena)
+                            self.boosters.arena = self.insertrow(self.boosters.arena)
+                            self.bounceballs.arena = self.insertrow(self.bounceballs.arena)
+                            self.portals.arena = self.insertrow(self.portals.arena)
                     elif(4 in collision): #down arrow
                         editpos[1] += 1
                     elif(5 in collision): #left arrow
@@ -2049,8 +2067,43 @@ class LevelEditor():
                         if(x in collision):
                             tiley = int((x - 9) / 18)
                             tilex = int((x - 9) % 18)
-                            if(self.trash == False):
+                            if(self.trash == False and self.number == False):
                                 exec(str(enginetypes[selectedblocks]) + ".arena[" + str(tiley + editpos[1]) + "]" + "[" + str(tilex + editpos[0]) + "] = " + str(self.selectedblock + 1))
+                            elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
+                                #now we find if a portal has been placed where we clicked
+                                if(self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] != 0):
+                                    num = "0"
+                                    while self.number: #we can change this number then
+                                        screen.fill([0,0,0])
+                                        pygame.draw.rect(screen,[255,0,0],[50,40,100,40],1) #draw a rectangle for the number to go inside
+
+                                        numberimg = self.pusab.render(num,0,[255,255,255])
+                                        screen.blit(numberimg,[100 - len(list(num)) * 3,55])
+
+                                        for event in pygame.event.get():
+                                            if(event.type == pygame.KEYDOWN):
+                                                if(event.key == pygame.K_BACKSPACE): #delete most recent number IF backspace pressed
+                                                    num = list(num)
+                                                    try:
+                                                        del(num[len(num) - 1])
+                                                    except IndexError:
+                                                        pass #we ran out of things we could remove from num, so we don't do anything
+                                                    num = self.ListToStr(num)
+                                                elif(event.key == pygame.K_RETURN):
+                                                    num = int(num)
+                                                    self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] = num
+                                                    self.number = False
+                                                else: #otherwise, add a new number! (provided it's a number, not a letter)
+                                                    try:
+                                                        test = int(self.akey(event.key))
+                                                        num = num + str(self.akey(event.key))
+                                                    except RuntimeError:
+                                                        pass
+                                        
+                                        pygame.display.flip() #screen refresh and FPS cap
+                                        self.clock.tick(10)
+                                else:
+                                    pass #do nothing!
                             else:
                                 for x in range(0,len(enginetypes)):
                                     exec(str(enginetypes[x]) + ".arena[" + str(tiley + editpos[1]) + "][" + str(tilex + editpos[0]) + "] = 0")
@@ -2058,10 +2111,15 @@ class LevelEditor():
                         if(x in collision):
                             if(x == 118):
                                 self.trash = True
+                                self.number = False
+                            if(x == 117):
+                                self.number = True
+                                self.trash = False
                     for x in range(119,137): #block buttons
                         if(x in collision):
                             blocknum = x - 119
                             self.trash = False
+                            self.number = False
                             exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
                             if(blocknum < len(self.tmptiles)):
                                 self.selectedblock = blocknum
@@ -3493,6 +3551,10 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
                     if(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == False):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                    elif(self.selectedform == 'arrow'):
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = -1")
                     elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5): #physics for mini ship might need to be updated eventually...
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.1")
                     elif(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == True):
