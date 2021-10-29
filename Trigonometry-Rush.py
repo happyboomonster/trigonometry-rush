@@ -1904,6 +1904,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         for x in range(0,len(self.keys)):
             if(keynum == self.keys[x][0]):
                 return self.keys[x][1]
+        return "" #if we don't have a keymap for this keypress, return nothing.
 
     def ListToStr(self,milist):
         tmpstr = ""
@@ -1987,9 +1988,6 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             screen.fill(self.bgcolor) #fill our background with BLACK (an excellent way to start a menu)
             self.menuengine.drawimages(self.imageset) #draw ALL our menu's images
 
-            #draw a white square around where we can build
-            pygame.draw.rect(screen,[255,255,255],[10,40,180,50],1)
-
             #draw the level's name
             screen.blit(self.pusab.render(levelname,0,[150,150,150]),[100 - len(levelname) * 3,5])
 
@@ -2003,6 +2001,9 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             self.boosters.lackluster_draw_arena(self.boosters.arena,editpos,[10,40])
             self.bounceballs.lackluster_draw_arena(self.bounceballs.arena,editpos,[10,40])
             self.portals.draw_arena(self.portals.arena,editpos,[10,40])
+
+            #draw a white square around where we can build
+            pygame.draw.rect(screen,[255,255,255],[10,40,180,50],1)
             
             for event in pygame.event.get():
                 if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -2115,12 +2116,78 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
                                 #now we find if a portal has been placed where we clicked
                                 if(self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] != 0):
-                                    num = "0"
+                                    num = "0" #current number variable we typed in
+                                    #create a new pusab font, and make a bunch of surfaces containing the numbers corresponding to the portal functions.
+                                    bigpusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",30)
+                                    portal1 = bigpusab.render("1 = Cube",0,[0,255,0])
+                                    portal3 = bigpusab.render("3 = Ball",0,[0,255,0])
+                                    portal5 = bigpusab.render("5 = Arrow",0,[0,255,0])
+                                    portal7 = bigpusab.render("7 = Gravitycreeper",0,[0,255,0])
+                                    portal9 = bigpusab.render("9 = Reverse-gravity",0,[0,255,0])
+                                    portal11 = bigpusab.render("11 = Left Direction",0,[0,255,0])
+                                    portal13 = bigpusab.render("13 = Teleport Exit",0,[0,255,0])
+                                    portal15 = bigpusab.render("15 = Speed 1x",0,[0,255,0])
+                                    portal17 = bigpusab.render("17 = Speed 3x",0,[0,255,0])
+                                    #even ones
+                                    portal2 = bigpusab.render("2 = Spaceship",0,[0,0,255])
+                                    portal4 = bigpusab.render("4 = Mini",0,[0,0,255])
+                                    portal6 = bigpusab.render("6 = Robot",0,[0,0,255])
+                                    portal8 = bigpusab.render("8 = Normal Gravity",0,[0,0,255])
+                                    portal10 = bigpusab.render("10 = Right Direction",0,[0,0,255])
+                                    portal12 = bigpusab.render("12 = Teleport Entrance",0,[0,0,255])
+                                    portal14 = bigpusab.render("14 = Speed 0.5x",0,[0,0,255])
+                                    portal16 = bigpusab.render("16 = Speed 2x",0,[0,0,255])
+
+                                    #we needs a message tracker...
+                                    numbers = []
+                                    nextmsg = 5
+                                    fourthmsg = 260
+                                    msglist = [["portal" + str(1), 200,0],["portal" + str(2), 220,1],["portal" + str(3), 240,2]]
                                     while self.number: #we can change this number then
                                         screen.fill([0,0,0])
+
+                                        #handle the scrolling portal messages...
+                                        listback = 0
+                                        for x in range(0,len(msglist)): #delete any messages that aren't onscreen
+                                            if(msglist[x + listback][1] < len(list(msglist[x + listback][0])) * -45):
+                                                numbers.append(msglist[x + listback][2])
+                                                del(msglist[x + listback])
+                                                listback -= 1
+                                        if(len(msglist) < 3): #if we don't have 4 messages scrolling, then add another one randomly
+                                            emptypos = 0
+                                            msglist.append(["portal" + str(nextmsg),200,numbers[0]])
+                                            if(nextmsg < 17):
+                                                nextmsg += 1
+                                            else:
+                                                nextmsg = 1
+                                            del(numbers[0])
+                                        for x in range(0,len(msglist)): #move all messages -1 pixels X
+                                           msglist[x][1] -= 3
+                                        #draw all messages
+                                        for x in range(0,len(msglist)):
+                                           exec("screen.blit(" + str(msglist[x][0]) + ",[" + str(msglist[x][1]) + "," + str(msglist[x][2] * 30) + "])")
+                                        #handle msg4
+                                        fourthmsg -= 3
+                                        try:
+                                            selectedportal = "portal" + str(int(num))
+                                            try:
+                                                if(fourthmsg < len(list(selectedportal)) * -45):
+                                                    fourthmsg = 260
+                                            except ValueError:
+                                                pass
+                                        except ValueError:
+                                            pass
+                                        except NameError:
+                                            if(fourthmsg < 20 * -45):
+                                                fourthmsg = 260
+                                        try:
+                                            exec("screen.blit(portal" + str(int(num)) + ",[" + str(fourthmsg) + ",90])")
+                                        except:
+                                            exec("screen.blit(portal" + str(random.randint(1,17)) + ",[" + str(fourthmsg) + ",90])")
+
                                         pygame.draw.rect(screen,[255,0,0],[50,40,100,40],1) #draw a rectangle for the number to go inside
 
-                                        numberimg = self.pusab.render(num,0,[255,255,255])
+                                        numberimg = self.pusab.render(num,0,[255,255,255]) #print our number
                                         screen.blit(numberimg,[100 - len(list(num)) * 3,55])
 
                                         for event in pygame.event.get():
@@ -2133,17 +2200,20 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                                         pass #we ran out of things we could remove from num, so we don't do anything
                                                     num = self.ListToStr(num)
                                                 elif(event.key == pygame.K_RETURN):
-                                                    self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] = int(num)
-                                                    self.number = False
+                                                    try:
+                                                        self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] = int(num)
+                                                        self.number = False
+                                                    except ValueError:
+                                                        pass
                                                 else: #otherwise, add a new number! (provided it's a number, not a letter)
                                                     try:
                                                         test = int(self.akey(event.key))
                                                         num = num + str(self.akey(event.key))
-                                                    except RuntimeError or TypeError:
+                                                    except ValueError:
                                                         pass
                                         
                                         pygame.display.flip() #screen refresh and FPS cap
-                                        self.clock.tick(10)
+                                        self.clock.tick(30)
                                 else:
                                     pass #do nothing!
                             else:
@@ -3199,8 +3269,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #list of all keys pressed at the moment
         keys = []
         #start some music
-        exec("pygame.mixer.music.load('Assets/Music/BackOnTrack.ogg')")#**********************need to change this **********************************************************
-        pygame.mixer.music.play()
+        #exec("pygame.mixer.music.load('Assets/Music/BackOnTrack.ogg')")#**********************need to change this **********************************************************
+        #pygame.mixer.music.play()
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squaresCourse[0])")
         #we've got to switch to While loop!...
