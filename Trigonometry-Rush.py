@@ -29,8 +29,6 @@ videostuff = pygame.display.Info()
 screen = pygame.display.set_mode([200,120],pygame.HWSURFACE | pygame.HWACCEL | pygame.SCALED)
 pygame.display.set_caption('Trigonometry Rush V1.0-RC')
 
-myfolderslash = "/"
-
 def debackslash(string):
     mystr = list(string)
     for x in range(0,len(mystr)):
@@ -2007,6 +2005,10 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     collision = self.menuengine.getcollision(event.pos)
                     if(0 in collision): #exit button
+                        try: #just in case we DON'T save our changes...
+                            outfilename.close()
+                        except UnboundLocalError:
+                            pass
                         running = False
                     elif(1 in collision): #change name button
                         namechanging = True
@@ -2060,6 +2062,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                         else:
                             outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","wb+")
                             pickle.dump(mimetalist,outfilename,2)
+                        outfilename.flush()
                         #put animation here...
                         for yposloop in range(0,40):
                             screen.fill([0,0,0]) #prepare our background
@@ -2133,7 +2136,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                                     try:
                                                         test = int(self.akey(event.key))
                                                         num = num + str(self.akey(event.key))
-                                                    except RuntimeError:
+                                                    except RuntimeError or TypeError:
                                                         pass
                                         
                                         pygame.display.flip() #screen refresh and FPS cap
@@ -2795,7 +2798,7 @@ class Menu():
                 subskins = eval(str(skinname) + "skins")
             listnames.append("skinshape" + str(skinname))
             for subskinname in subskins:
-                exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "/Assets/Skins/" + str(skinname) + myfolderslash +  str(subskinname) + "'))")
+                exec("skinshape" + str(skinname) + ".append(self.load('" + execpath + "/Assets/Skins/" + str(skinname) + "/" + str(subskinname) + "'))")
 
         listlens = []
         for listname in listnames:
