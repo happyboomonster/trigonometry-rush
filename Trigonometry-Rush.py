@@ -1987,6 +1987,9 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             screen.fill(self.bgcolor) #fill our background with BLACK (an excellent way to start a menu)
             self.menuengine.drawimages(self.imageset) #draw ALL our menu's images
 
+            #draw a white square around where we can build
+            pygame.draw.rect(screen,[255,255,255],[10,40,180,50],1)
+
             #draw the level's name
             screen.blit(self.pusab.render(levelname,0,[150,150,150]),[100 - len(levelname) * 3,5])
 
@@ -2992,6 +2995,7 @@ class Menu():
         #note: PMStatus stands for Practice Mode status (Is it True - Practice mode on, or False?)
         global screen
         InMenu = True
+        self.mousepos = [0,0]
         while InMenu:
             #event loop
             for event in pygame.event.get():
