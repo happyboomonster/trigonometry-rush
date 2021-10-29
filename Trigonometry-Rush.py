@@ -1154,7 +1154,7 @@ class CourseBoosters():  #all done
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 6,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,3,'booster'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
-                            self.collidecoords.append([x * 10 + speccoords[0] +_5,y * 10 + speccoords[1] + 5,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,4,'booster'])
+                            self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,4,'booster'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 5):
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,1,'booster'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 6):
@@ -1879,15 +1879,30 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         return tmparena[:]
 
     def resize_arena(self,arena,coords): #checks when the arena is too small and we're gonna get a IndexError. Resizes it from there. #remember, 5*18 arena size!!!
-        if(coords[0] + 18 > len(arena[0])):
-            for x in range(0,len(arena)):
-                arena[x].append(0)
-        if(coords[1] + 15 > len(arena)):
-            tmpline = []
-            for x in range(0,len(arena[0])):
-                tmpline.append(0)
-            arena.append(tmpline[:])
+        while True:
+            tmp = 0
+            if(coords[0] + 18 > len(arena[0])):
+                for x in range(0,len(arena)):
+                    arena[x].append(0)
+                tmp = 1
+            if(coords[1] + 15 > len(arena)):
+                tmpline = []
+                for x in range(0,len(arena[0])):
+                    tmpline.append(0)
+                arena.append(tmpline[:])
+                tmp = 1
+            if(tmp == 0):
+                break
         return arena[:]
+
+    def arena_check(self, arena):
+        lenlist = []
+        for x in range(0,len(arena)):
+            lenlist.append(len(arena[x]))
+        constant = lenlist[0]
+        for x in range(0,len(arena[0])):
+            if(len(arena[x]) != constant):
+                print("You have an inconsistency in your level pickle...Correct it!")
 
     def draw_tile(self,size,tile,colors): #draws a tile of any size and scales it to 10x10
         tmpsurface = pygame.Surface([10,10])
@@ -1967,6 +1982,12 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                 self.portals.arena = self.create_arena()
             levelname = levelin[1]
 
+        self.arena_check(self.squares.arena)
+        self.arena_check(self.triangles.arena)
+        self.arena_check(self.boosters.arena)
+        self.arena_check(self.bounceballs.arena)
+        self.arena_check(self.portals.arena)
+
         #trash can status
         self.trash = False
         self.trashimg = pygame.image.load("Assets/LevelEditor/Trash.png")
@@ -1976,6 +1997,16 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         self.number = False
         self.numberimg = pygame.image.load("Assets/LevelEditor/Number.png")
         self.imageset[117] = self.numberimg
+
+        #move 20 blocks left/right
+        self.twentyleft = pygame.image.load("Assets/LevelEditor/Left.png")
+        self.twentyright = pygame.image.load("Assets/LevelEditor/Right.png")
+        self.imageset[109] = self.twentyright
+        self.imageset[108] = self.twentyleft
+
+        #move 20 blocks up/down
+        self.imageset[107] = pygame.image.load("Assets/LevelEditor/MiniUp.png") #up?
+        self.imageset[110] = pygame.image.load("Assets/LevelEditor/MiniDown.png") #down
 
         while running:
             #make sure our arenasizes are large enough to prevent IndexErrors from occurring
@@ -2227,6 +2258,23 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 117):
                                 self.number = True
                                 self.trash = False
+                            if(x == 108): #move 20 left
+                                if(editpos[0] >= 20):
+                                    editpos[0] -= 20
+                            if(x == 109): #move 20 right
+                                editpos[0] += 20
+                            if(x == 107): #move up 20 blocks
+                                for c in range(0,10):
+                                    if(editpos[1] > 10):
+                                        editpos[1] -= 1
+                                    else:
+                                        self.squares.arena = self.insertrow(self.squares.arena)
+                                        self.triangles.arena = self.insertrow(self.triangles.arena)
+                                        self.boosters.arena = self.insertrow(self.boosters.arena)
+                                        self.bounceballs.arena = self.insertrow(self.bounceballs.arena)
+                                        self.portals.arena = self.insertrow(self.portals.arena)
+                            if(x == 110): #move down 20 blocks
+                                editpos[1] += 10
                     for x in range(119,137): #block buttons
                         if(x in collision):
                             blocknum = x - 119
