@@ -1895,14 +1895,34 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                 break
         return arena[:]
 
-    def arena_check(self, arena):
-        lenlist = []
-        for x in range(0,len(arena)):
-            lenlist.append(len(arena[x]))
-        constant = lenlist[0]
-        for x in range(0,len(arena[0])):
-            if(len(arena[x]) != constant):
-                print("You have an inconsistency in your level pickle...Correct it!")
+    def arena_check(self, arena): #checks arena consistency and tries to repair if possible
+        #repair Y axis check
+        y = 0
+        while (y < len(arena)):
+            try:
+                eval("arena[y]")
+            except IndexError:
+                print("Y Len() desync occurred. Attempting to repair...")
+                arenarow = []
+                for buildarena in range(0,len(arena[0])): #build a single row of arena
+                    arenarow.append(0)
+                for repair in range(0,len(arena) - y): #append our blank arena row to fill the space needed
+                    arena.append(arenarow)
+            y += 1
+        #check all X rows, and fix them if possible (level length defined relative to Row 0, be warned)
+        for x in range(0,y):
+            b = 0
+            while True:
+                try:
+                    eval("arena[x][b]")
+                except IndexError:
+                    if(b + 1 < len(arena[0])):
+                        print("Inconsistencies found on row Y: " + str(x) + ", position " + str(b) + ", " + str(len(arena[0]) - (b + 1)) + " short?")
+                        for append in range(0,len(arena[0]) - (b + 1)):
+                            arena[x].append(0)
+                    break
+                b += 1
+        return arena #return the repaired arena list
 
     def draw_tile(self,size,tile,colors): #draws a tile of any size and scales it to 10x10
         tmpsurface = pygame.Surface([10,10])
@@ -1982,11 +2002,12 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                 self.portals.arena = self.create_arena()
             levelname = levelin[1]
 
-        self.arena_check(self.squares.arena)
-        self.arena_check(self.triangles.arena)
-        self.arena_check(self.boosters.arena)
-        self.arena_check(self.bounceballs.arena)
-        self.arena_check(self.portals.arena)
+        #check arena integrity and repair if needed
+        self.squares.arena = self.arena_check(self.squares.arena)
+        self.triangles.arena = self.arena_check(self.triangles.arena)
+        self.boosters.arena = self.arena_check(self.boosters.arena)
+        self.bounceballs.arena = self.arena_check(self.bounceballs.arena)
+        self.portals.arena = self.arena_check(self.portals.arena)
 
         #trash can status
         self.trash = False
