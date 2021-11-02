@@ -284,7 +284,7 @@ class GD_Figure():
                 return [int(self.pos[0]) + 7,int(self.pos[1]) + 7,int(self.pos[0]) + 9,int(self.pos[1]) + 9]
 
             elif(figureshape == 'ship'):
-                return [int(self.pos[0] + 1),int(self.pos[1] + 6),int(self.pos[0] + 14),int(self.pos[1] + 10)]
+                return [int(self.pos[0] + 1),int(self.pos[1] + 7),int(self.pos[0] + 14),int(self.pos[1] + 9)]
 
             elif(figureshape == 'ball' or figureshape == 'cube'):
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
@@ -293,7 +293,7 @@ class GD_Figure():
                 return [int(self.pos[0]) + 3,int(self.pos[1]) + 3,int(self.pos[0]) + 5,int(self.pos[1]) + 5]
 
             elif(figureshape == 'ship'):
-                return [int(self.pos[0]),int(self.pos[1] + 2),int(self.pos[0] + 7),int(self.pos[1] + 5)]
+                return [int(self.pos[0]),int(self.pos[1] + 3),int(self.pos[0] + 7),int(self.pos[1] + 5)]
 
             elif(figureshape == 'ball' or figureshape == 'cube'):
                 return [int(self.pos[0] + 2),int(self.pos[1] + 2),int(self.pos[0] + 6),int(self.pos[1] + 6)]
@@ -1758,15 +1758,15 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         self.portals = CoursePortals()
 
         self.squares.screen_w = 18 #setting width and height of course render viewport
-        self.squares.screen_h = 5
+        self.squares.screen_h = 10
         self.triangles.screen_w = 18
-        self.triangles.screen_h = 5
+        self.triangles.screen_h = 10
         self.boosters.screen_w = 18
-        self.boosters.screen_h = 5
+        self.boosters.screen_h = 10
         self.bounceballs.screen_w = 18
-        self.bounceballs.screen_h = 5
+        self.bounceballs.screen_h = 10
         self.portals.screen_w = 18
-        self.portals.screen_h = 5
+        self.portals.screen_h = 10
 
         #get pygame surfaces for all course tiles
         OLDcolors = [[0,0,0],[255,0,0],[0,255,0],[0,0,255],[255,255,0]]
@@ -1965,6 +1965,9 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         #color palette for blocks...
         colors = [[0,0,0],[255,255,0],[0,255,0],[255,0,0],[0,0,255]]
 
+        #for highlighting the block we're on
+        mousepos = [0,0]
+
         for x in range(0,18): #set menu block palette images as a set from one of our block engines
             exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
             
@@ -2009,6 +2012,14 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         self.bounceballs.arena = self.arena_check(self.bounceballs.arena)
         self.portals.arena = self.arena_check(self.portals.arena)
 
+        #insert row status
+        self.insertxy = "x"
+        self.insert = False
+        self.insertximg = pygame.image.load("Assets/LevelEditor/InsertX.png")
+        self.insertyimg = pygame.image.load("Assets/LevelEditor/InsertY.png")
+        self.imageset[106] = self.insertximg
+        self.imageset[111] = self.insertyimg
+
         #trash can status
         self.trash = False
         self.trashimg = pygame.image.load("Assets/LevelEditor/Trash.png")
@@ -2038,6 +2049,14 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             self.portals.arena = self.resize_arena(self.portals.arena,editpos)
             
             screen.fill(self.bgcolor) #fill our background with BLACK (an excellent way to start a menu)
+
+            #draw the arena
+            self.squares.draw_arena(self.squares.arena,editpos,[10,40])
+            self.triangles.draw_arena(self.triangles.arena,editpos,[10,40])
+            self.boosters.lackluster_draw_arena(self.boosters.arena,editpos,[10,40])
+            self.bounceballs.lackluster_draw_arena(self.bounceballs.arena,editpos,[10,40])
+            self.portals.draw_arena(self.portals.arena,editpos,[10,40])
+            
             self.menuengine.drawimages(self.imageset) #draw ALL our menu's images
 
             #draw the level's name
@@ -2048,16 +2067,17 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             screen.blit(self.pusab.render("X: " + str(editpos[0]),0,[0,0,255]),[10,100])
             screen.blit(self.pusab.render("Y: " + str(editpos[1]),0,[0,255,0]),[10 + 10 * len(list("X: " + str(editpos[0]))),100])
 
-            self.squares.draw_arena(self.squares.arena,editpos,[10,40])
-            self.triangles.draw_arena(self.triangles.arena,editpos,[10,40])
-            self.boosters.lackluster_draw_arena(self.boosters.arena,editpos,[10,40])
-            self.bounceballs.lackluster_draw_arena(self.bounceballs.arena,editpos,[10,40])
-            self.portals.draw_arena(self.portals.arena,editpos,[10,40])
-
             #draw a white square around where we can build
             pygame.draw.rect(screen,[255,255,255],[10,40,180,50],1)
+
+            #highlight where we're gonna end up triggering a collision box if we click
+            thisx = int(math.floor(mousepos[0] / 10.0) * 10)
+            thisy = int(math.floor(mousepos[1] / 10.0) * 10)
+            pygame.draw.rect(screen,[255,255,255],[thisx,thisy,10,10],1)
             
             for event in pygame.event.get():
+                if(event.type == pygame.MOUSEMOTION):
+                    mousepos = event.pos[:]
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     collision = self.menuengine.getcollision(event.pos)
                     if(0 in collision): #exit button
@@ -2163,8 +2183,25 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                         if(x in collision):
                             tiley = int((x - 9) / 18)
                             tilex = int((x - 9) % 18)
-                            if(self.trash == False and self.number == False):
+                            if(self.trash == False and self.number == False and self.insert == False):
                                 exec(str(enginetypes[selectedblocks]) + ".arena[" + str(tiley + editpos[1]) + "]" + "[" + str(tilex + editpos[0]) + "] = " + str(self.selectedblock + 1))
+                            elif(self.insert == True):
+                                if(self.insertxy == "x"):
+                                    tmplist = []
+                                    for createlist in range(0,len(self.squares.arena[0])):
+                                        tmplist.append(0)
+                                    self.portals.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    self.triangles.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    self.bounceballs.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    self.boosters.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    self.squares.arena.insert(int(tiley + editpos[1]),tmplist)
+                                if(self.insertxy == "y"):
+                                    for listindex in range(0,len(self.squares.arena)):
+                                        self.portals.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                        self.triangles.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                        self.bounceballs.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                        self.boosters.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                        self.squares.arena[listindex].insert(int(tilex + editpos[0]),0)
                             elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
                                 #now we find if a portal has been placed where we clicked
                                 if(self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] != 0):
@@ -2276,9 +2313,11 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 118):
                                 self.trash = True
                                 self.number = False
+                                self.insert = False
                             if(x == 117):
                                 self.number = True
                                 self.trash = False
+                                self.insert = False
                             if(x == 108): #move 20 left
                                 if(editpos[0] >= 20):
                                     editpos[0] -= 20
@@ -2296,11 +2335,22 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                         self.portals.arena = self.insertrow(self.portals.arena)
                             if(x == 110): #move down 20 blocks
                                 editpos[1] += 10
+                            if(x == 106): #insert X
+                                self.insert = True
+                                self.insertxy = "x"
+                                self.trash = False
+                                self.number = False
+                            if(x == 111): #insert Y
+                                self.insert = True
+                                self.insertxy = "y"
+                                self.trash = False
+                                self.number = False
                     for x in range(119,137): #block buttons
                         if(x in collision):
                             blocknum = x - 119
                             self.trash = False
                             self.number = False
+                            self.insert = False
                             exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
                             if(blocknum < len(self.tmptiles)):
                                 self.selectedblock = blocknum
@@ -3217,6 +3267,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             exec("self.gd" + str(x) + " = GD_Figure()")
             exec("self.gd" + str(x) + ".goto([" + str(50 + (10 * x)) + ",60])")
             exec("self.gd" + str(x) + ".shipspeeds = []")  #a very misleading list name which tracks the Y speeds of the GD figure (used in jumping)
+            exec("self.gd" + str(x) + ".positionlog = [60,60,60,60,60,60,60,60,60,60,60,60,60,60,60]") #tracks our Y positions (used in camera control)
             exec("self.gd" + str(x) + ".gdcoordslist = []")
             exec("self.gd" + str(x) + ".jumping = 0")
             exec("self.gd" + str(x) + ".touchingground = 0")
@@ -3301,7 +3352,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
 
         ###############*********** End Of GameLoop Init *******************###################
 
-    def LoadLevel(self,filename): #filename is a string with the path to your level pickle file. - see Assets/Levels/README.md for more info on this...
+    def LoadLevel(self,filename): #filename is a string with the path to your level pickle file.
         if(PYTHON2):
             loadedfile = open(filename, "r")
         elif(PYTHON3):
@@ -3331,7 +3382,8 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         exec("self.y10y = [4,0]")
         for y in range(0,len(self.squaresCourse)):
             if(self.squaresCourse[y][5] != 0):
-                exec("self.y10y = [y - 12,0]")
+                exec("self.y10y = [y - 6,0]")
+                break
         exec("self.x10x = [0,0]")
         #PMtouchingground list
         touchingground = []
@@ -3375,41 +3427,36 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
             self.portals.direction = self.direction
 
             #get the average Y position of everyone on the screen
-            for abcdef in range(0,4):
-                self.avgY = 0
-                self.deadplayers = 0
-                for imrunningoutofvariables in range(0,self.players):
-                    exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")
-                    if(self.handleddead == True):
-                        self.deadplayers += 1
-                        continue
-                    exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
-                try:
-                    self.avgY = int(self.avgY / (self.players - self.deadplayers))
-                except ZeroDivisionError: #this only occurs when everyone's dead and the frame countdown (30 frames?) starts
-                    self.avgY = 45
+            self.avgY = 0
+            self.deadplayers = 0
+            for imrunningoutofvariables in range(0,self.players):
+                exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")
+                if(self.handleddead == True):
+                    self.deadplayers += 1
+                    continue
+                exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".pos[1]")
+                #for idunno in range(0,4): #add a few of the players previous coordinates so the game camera moves more smoothly
+                #    exec("self.avgY += self.gd" + str(imrunningoutofvariables) + ".positionlog[len(self.gd" + str(imrunningoutofvariables) + ".positionlog) - (idunno + 1)]")
+                exec("self.gd" + str(imrunningoutofvariables) + ".positionlog.append(self.gd" + str(imrunningoutofvariables) + ".pos[1])")
+                exec("self.handledpositionlog = self.gd" + str(imrunningoutofvariables) + ".positionlog")
+                if(len(self.handledpositionlog) > 15):
+                    exec("self.gd" + str(imrunningoutofvariables) + ".positionlog.pop(0)")
+            try:
+                self.avgY = int(self.avgY / (self.players - self.deadplayers))
+            except ZeroDivisionError: #this only occurs when everyone's dead and the frame countdown (30 frames?) starts
+                self.avgY = 60
 
-                #move our screen and players around a little based on our avgY variable (set above)
-                if(self.avgY < 30):
-                    if(self.y10y[1] < 9):
-                        self.y10y[1] += 1
-                        for p in range(0,self.players):
-                            exec("self.gd" + str(p) + ".pos[1] += 1")
-                    else:
-                        self.y10y[1] = 0
-                        self.y10y[0] -= 1
-                        for p in range(0,self.players):
-                            exec("self.gd" + str(p) + ".pos[1] += 1")
-                elif(self.avgY > 60):
-                    if(self.y10y[1] > 0):
-                        self.y10y[1] -= 1
-                        for p in range(0,self.players):
-                            exec("self.gd" + str(p) + ".pos[1] -= 1")
-                    else:
-                        self.y10y[1] = 9
-                        self.y10y[0] += 1
-                        for p in range(0,self.players):
-                            exec("self.gd" + str(p) + ".pos[1] -= 1")
+            #move our screen and players around a little based on our avgY variable (set above)
+            if(self.avgY > 80):
+                for p in range(0,self.players):
+                    exec("self.gd" + str(p) + ".pos[1] += 80 - self.avgY")
+                tmpypos = self.y10y[0] * -10 + self.y10y[1] + int(80 - self.avgY)
+                self.y10y = [int(tmpypos / -10),int(tmpypos % -10)]
+            if(self.avgY < 30):
+                for p in range(0,self.players):
+                    exec("self.gd" + str(p) + ".pos[1] += 30 - self.avgY")
+                tmpypos = self.y10y[0] * -10 + self.y10y[1] + int(30 - self.avgY)
+                self.y10y = [int(tmpypos / -10),int(tmpypos % -10)]
 
             #move the effects every third frame (this could almost go in DrawEVERYTHING())
             if(self.x10x[1] % 3 == 0):
