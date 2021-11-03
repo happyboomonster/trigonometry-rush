@@ -252,7 +252,6 @@ class GD_Figure():
                 self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             else:
                 self.extramove = [self.cubecenteredpos[0] - self.rotatedimage.get_rect().center[0],self.cubecenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'arrow'):
             self.rotatedimage = pygame.transform.rotate(self.arrowframe,int(self.angle)).convert_alpha()
             if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing.
@@ -260,7 +259,6 @@ class GD_Figure():
                 self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             else:
                 self.extramove = [self.arrowcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.arrowcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'ship'):
             self.rotatedimage = pygame.transform.rotate(self.shipframe,int(self.angle)).convert_alpha()
             if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing.
@@ -268,7 +266,6 @@ class GD_Figure():
                 self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             else:
                 self.extramove = [self.shipcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.shipcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         elif(figureshape == 'ball'):
             self.rotatedimage = pygame.transform.rotate(self.ballframe,int(self.angle)).convert_alpha()
             if(self.mini == True): #if we're mini form, transform 16x16 image to 1/2 the size before drawing. (AND re-center due to surface size changes)
@@ -276,7 +273,10 @@ class GD_Figure():
                 self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             else:
                 self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
+        if(self.gravity == 1):
             screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+        else:
+            screen.blit(pygame.transform.flip(self.rotatedimage,False,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
 
     def getcoords(self,figureshape='cube'):
         if(self.mini == False):
@@ -3768,8 +3768,7 @@ class GameLoop():
                                 screen.blit(ErrorC,[3,80])
                                 pygame.display.flip()
                                 timelib.sleep(4)
-                        elif(self.returnstatement == "resume"):
-                            timelib.sleep(1)
+                        #nothing happens if resume clicked, just continue in game...
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
