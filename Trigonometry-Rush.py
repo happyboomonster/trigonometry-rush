@@ -3241,7 +3241,7 @@ class Menu():
 
         return self.out
 
-class GameLoop(): #********************** Maybe not so WIP??? *********************************#
+class GameLoop():
     def __init__(self,players,keyconfig,playercolors,playerskins,skinlist):
         #um...  our key configs for each player?  (left, right, jump)
         self.keyconfig = keyconfig
@@ -3353,6 +3353,7 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         ###############*********** End Of GameLoop Init *******************###################
 
     def LoadLevel(self,filename): #filename is a string with the path to your level pickle file.
+        self.filename = filename #used in finding music to this level later
         if(PYTHON2):
             loadedfile = open(filename, "r")
         elif(PYTHON3):
@@ -3390,8 +3391,23 @@ class GameLoop(): #********************** Maybe not so WIP??? ******************
         #list of all keys pressed at the moment
         keys = []
         #start some music
-        #exec("pygame.mixer.music.load('Assets/Music/BackOnTrack.ogg')")#**********************need to change this **********************************************************
-        #pygame.mixer.music.play()
+        filepath = list(self.filename)
+        for delete in range(0,15): #delete "OutputLevel.pkl" from end of filename
+            del(filepath[len(filepath) - 1])
+        Catdfilepath = ""
+        for collect in range(0,len(filepath)):
+            Catdfilepath = Catdfilepath + str(filepath[collect])
+        possiblemusic = os.listdir(Catdfilepath) #filepath to OutputLevel.pkl file
+        #now we sort through all the files in this folder, and find any .OGG ending. If located, Lights, Camera, MUSIC!
+        for locate in range(0,len(possiblemusic)):
+            tmpselection = list(possiblemusic[locate].lower())
+            if(tmpselection[len(tmpselection) - 1] == "g"):
+                if(tmpselection[len(tmpselection) - 2] == "g"):
+                    if(tmpselection[len(tmpselection) - 3] == "o"):
+                        if(tmpselection[len(tmpselection) - 4] == "."):
+                            pygame.mixer.music.load(Catdfilepath + str(possiblemusic[locate]))
+                            pygame.mixer.music.play()
+        
         #make a levellength variable based on out selected level (used in the next line)
         exec("self.LevelLength = len(self.squaresCourse[0])")
         #we've got to switch to While loop!...
