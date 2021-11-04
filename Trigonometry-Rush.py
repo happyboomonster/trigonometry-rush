@@ -1565,9 +1565,8 @@ class BGEffects():
 
 class FGEffects():
     def __init__(self):
-        #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
-        #[[2,10],[[50,90],[20,60]],[[50,50,50],[0,255,0]],[15,framecount + 30]]
         self.pixeleffects = []
+        #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
         #Code for circle effects:  [[beginning size,ending size],[beginning pos,ending pos]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
         self.circleeffects = []
         self.onoff = True
@@ -1587,33 +1586,6 @@ class FGEffects():
         if(self.onoff == False):
             return
         #because of the way I delete old effects, I need this variable
-        self.subtractone = 0
-        for x in range(0,len(self.pixeleffects)):
-            self.selectedeffect = self.pixeleffects[x - self.subtractone]
-
-            #locate beginning frame and ending frame
-            self.end = self.selectedeffect[3][1] + self.selectedeffect[3][0]
-            self.beginning = self.selectedeffect[3][1]
-            #how many frames are we into this effect?
-            self.framesleft = currentframe - self.selectedeffect[3][1]
-            self.effectprogress = self.selectedeffect[3][0] - self.framesleft
-
-            if(currentframe >= self.end):
-                #are we dealing with a "stale" (ended) effect?
-                #if so, delete it, and increment the subtractone...
-                del(self.pixeleffects[x - self.subtractone])
-                #variable to keep track that the list lost a length (IMPORTANT)
-                self.subtractone += 1
-            else:
-                if(self.framesleft > 0):
-                    self.redchange = (self.selectedeffect[2][1][0] - self.selectedeffect[2][0][0]) / float(self.selectedeffect[3][0])
-                    self.greenchange = (self.selectedeffect[2][1][1] - self.selectedeffect[2][0][1]) / float(self.selectedeffect[3][0])
-                    self.bluechange = (self.selectedeffect[2][1][2] - self.selectedeffect[2][0][2]) / float(self.selectedeffect[3][0])
-                    self.newcolor = [self.redchange * self.framesleft + self.selectedeffect[2][0][0],self.greenchange * self.framesleft + self.selectedeffect[2][0][1],self.bluechange * self.framesleft + self.selectedeffect[2][0][2]]
-                    self.xmove = (self.selectedeffect[1][1][0] - self.selectedeffect[1][0][0]) / float(self.selectedeffect[3][0]) #how much to move effect in a single frame on X axis
-                    self.ymove = (self.selectedeffect[1][1][1] - self.selectedeffect[1][0][1]) / float(self.selectedeffect[3][0]) #how much to move effect in a single frame on Y axis
-                    self.sizemove = (self.selectedeffect[0][1] - self.selectedeffect[0][0]) / float(self.selectedeffect[3][0]) #how much to grow effect in a single frame
-                    pygame.draw.rect(screen,self.newcolor,[int(self.xmove * self.framesleft + self.selectedeffect[1][0][0]),int(self.ymove * self.framesleft + self.selectedeffect[1][0][1]),int(self.selectedeffect[0][0] + self.sizemove * self.framesleft),int(self.selectedeffect[0][0] + self.sizemove * self.framesleft)],2)
         self.subtractone = 0
         for x in range(0,len(self.circleeffects)):
             self.selectedeffect = self.circleeffects[x - self.subtractone]
@@ -1641,6 +1613,33 @@ class FGEffects():
                     self.ymove = (self.selectedeffect[1][1][1] - self.selectedeffect[1][0][1]) / float(self.selectedeffect[3][0]) #how much to move effect in a single frame on Y axis
                     self.sizemove = (self.selectedeffect[0][1] - self.selectedeffect[0][0]) / float(self.selectedeffect[3][0]) #how much to grow effect in a single frame
                     pygame.draw.circle(screen,self.newcolor,[int(self.xmove * self.framesleft + self.selectedeffect[1][0][0]),int(self.ymove * self.framesleft + self.selectedeffect[1][0][1])],int(self.selectedeffect[0][0] + self.sizemove * self.framesleft),2)
+        self.subtractone = 0
+        for x in range(0,len(self.pixeleffects)):
+            self.selectedeffect = self.pixeleffects[x - self.subtractone]
+
+            #locate beginning frame and ending frame
+            self.end = self.selectedeffect[3][1] + self.selectedeffect[3][0]
+            self.beginning = self.selectedeffect[3][1]
+            #how many frames are we into this effect?
+            self.framesleft = currentframe - self.selectedeffect[3][1]
+            self.effectprogress = self.selectedeffect[3][0] - self.framesleft
+
+            if(currentframe >= self.end):
+                #are we dealing with a "stale" (ended) effect?
+                #if so, delete it, and increment the subtractone...
+                del(self.pixeleffects[x - self.subtractone])
+                #variable to keep track that the list lost a length (IMPORTANT)
+                self.subtractone += 1
+            else:
+                if(self.framesleft > 0):
+                    self.redchange = (self.selectedeffect[2][1][0] - self.selectedeffect[2][0][0]) / float(self.selectedeffect[3][0])
+                    self.greenchange = (self.selectedeffect[2][1][1] - self.selectedeffect[2][0][1]) / float(self.selectedeffect[3][0])
+                    self.bluechange = (self.selectedeffect[2][1][2] - self.selectedeffect[2][0][2]) / float(self.selectedeffect[3][0])
+                    self.newcolor = [self.redchange * self.framesleft + self.selectedeffect[2][0][0],self.greenchange * self.framesleft + self.selectedeffect[2][0][1],self.bluechange * self.framesleft + self.selectedeffect[2][0][2]]
+                    self.xmove = (self.selectedeffect[1][1][0] - self.selectedeffect[1][0][0]) / float(self.selectedeffect[3][0]) #how much to move effect in a single frame on X axis
+                    self.ymove = (self.selectedeffect[1][1][1] - self.selectedeffect[1][0][1]) / float(self.selectedeffect[3][0]) #how much to move effect in a single frame on Y axis
+                    self.sizemove = (self.selectedeffect[0][1] - self.selectedeffect[0][0]) / float(self.selectedeffect[3][0]) #how much to grow effect in a single frame
+                    pygame.draw.rect(screen,self.newcolor,[int(self.xmove * self.framesleft + self.selectedeffect[1][0][0]),int(self.ymove * self.framesleft + self.selectedeffect[1][0][1]),int(self.selectedeffect[0][0] + self.sizemove * self.framesleft),int(self.selectedeffect[0][0] + self.sizemove * self.framesleft)],2)
 
 class MenuEngine():
     def __init__(self,images,placement):
@@ -1968,12 +1967,36 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                 self.portals.arena = self.create_arena()
             levelname = levelin[1]
 
-        #check arena integrity and repair if needed
+        #check arena integrity and repair if needed and make a loading screen so it looks ok
+        screen.fill([0,0,0]) #loading bar at 0%
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,1,100],0)
+        pygame.display.flip()
         self.squares.arena = self.arena_check(self.squares.arena)
+        screen.fill([0,0,0]) #loading bar at 20% roughly
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,40,100],0)
+        pygame.display.flip()
         self.triangles.arena = self.arena_check(self.triangles.arena)
+        screen.fill([0,0,0]) #loading bar at 40% roughly
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,80,100],0)
+        pygame.display.flip()
         self.boosters.arena = self.arena_check(self.boosters.arena)
+        screen.fill([0,0,0]) #loading bar at 60% roughly
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,120,100],0)
+        pygame.display.flip()
         self.bounceballs.arena = self.arena_check(self.bounceballs.arena)
+        screen.fill([0,0,0]) #loading bar at 80% roughly
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,155,100],0)
+        pygame.display.flip()
         self.portals.arena = self.arena_check(self.portals.arena)
+        screen.fill([0,0,0]) #loading bar at 100%
+        pygame.draw.rect(screen,[255,0,0],[0,0,200,120],5)
+        pygame.draw.rect(screen,[0,255,0],[10,10,180,100],0)
+        pygame.display.flip()
 
         #insert row status
         self.insertxy = "x"
@@ -3330,6 +3353,9 @@ class GameLoop():
         #frameskip variable
         self.frameskip = 0
 
+        #Y offset variable for when an explosion occurs
+        self.explodeoffset = 0
+
         #some other things related to frameskip
         self.lastframe = 0
         self.framecount = 0
@@ -3380,7 +3406,7 @@ class GameLoop():
         #when we exit the loop, we need to give out something to tell what we wanted to do
         self.returnstatement = "won"
         #a countdown variable that gives a few frames left after the last person dies so he can have a glorious explosion like everyone else.
-        self.framecountdown = 20
+        self.framecountdown = 60
         #for some reason or other, fgeffects has a bug that requires reinit every time the level is restarted.
         self.fgeffects.cleareffects()
         self.avgY = 1
@@ -3438,7 +3464,7 @@ class GameLoop():
                 if(self.direction == 'right'):
                     exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
                 elif(self.direction == 'left'):
-                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(150 - 10 * imrunningoutofvariables) + ")")
+                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(140 - 10 * imrunningoutofvariables) + ")")
 
             #erase the screen with whatever bgcolor is for next frame
             screen.fill(self.bgcolor)
@@ -3503,6 +3529,9 @@ class GameLoop():
 
             #(JUMPING) collision stuff begins here.
             for imrunningoutofvariables in range(0,self.players):
+                exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")
+                if(self.handleddead == True):
+                    continue #don't bother computing this bloated jumping script if not needed
                 exec("self.gd" + str(imrunningoutofvariables) + ".shipspeeds.append(self.gd" + str(imrunningoutofvariables) + ".Yspeed)")
                 exec("self.selectedshipspeeds = self.gd" + str(imrunningoutofvariables) + ".shipspeeds")
                 exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
@@ -3611,6 +3640,8 @@ class GameLoop():
                 exec("self.handledgravity = self.gd" + str(CryingOutLoud) + ".gravity")
                 exec("self.handlednojump = self.gd" + str(CryingOutLoud) + ".nojump")
                 exec("self.handleddead = self.gd" + str(CryingOutLoud) + ".dead")
+                if(self.handleddead == True): #don't bother computing this trash if the player's already dead
+                    continue
                 if(self.handledform == 'cube' or self.handledform == 'ball'):
                     exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
@@ -3650,30 +3681,42 @@ class GameLoop():
 
                 #portal collision and what happens
                 exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                if('portal#1' in self.gdcollision):
+                if('portal#1' in self.gdcollision): #change to cube
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
-                if('portal#2' in self.gdcollision):
+                if('portal#2' in self.gdcollision): #change to ship
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'ship'")
                     exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                if('portal#3' in self.gdcollision):
+                if('portal#3' in self.gdcollision): #change to ball
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'ball'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                if('portal#4' in self.gdcollision):
+                if('portal#4' in self.gdcollision): #activate mini status
                     exec("self.gd" + str(CryingOutLoud) + ".mini = True")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
-                if('portal#5' in self.gdcollision):
+                if('portal#5' in self.gdcollision): #activate arrow
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'arrow'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                if('portal#8' in self.gdcollision):
+                if('portal#8' in self.gdcollision): #activate normal gravity
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".gravity = 1")
-                if('portal#9' in self.gdcollision):
+                if('portal#9' in self.gdcollision): #activate reverse gravity
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
+                if("portal#14" in self.gdcollision): #activate speed 0.5x
+                    self.gamespeed = 1
+                if("portal#15" in self.gdcollision): #activate speed 1x
+                    self.gamespeed = 2
+                if("portal#16" in self.gdcollision): #activate speed 2x
+                    self.gamespeed = 3
+                if("portal#17" in self.gdcollision): #activate speed 3x
+                    self.gamespeed = 4
+                if("portal#10" in self.gdcollision): #activate move right
+                    self.direction = "right"
+                if("portal#11" in self.gdcollision): #activate move left
+                    self.direction = "left"
 
                 #booster collision handling
                 exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
@@ -3714,10 +3757,30 @@ class GameLoop():
                     exec("self.gd" + str(CryingOutLoud) + ".rotating = 1")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
 
+            #here we take the "exploding" values, and make sure that we get the explosion effects started.
+            for explodeplayer in range(0,self.players):
+                exec("self.handledexploding = self.gd" + str(explodeplayer) + ".exploding")
+                exec("self.handledpos = self.gd" + str(explodeplayer) + ".pos")
+                self.handledcolor = []
+                exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorA)")
+                exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorB)")
+                exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorC)")
+                if(self.handledexploding == True):
+                    exec("self.gd" + str(explodeplayer) + ".exploding = False")
+                    #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
+                    #Code for circle effects:  [[beginning size,ending size],[beginning pos,ending pos]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
+                    for createpixels in range(0,20):
+                        for howmanyperframe in range(0,10):
+                            randomizerx = random.randint(-40,40)
+                            randomizery = random.randint(-40,40)
+                            self.fgeffects.addeffect("pixel",[[1,6],[[self.handledpos[0] + 4,self.handledpos[1] + 4],[self.handledpos[0] + 4 + randomizerx,self.handledpos[1] + 4 + randomizery]],[self.handledcolor[2],self.handledcolor[2]],[15,self.framecount + int(createpixels / 2) + 1]])
+                    for createcircles in range(0,10):
+                        self.fgeffects.addeffect("circle",[[1,40],[[self.handledpos[0],self.handledpos[1]],[self.handledpos[0],self.handledpos[1]]],[self.handledcolor[0],self.handledcolor[1]],[20,self.framecount + createcircles + 1]])
+
             self.bool = []
             for pq in range(0,self.players):
                 self.bool.append(self.deadlist[pq][1])
-                
+
             if(False not in self.bool):
                 self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
                 self.returnstatement = "dead"
@@ -3853,9 +3916,6 @@ class GameLoop():
     def DrawEVERYTHING(self,x10x,y10y,choice,attempts):
         #draw the BGEffects
         self.effects.draweffects()
-        
-        #draw the FGEffects
-        self.fgeffects.draweffects(self.framecount)
             
         #draw the various components of the arena
         exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
@@ -3863,6 +3923,9 @@ class GameLoop():
         exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
         exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
         exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
+
+        #draw the FGEffects (moved here to draw effects overtop of arena)
+        self.fgeffects.draweffects(self.framecount)
 
         #draw the GD figure
         for imrunningoutofvariables in range(0,self.players):
