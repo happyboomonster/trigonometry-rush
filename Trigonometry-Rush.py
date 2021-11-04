@@ -2022,6 +2022,19 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             
             self.menuengine.drawimages(self.imageset) #draw ALL our menu's images
 
+            #if our trash is turned on, make sure people know what state trash is in...
+            if(self.trash == True):
+                pygame.draw.line(screen,[255,0,0],[200,20],[190,30],1)
+            #do a similar thing for the insert buttons...
+            if(self.insert == True):
+                if(self.insertxy == "x"):
+                    pygame.draw.line(screen,[255,0,0],[80,20],[70,30],1)
+                else:
+                    pygame.draw.line(screen,[255,0,0],[130,20],[120,30],1)
+            #annnd...the portal# button
+            if(self.number == True):
+                pygame.draw.line(screen,[255,255,255],[190,20],[180,30],1)
+
             #draw the level's name
             screen.blit(self.pusab.render(levelname,0,[150,150,150]),[100 - len(levelname) * 3,5])
 
@@ -2295,13 +2308,18 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                     for x in range(99,119): #settings buttons
                         if(x in collision):
                             if(x == 118): #trash
-                                self.trash = True
-                                self.number = False
-                                self.insert = False
+                                if(self.trash == False):
+                                    self.trash = True
+                                    self.number = False
+                                else:
+                                    self.trash = False
                             if(x == 117): #number for portals
-                                self.number = True
-                                self.trash = False
-                                self.insert = False
+                                if(self.number == False):
+                                    self.number = True
+                                    self.trash = False
+                                    self.insert = False
+                                else:
+                                    self.number = False
                             if(x == 108): #move 20 left
                                 if(editpos[0] >= 20):
                                     editpos[0] -= 20
@@ -2320,13 +2338,19 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 110): #move down 20 blocks
                                 editpos[1] += 10
                             if(x == 106): #insert X
-                                self.insert = True
-                                self.insertxy = "x"
-                                self.number = False
+                                if(self.insert == False or self.insertxy == "y"):
+                                    self.insert = True
+                                    self.insertxy = "x"
+                                    self.number = False
+                                else:
+                                    self.insert = False
                             if(x == 111): #insert Y
-                                self.insert = True
-                                self.insertxy = "y"
-                                self.number = False
+                                if(self.insert == False or self.insertxy == "x"):
+                                    self.insert = True
+                                    self.insertxy = "y"
+                                    self.number = False
+                                else:
+                                    self.insert = False
                     for x in range(119,137): #block buttons
                         if(x in collision):
                             blocknum = x - 119
