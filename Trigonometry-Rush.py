@@ -224,14 +224,9 @@ class GD_Figure():
         self.pos[0] = goto[0]
         self.pos[1] = goto[1]
 
-    def rotate(self,gravity,figureshape ='cube'):
+    def rotate(self,figureshape ='cube'):
         if(figureshape == 'cube' or figureshape == 'ball'):
-            if(gravity == 1):
-                self.angle = self.angle - 4.5
-            elif(gravity != 1):
-                self.angle = self.angle + 4.5
-            else:
-                self.angle = 360
+            self.angle = self.angle - 4.5
         elif(figureshape == 'arrow'):
             if(self.angle > 0):
                 self.angle = 360
@@ -243,7 +238,7 @@ class GD_Figure():
     def setrotate(self,inframe):
         self.angle = inframe
 
-    def draw(self,figureshape='cube'):
+    def draw(self,figureshape='cube',direction='right'):
         global screen
         if(figureshape == 'cube'):
             self.rotatedimage = pygame.transform.rotate(self.cubeframe,int(self.angle)).convert_alpha()
@@ -273,10 +268,16 @@ class GD_Figure():
                 self.extramove = [self.minicenteredpos[0] - self.rotatedimage.get_rect().center[0],self.minicenteredpos[1] - self.rotatedimage.get_rect().center[1]]
             else:
                 self.extramove = [self.ballcenteredpos[0] - self.rotatedimage.get_rect().center[0],self.ballcenteredpos[1] - self.rotatedimage.get_rect().center[1]]
-        if(self.gravity == 1):
-            screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+        if(direction == 'right'):
+            if(self.gravity == 1):
+                screen.blit(self.rotatedimage,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+            else:
+                screen.blit(pygame.transform.flip(self.rotatedimage,False,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         else:
-            screen.blit(pygame.transform.flip(self.rotatedimage,False,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+            if(self.gravity == 1):
+                screen.blit(pygame.transform.flip(self.rotatedimage),True,False,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+            else:
+                screen.blit(pygame.transform.flip(self.rotatedimage,True,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
 
     def getcoords(self,figureshape='cube'):
         if(self.mini == False):
@@ -700,7 +701,7 @@ class CourseBounceballs(): # all done
     def __init__(self):
         self.direction = 'right'
         self.colorA = [255,0,255]
-        self.colorB = [0,255,255]
+        self.colorB = [255,255,0]
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
 
@@ -819,27 +820,10 @@ class CourseBounceballs(): # all done
                                 for z in range(0,1):
                                     randomizerx = random.randint(-5,15)
                                     randomizery = random.randint(-5,15)
-                                    fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time - time / 10 + randomizerx,y * 10 + speccoords[1] + randomizery]],[effectcolor,effectcolor],[time,currentframe + 1]])
+                                    fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time + randomizerx,y * 10 + speccoords[1] + randomizery]],[effectcolor,effectcolor],[int(time / gamespeed),currentframe + 1]])
                                 if(currentframe % time - 8 == 0 and time >= 8):
-                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
-                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
-                        elif(currentmap[coords[1] + y][coords[0] + x] <= 8 and currentframe % 4 == 0):
-                            if(currentmap[coords[1] + y][coords[0] + x] == 5):
-                                effectcolor = self.colorA[:]
-                            elif(currentmap[coords[1] + y][coords[0] + x] == 6):
-                                effectcolor = self.colorB[:]
-                            elif(currentmap[coords[1] + y][coords[0] + x] == 7):
-                                effectcolor = self.colorC[:]
-                            elif(currentmap[coords[1] + y][coords[0] + x] == 8):
-                                effectcolor = self.colorD[:]
-                            if(self.direction == 'right'):
-                                for z in range(0,1):
-                                    randomizerx = random.randint(-5,15)
-                                    randomizery = random.randint(-5,15)
-                                    fgeffects.addeffect('pixel',[[4,1],[[x *  10 + speccoords[0] + 5,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] - time - time / 10 + randomizerx,y * 10 + speccoords[1] + 10 + randomizery]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
-                                if(currentframe % time - 8 == 0 and time >= 8):
-                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1]])
-                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - time / 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
+                                    fgeffects.addeffect('circle',[[1,10],[[x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - int(time / 2) * gamespeed,y * 10 + speccoords[1] + 5]],[effectcolor,effectcolor],[int(time / 2),currentframe + 1]])
+                                    fgeffects.addeffect('circle',[[10,1],[[x * 10 + speccoords[0] + 2 - int(time / 2) * gamespeed,y * 10 + speccoords[1] + 5],[x * 10 + speccoords[0] + 2 - (time * gamespeed),y * 10 + speccoords[1] + 5]],[effectcolor,effectcolor],[int(time / 2),currentframe + 1 + time / 2]])
         if(self.direction == 'left'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -860,7 +844,7 @@ class CourseBounceballs(): # all done
                             for z in range(0,1):
                                 randomizerx = random.randint(-5,15)
                                 randomizery = random.randint(-5,15)
-                                fgeffects.addeffect('pixel',[[4,1],[[newx * 10 + speccoords[0] + 5,newy * 10 + speccoords[1] + 5],[newx * 10 + speccoords[0] + time + time / 10 + randomizerx,newy * 10 + speccoords[1] + randomizery]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
+                                fgeffects.addeffect('pixel',[[4,1],[[newx * 10 + speccoords[0] + 5,newy * 10 + speccoords[1] + 5],[newx * 10 + speccoords[0] + time * gamespeed + randomizerx,newy * 10 + speccoords[1] + randomizery]],[effectcolor,effectcolor],[time,currentframe + 1]])
                             if(currentframe % time - 8 == 0 and time >= 8):
                                 fgeffects.addeffect('circle',[[1,10],[[newx * 10 + 7 + speccoords[0],newy * 10 + 5 + speccoords[1]],[newx * 10 + 7 + speccoords[0] + (time / 2) * gamespeed,newy * 10 + 5 + speccoords[1]]],[effectcolor,effectcolor],[time / 2,currentframe + 1]])
                                 fgeffects.addeffect('circle',[[10,1],[[newx * 10 + 8 + speccoords[0] + time / 2,newy * 10 + 5 + speccoords[1]],[newx * 10 + speccoords[0] + 8 + (time * gamespeed),newy * 10 + 5 + speccoords[1]]],[effectcolor,[0,0,0]],[time / 2,currentframe + 1 + time / 2]])
@@ -1071,7 +1055,7 @@ class CourseBoosters():  #all done
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
                         #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
                         if(currentmap[coords[1] + y][coords[0] + x] <= 4 and currentframe % 2 == 0):
-                            if(currentmap[coords[1] + y][coords[0] + x] == 1):
+                            if(currentmap[coords[1] + y][coords[0] + x] == 1): #set our effect colour we are going to create
                                 effectcolor = self.colorA[:]
                             elif(currentmap[coords[1] + y][coords[0] + x] == 2):
                                 effectcolor = self.colorB[:]
@@ -1081,9 +1065,9 @@ class CourseBoosters():  #all done
                                 effectcolor = self.colorD[:]
                             for z in range(0,gamespeed):
                                 randomizer = random.randint(0,10)
-                                fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + randomizer,y * 10 + speccoords[1] + 9],[(x * 10 + speccoords[0] - time + randomizer),y * 10 + speccoords[1]]],[effectcolor,[0,0,0]],[time / gamespeed,currentframe + 1]])
+                                fgeffects.addeffect('pixel',[[4,1],[[x * 10 + speccoords[0] + randomizer,y * 10 + speccoords[1] + 9],[x * 10 + speccoords[0] - time * gamespeed + randomizer,y * 10 + speccoords[1]]],[effectcolor,effectcolor],[time,currentframe + 1]])
                         elif(currentmap[coords[1] + y][coords[0] + x] <= 8 and currentframe % 2 == 0):
-                            if(currentmap[coords[1] + y][coords[0] + x] == 5):
+                            if(currentmap[coords[1] + y][coords[0] + x] == 5): #set our effect colour
                                 effectcolor = self.colorA[:]
                             elif(currentmap[coords[1] + y][coords[0] + x] == 6):
                                 effectcolor = self.colorB[:]
@@ -1093,7 +1077,7 @@ class CourseBoosters():  #all done
                                 effectcolor = self.colorD[:]
                             for z in range(0,gamespeed):
                                 randomizer = random.randint(0,10)
-                                fgeffects.addeffect('pixel',[[4,1],[[x *  10 + speccoords[0] + randomizer,y * 10 + speccoords[1] + 1],[(x * 10 + speccoords[0] - time * gamespeed + randomizer),y * 10 + speccoords[1] + 10]],[effectcolor,[0,0,0]],[time / gamespeed,currentframe + 1]])
+                                fgeffects.addeffect('pixel',[[4,1],[[x *  10 + speccoords[0] + randomizer,y * 10 + speccoords[1] + 1],[x * 10 + speccoords[0] - time * gamespeed + randomizer,y * 10 + speccoords[1] + 10]],[effectcolor,effectcolor],[time,currentframe + 1]])
         elif(self.direction == 'left'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -1102,7 +1086,7 @@ class CourseBoosters():  #all done
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
                         #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
-                        if(currentmap[coords[1] + y][coords[0] + x] <= 4 and currentframe % 2 == 0):
+                        if(currentmap[coords[1] + y][coords[0] + x] <= 4 and currentframe % 2 == 0): #set our effect colors
                             if(currentmap[coords[1] + y][coords[0] + x] == 1):
                                 effectcolor = self.colorA[:]
                             elif(currentmap[coords[1] + y][coords[0] + x] == 2):
@@ -1113,8 +1097,8 @@ class CourseBoosters():  #all done
                                 effectcolor = self.colorD[:]
                             for z in range(0,gamespeed):
                                 randomizer = random.randint(0,10)
-                                fgeffects.addeffect('pixel',[[4,1],[[newx * 10 + speccoords[0] + randomizer,newy * 10 + speccoords[1] + 9],[newx * 10 + speccoords[0] + time + randomizer,newy * 10 + speccoords[1]]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
-                        elif(currentmap[coords[1] + y][coords[0] + x] <= 8 and currentframe % 2 == 0):
+                                fgeffects.addeffect('pixel',[[4,1],[[newx * 10 + speccoords[0] + randomizer,newy * 10 + speccoords[1] + 9],[newx * 10 + speccoords[0] + time * gamespeed + randomizer,newy * 10 + speccoords[1]]],[effectcolor,effectcolor],[time,currentframe + 1]])
+                        elif(currentmap[coords[1] + y][coords[0] + x] <= 8 and currentframe % 2 == 0): #set our effect colors
                             if(currentmap[coords[1] + y][coords[0] + x] == 5):
                                 effectcolor = self.colorA[:]
                             elif(currentmap[coords[1] + y][coords[0] + x] == 6):
@@ -1125,7 +1109,7 @@ class CourseBoosters():  #all done
                                 effectcolor = self.colorD[:]
                             for z in range(0,gamespeed):
                                 randomizer = random.randint(0,10)
-                                fgeffects.addeffect('pixel',[[4,1],[[newx *  10 + speccoords[0] + randomizer,newy * 10 + speccoords[1] + 1],[newx * 10 + speccoords[0] + time + randomizer,newy * 10 + speccoords[1] + 10]],[effectcolor,[0,0,0]],[time,currentframe + 1]])
+                                fgeffects.addeffect('pixel',[[4,1],[[newx *  10 + speccoords[0] + randomizer,newy * 10 + speccoords[1] + 1],[newx * 10 + speccoords[0] + time * gamespeed + randomizer,newy * 10 + speccoords[1] + 10]],[effectcolor,effectcolor],[time,currentframe + 1]])
 
     def lackluster_draw_arena(self,currentmap,coords,speccoords): #more basic version of draw_arena(). used in class LevelEditor()
         if(self.direction == 'right'):
@@ -1528,8 +1512,11 @@ class BGEffects():
     def __init__(self):
         self.effectspos = []
         self.effectscolor = [40,40,40]
+        self.onoff = True
 
     def moveeffects(self,direction):
+        if(self.onoff == False):
+            return
         if(direction == 'right'):
             for x in range(0,len(self.effectspos)):
                 if(self.effectspos[x][0] < 210 + self.effectspos[x][3]):
@@ -1556,7 +1543,8 @@ class BGEffects():
                     self.effectspos[x][1] = 0 - self.effectspos[x][3]
 
     def createeffect(self,coords,shape,size,speed):
-        self.effectspos.append([coords[0],coords[1],shape,size,speed])
+        if(self.onoff == True):
+            self.effectspos.append([coords[0],coords[1],shape,size,speed])
 
     def setcolor(self,color):
         self.effectscolor = color[:]
@@ -1565,6 +1553,8 @@ class BGEffects():
         return self.effectscolor
 
     def draweffects(self):
+        if(self.onoff == False):
+            return
         for x in range(0,len(self.effectspos)):
             if(self.effectspos[x][2] == 'circle'):
                 pygame.draw.circle(screen,self.effectscolor,[self.effectspos[x][0],self.effectspos[x][1]],self.effectspos[x][3],5)
@@ -1580,14 +1570,22 @@ class FGEffects():
         self.pixeleffects = []
         #Code for circle effects:  [[beginning size,ending size],[beginning pos,ending pos]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
         self.circleeffects = []
+        self.onoff = True
+
+    def cleareffects(self):
+        self.pixeleffects = []
+        self.circleeffects = []
 
     def addeffect(self,EffectType,specs):
-        if(EffectType == 'pixel'):
-           self.pixeleffects.append(specs[:])
-        elif(EffectType == 'circle'):
-           self.circleeffects.append(specs[:])
+        if(self.onoff == True): #only do something if we're actually gonna be using it
+            if(EffectType == 'pixel'):
+               self.pixeleffects.append(specs[:])
+            elif(EffectType == 'circle'):
+               self.circleeffects.append(specs[:])
 
     def draweffects(self,currentframe):
+        if(self.onoff == False):
+            return
         #because of the way I delete old effects, I need this variable
         self.subtractone = 0
         for x in range(0,len(self.pixeleffects)):
@@ -3373,11 +3371,11 @@ class GameLoop():
         #set key repeat
         pygame.key.set_repeat(5,5)
         #when we exit the loop, we need to give out something to tell what we wanted to do
-        self.returnstatement = "dead"
+        self.returnstatement = "won"
         #a countdown variable that gives a few frames left after the last person dies so he can have a glorious explosion like everyone else.
         self.framecountdown = 20
         #for some reason or other, fgeffects has a bug that requires reinit every time the level is restarted.
-        self.fgeffects.__init__()
+        self.fgeffects.cleareffects()
         self.avgY = 1
         #give us a starting position
         exec("self.y10y = [4,0]")
@@ -3435,6 +3433,9 @@ class GameLoop():
                 elif(self.direction == 'left'):
                     exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(150 - 10 * imrunningoutofvariables) + ")")
 
+            #erase the screen with whatever bgcolor is for next frame
+            screen.fill(self.bgcolor)
+
             #set some object variables so the course knows which way we're going
             self.triangles.direction = self.direction
             self.squares.direction = self.direction
@@ -3491,7 +3492,7 @@ class GameLoop():
                 exec("self.selectedform = self.gd" + str(imrunningoutofvariables) + ".form")
                 if(self.selectedrotating == 1):
                     for c in range(0,self.gamespeed):
-                        exec("self.gd" + str(imrunningoutofvariables) + ".rotate(self.selectedgravity,self.selectedform)")
+                        exec("self.gd" + str(imrunningoutofvariables) + ".rotate(self.selectedform)")
 
             #(JUMPING) collision stuff begins here.
             for imrunningoutofvariables in range(0,self.players):
@@ -3712,6 +3713,7 @@ class GameLoop():
                 
             if(False not in self.bool):
                 self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
+                self.returnstatement = "dead"
                 for CryingOutLoud in range(0,self.players):
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
 
@@ -3742,10 +3744,17 @@ class GameLoop():
             for event in pygame.event.get():
                 if(event.type == pygame.QUIT):
                     pygame.quit()
-                if(event.type == pygame.KEYUP):
+                elif(event.type == pygame.MOUSEBUTTONDOWN): #useful for 1 player, mouse works better...
+                    keys.append('mouse')
+                elif(event.type == pygame.MOUSEBUTTONUP):
+                    try:
+                        keys.remove('mouse')
+                    except ValueError:
+                        pass
+                elif(event.type == pygame.KEYUP):
                     if(event.key in keys):
                         keys.remove(event.key)
-                if(event.type == pygame.KEYDOWN):
+                elif(event.type == pygame.KEYDOWN):
                     if(event.key not in keys):
                         keys.append(event.key)
                     if(event.key == pygame.K_ESCAPE):
@@ -3772,7 +3781,7 @@ class GameLoop():
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
-                if(self.keyconfig[CryingOutLoud][2] in keys):
+                if(self.keyconfig[CryingOutLoud][2] in keys or 'mouse' in keys):
                     exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
                     exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
                     exec("self.selectedYspeed = self.gd" + str(CryingOutLoud) + ".Yspeed")
@@ -3816,9 +3825,6 @@ class GameLoop():
             if(int(self.clock.get_fps()) < self.fps / 4 * 3 and self.framecount > 20 and self.lastframe + 20 < self.framecount):
                 self.lastframe = self.framecount
                 print("SLOW DOOOOOOOWWWWNNN!")
-
-            #erase the screen with whatever bgcolor is for next frame
-            screen.fill(self.bgcolor)
 
             #exactly what are our highs and lows in FPS drops/overshoots?
             self.tmpfps = self.clock.get_fps()#we don't need to init this variable.
@@ -3982,6 +3988,8 @@ mimenu = Menu()
 migameloop = GameLoop(1,keyconfig,playercolors,playerskins,mimenu.skintypes)
 PlayerNumber = 1
 Exit = False
+clock = pygame.time.Clock() #create a clock which is used in the Level Complete menu
+settingsout = [['volume', 'analog', 100, 100], ['player #', 'analog', 1, 10], ['FG-Effects', 'I/O', 'On'], ['BG-Effects', 'I/O', 'On'], ['PP-Effects', 'I/O', 'Off']] #needed for checking whether to use FGeffects etc.
 
 while True:
     choice1 = mimenu.FrontMenu()
@@ -3997,8 +4005,101 @@ while True:
                 migameloop.LoadLevel(milevelchoice)
                 while True:
                     migameloop.__init__(PlayerNumber,keyconfig,playercolors,playerskins,mimenu.skintypes)
+                    #Turn on or off FG-Effects in game
+                    index = 0
+                    while "FG-Effects" not in settingsout[index]:
+                        index += 1
+                    if(settingsout[index][2] == "Off"):
+                        migameloop.fgeffects.onoff = False
+                    else:
+                        migameloop.fgeffects.onoff = True
+                    #Turn on or off BG-Effects in game
+                    index = 0
+                    while "BG-Effects" not in settingsout[index]:
+                        index += 1
+                    if(settingsout[index][2] == "Off"):
+                        migameloop.effects.onoff = False
+                    else:
+                        migameloop.effects.onoff = True
+                    #start game!
                     returnstatement = migameloop.GameLoop(milevelchoice,Attempts)
                     pygame.mixer.music.stop()
+                    if(returnstatement == "won"):
+                        for x in range(0,50): #fade out the screen... *darkness*
+                            myscreen = pygame.Surface([200,120]) #create a copy of our screen
+                            myscreen.blit(screen,[0,0])
+                            for changex in range(0,200):
+                                for changey in range(0,120):
+                                    tmppixel = myscreen.get_at([changex,changey])
+                                    if(tmppixel[0] > 4):
+                                        tmppixel[0] -= 5
+                                    if(tmppixel[1] > 4):
+                                        tmppixel[1] -= 5
+                                    if(tmppixel[2] > 4):
+                                        tmppixel[2] -= 5
+                                    myscreen.set_at([changex,changey],tmppixel)
+                            screen.blit(myscreen,[0,0])
+                            pygame.display.flip()
+                            clock.tick(52)
+                            #K...so after we fade out the screen, BLACK
+                        screen.fill([0,0,0]) #everyone's favourite background color
+                        pygame.display.flip()
+                        
+                        #make some *You beat X Level* text show up!
+                        prelevelname = list(milevelchoice)
+                        for x in range(0,len("/OutputLevel.pkl")): #remove the "OutputLevel.pkl" and the first forwardslash from the name...
+                            del(prelevelname[len(prelevelname) - 1])
+                        char = ""
+                        offset = 0
+                        levelname = ""
+                        while True:
+                            char = prelevelname[len(prelevelname) - 1 - offset]
+                            if(char != "/"):
+                                levelname = char + levelname
+                            else:
+                                break
+                            offset += 1
+                            
+                        levelmsg = mimenu.pusab.render(levelname,0,[255,255,255]) #get our messages to be displayed set up
+                        completedmsg = mimenu.pusab.render("completed!",0,[255,255,255])
+                        continuebutton = mimenu.pusab.render("Continue",0,[0,255,0])
+                        pygame.draw.rect(continuebutton,[255,255,255],[0,0,continuebutton.get_width(),continuebutton.get_height()],2)
+                        screen.fill([0,0,0])
+                        screen.blit(levelmsg,[len(list(levelname)) * -6 + 100,10]) #draw them on a temporary screen buffer
+                        screen.blit(completedmsg,[len(list("completed!")) * -6 + 100,50])
+                        screen.blit(continuebutton,[len(list("Continue")) * -6 + 100,80])
+                        for c in range(0,50):
+                            z = 255 - (c * 5)
+                            screen.fill([0,0,0])
+                            screen.blit(levelmsg,[len(list(levelname)) * -6 + 100,10]) #draw them on a temporary screen buffer
+                            screen.blit(completedmsg,[len(list("completed!")) * -6 + 100,50])
+                            screen.blit(continuebutton,[len(list("Continue")) * -6 + 100,80])
+                            for x in range(0,200):
+                                for y in range(0,120):
+                                    tmppixel = screen.get_at([x,y])
+                                    if(tmppixel[0] > z):
+                                        tmppixel[0] -= z
+                                    else:
+                                        tmppixel[0] = 0
+                                    if(tmppixel[1] > z):
+                                        tmppixel[1] -= z
+                                    else:
+                                        tmppixel[1] = 0
+                                    if(tmppixel[2] > z):
+                                        tmppixel[2] -= z
+                                    else:
+                                        tmppixel[2] = 0
+                                    screen.set_at([x,y],tmppixel)
+                            pygame.display.flip()
+
+                        wait4click = True #wait till we click on the screen to get back to main menu
+                        while wait4click:
+                            for event in pygame.event.get():
+                                if(event.type == pygame.MOUSEBUTTONDOWN):
+                                    wait4click = False
+                                
+                        Exit = True #return to front game menu after beating level
+                        break
                     if(returnstatement == "level menu"):
                         milevel = mimenu.LevelMenu()
                         milevelchoice = milevel[0]
