@@ -1642,41 +1642,6 @@ class FGEffects():
                     self.sizemove = (self.selectedeffect[0][1] - self.selectedeffect[0][0]) / float(self.selectedeffect[3][0]) #how much to grow effect in a single frame
                     pygame.draw.circle(screen,self.newcolor,[int(self.xmove * self.framesleft + self.selectedeffect[1][0][0]),int(self.ymove * self.framesleft + self.selectedeffect[1][0][1])],int(self.selectedeffect[0][0] + self.sizemove * self.framesleft),2)
 
-class PostProcessing_Effects():
-    def __init__(self):
-        self.effecttypes = []
-
-    def draweffect(self,specs):
-        global screen
-        if(specs[0] == 'vertical warp'):
-            self.warpbeginning = specs[1]
-            self.warpending = specs[2]  #ending and beginning tell where the warping effect begins and ends on the screen, in the X axis
-            forwardorbackward = self.warpending - self.warpbeginning
-            if(forwardorbackward > 0):
-                forwardorbackward = 1
-            elif(forwardorbackward < 0):
-                forwardorbackward = -1
-            self.textures = []
-            self.tmptexture = [] #here we are getting the area of the screen which we are going to warp.
-            for x in range(0,abs(self.warpending - self.warpbeginning)):
-                for y in range(0,120):
-                    self.tmptexture.append(screen.get_at([x * forwardorbackward + self.warpbeginning,y]))
-                self.textures.append(self.tmptexture[:])
-                del(self.tmptexture)
-                self.tmptexture = []
-            if(forwardorbackward == 1):
-                self.blankrectcoords = [self.warpbeginning,0,self.warpending - self.warpbeginning,120]
-            else:
-                self.blankrectcoords = [self.warpending,0,self.warpbeginning - self.warpending,120]
-            pygame.draw.rect(screen,[0,0,0],self.blankrectcoords)
-            for x in range(0,abs(self.warpending - self.warpbeginning)):
-                self.pygametexture = pygame.Surface([1,120])
-                self.pygametexture.fill([0,0,0])
-                for y in range(0,120):
-                    self.pygametexture.set_at([0,y],self.textures[x][y])
-                    self.newpygametexture = pygame.transform.scale(self.pygametexture,[1,120 + x * 8])
-                screen.blit(self.newpygametexture,[x * forwardorbackward + self.warpbeginning,0 - x * 4])
-
 class MenuEngine():
     def __init__(self,images,placement):
         self.images = images[:]
@@ -2185,21 +2150,42 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                 exec(str(enginetypes[selectedblocks]) + ".arena[" + str(tiley + editpos[1]) + "]" + "[" + str(tilex + editpos[0]) + "] = " + str(self.selectedblock + 1))
                             elif(self.insert == True):
                                 if(self.insertxy == "x"):
-                                    tmplist = []
-                                    for createlist in range(0,len(self.squares.arena[0])):
-                                        tmplist.append(0)
-                                    self.portals.arena.insert(int(tiley + editpos[1]),tmplist)
-                                    self.triangles.arena.insert(int(tiley + editpos[1]),tmplist)
-                                    self.bounceballs.arena.insert(int(tiley + editpos[1]),tmplist)
-                                    self.boosters.arena.insert(int(tiley + editpos[1]),tmplist)
-                                    self.squares.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    if(self.trash == False):
+                                        tmplist = []
+                                        for createlist in range(0,len(self.squares.arena[0])):
+                                            tmplist.append(0)
+                                        self.portals.arena.insert(int(tiley + editpos[1]),tmplist)
+                                        self.triangles.arena.insert(int(tiley + editpos[1]),tmplist)
+                                        self.bounceballs.arena.insert(int(tiley + editpos[1]),tmplist)
+                                        self.boosters.arena.insert(int(tiley + editpos[1]),tmplist)
+                                        self.squares.arena.insert(int(tiley + editpos[1]),tmplist)
+                                    else:
+                                        if(len(self.squares.arena) > 15):
+                                            del(self.squares.arena[int(tiley + editpos[1])])
+                                            del(self.triangles.arena[int(tiley + editpos[1])])
+                                            del(self.boosters.arena[int(tiley + editpos[1])])
+                                            del(self.bounceballs.arena[int(tiley + editpos[1])])
+                                            del(self.portals.arena[int(tiley + editpos[1])])
+                                            if(editpos[1] > 10):
+                                                editpos[1] -= 1
                                 if(self.insertxy == "y"):
-                                    for listindex in range(0,len(self.squares.arena)):
-                                        self.portals.arena[listindex].insert(int(tilex + editpos[0]),0)
-                                        self.triangles.arena[listindex].insert(int(tilex + editpos[0]),0)
-                                        self.bounceballs.arena[listindex].insert(int(tilex + editpos[0]),0)
-                                        self.boosters.arena[listindex].insert(int(tilex + editpos[0]),0)
-                                        self.squares.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                    if(self.trash == False):
+                                        for listindex in range(0,len(self.squares.arena)):
+                                            self.portals.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                            self.triangles.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                            self.bounceballs.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                            self.boosters.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                            self.squares.arena[listindex].insert(int(tilex + editpos[0]),0)
+                                    else:
+                                        if(len(self.squares.arena[0]) > 18):
+                                            for listindex in range(0,len(self.squares.arena)):
+                                                del(self.portals.arena[listindex][int(tilex + editpos[0])])
+                                                del(self.triangles.arena[listindex][int(tilex + editpos[0])])
+                                                del(self.bounceballs.arena[listindex][int(tilex + editpos[0])])
+                                                del(self.boosters.arena[listindex][int(tilex + editpos[0])])
+                                                del(self.squares.arena[listindex][int(tilex + editpos[0])])
+                                            if(editpos[0] > 0):
+                                                editpos[0] -= 1
                             elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
                                 #now we find if a portal has been placed where we clicked
                                 if(self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] != 0):
@@ -2308,11 +2294,11 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                     exec(str(enginetypes[x]) + ".arena[" + str(tiley + editpos[1]) + "][" + str(tilex + editpos[0]) + "] = 0")
                     for x in range(99,119): #settings buttons
                         if(x in collision):
-                            if(x == 118):
+                            if(x == 118): #trash
                                 self.trash = True
                                 self.number = False
                                 self.insert = False
-                            if(x == 117):
+                            if(x == 117): #number for portals
                                 self.number = True
                                 self.trash = False
                                 self.insert = False
@@ -2336,12 +2322,10 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 106): #insert X
                                 self.insert = True
                                 self.insertxy = "x"
-                                self.trash = False
                                 self.number = False
                             if(x == 111): #insert Y
                                 self.insert = True
                                 self.insertxy = "y"
-                                self.trash = False
                                 self.number = False
                     for x in range(119,137): #block buttons
                         if(x in collision):
@@ -2680,7 +2664,7 @@ class Menu():
     def SettingsMenu(self):  #this'll take some TIME...
         #format for each setting:  [main list["name of setting","I/O or analog",default state]
         # DEMO List:   self.optionslist = [["name","I/O","Default"]] OR ["name","analog",defaultnumber,maximumsetting]
-        self.optionslist = [["volume","analog",100,100],["player #","analog",1,10],["FG-Effects","I/O","On"],["BG-Effects","I/O","On"],["PP-Effects","I/O","Off"]]
+        self.optionslist = [["volume","analog",100,100],["player #","analog",1,10],["FG-Effects","I/O","On"],["BG-Effects","I/O","On"]]
 
         #we're gonna need to insert the saved settings somewhere in here...
 
@@ -3252,7 +3236,6 @@ class GameLoop():
         self.portals = CoursePortals()
         self.effects = BGEffects()
         self.fgeffects = FGEffects()
-        self.postprocessing = PostProcessing_Effects()
         self.animation = CourseAnimation()
 
         #how many players are dead yet???
