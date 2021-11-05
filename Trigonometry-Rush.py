@@ -3932,7 +3932,7 @@ class GameLoop():
             if(self.deadlist[imrunningoutofvariables][1] == False):
                 exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
 
-        #gdlistcoords handling (for showing a trail behind GD_Cube:
+        #gdlistcoords handling (for showing a trail behind GD_Cube):
         for imrunningoutofvariables in range(0,self.players):
             exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")  #do we skip drawing this one?
             if(self.handleddead == True):
@@ -3945,10 +3945,16 @@ class GameLoop():
             exec("self.handledgdcoordslist = self.gd" + str(imrunningoutofvariables) + ".gdcoordslist")
             exec("self.handledjumping = self.gd" + str(imrunningoutofvariables) + ".jumping")
             if(self.handledtouchingground == 0 and self.handledjumping == 1 and self.handledYspeed != 0):
+                if(self.direction == 'right'):
+                    offset = [4,8]
+                    arrowoffset = [4,4]
+                else:
+                    offset = [12,8]
+                    arrowoffset = [12,12]
                 if((self.handledform == 'cube' or self.handledform == 'ship' or self.handledform == 'ball') and self.handledmini == False):
-                    self.handledgdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 8],[100,100,100]]) #append coordinate to a GD_Figure
+                    self.handledgdcoordslist.append([[self.handledpos[0] + offset[0],self.handledpos[1] + offset[1]],[100,100,100]]) #append coordinate to a GD_Figure
                 elif(self.handledform == 'arrow' and self.handledmini == False):
-                    self.handledgdcoordslist.append([[self.handledpos[0] + 4,self.handledpos[1] + 4],[100,100,100]])
+                    self.handledgdcoordslist.append([[self.handledpos[0] + arrowoffset[0],self.handledpos[1] + arrowoffset[1]],[100,100,100]])
                 elif(self.handledmini == True):
                     self.handledgdcoordslist.append([[self.handledpos[0] + 2,self.handledpos[1] + 3],[100,100,100]])
             self.tmpdec = 0
