@@ -3290,6 +3290,9 @@ class GameLoop():
         
         self.menu = Menu()
 
+        #explosion sound effect
+        self.explosion = pygame.mixer.Sound("Assets/SFX/Explosion.wav")
+
         #create as many players as we want! (and set up their variables)
         for x in range(0,players): #note: I store all variable ATTRIBUTES about GD figures inside the object instance.
             exec("self.gd" + str(x) + " = GD_Figure()")
@@ -3766,6 +3769,7 @@ class GameLoop():
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorB)")
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorC)")
                 if(self.handledexploding == True):
+                    self.explosion.play()
                     exec("self.gd" + str(explodeplayer) + ".exploding = False")
                     #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
                     #Code for circle effects:  [[beginning size,ending size],[beginning pos,ending pos]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
@@ -3782,6 +3786,7 @@ class GameLoop():
                 self.bool.append(self.deadlist[pq][1])
 
             if(False not in self.bool):
+                pygame.mixer.music.stop()
                 self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
                 self.returnstatement = "dead"
                 for CryingOutLoud in range(0,self.players):
@@ -3917,9 +3922,8 @@ class GameLoop():
         #draw the BGEffects
         self.effects.draweffects()
             
-        #draw the various components of the arena
+        #draw the various components of the arena (excep t portals, see farther down)
         exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
         exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
         exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
         exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
@@ -3931,6 +3935,9 @@ class GameLoop():
         for imrunningoutofvariables in range(0,self.players):
             if(self.deadlist[imrunningoutofvariables][1] == False):
                 exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
+
+        #draw the portals here, because it looks better for the GD_Figures to be behind them, not in front
+        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube):
         for imrunningoutofvariables in range(0,self.players):
