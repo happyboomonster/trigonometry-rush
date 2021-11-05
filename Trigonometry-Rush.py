@@ -275,7 +275,7 @@ class GD_Figure():
                 screen.blit(pygame.transform.flip(self.rotatedimage,False,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
         else:
             if(self.gravity == 1):
-                screen.blit(pygame.transform.flip(self.rotatedimage),True,False,[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
+                screen.blit(pygame.transform.flip(self.rotatedimage,True,False),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
             else:
                 screen.blit(pygame.transform.flip(self.rotatedimage,True,True),[int(self.pos[0]) + self.extramove[0],int(self.pos[1]) + self.extramove[1]])
 
@@ -3930,7 +3930,7 @@ class GameLoop():
         #draw the GD figure
         for imrunningoutofvariables in range(0,self.players):
             if(self.deadlist[imrunningoutofvariables][1] == False):
-                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form)")
+                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube:
         for imrunningoutofvariables in range(0,self.players):
@@ -3962,7 +3962,6 @@ class GameLoop():
             for b in range(0,len(self.handledgdcoordslist) - 1):
                 pygame.draw.line(screen,self.handledgdcoordslist[b][1],self.handledgdcoordslist[b][0],self.handledgdcoordslist[b + 1][0],int((b / 10) * self.gamespeed))
             for b in range(0,len(self.handledgdcoordslist)):
-                self.handledgdcoordslist[b][0][0] = self.handledgdcoordslist[b][0][0] - self.gamespeed
                 if(self.handledform != 'arrow'):
                     if(self.handledgdcoordslist[b][1][0] > 4):
                         self.handledgdcoordslist[b][1][0] -= 5
@@ -3970,6 +3969,10 @@ class GameLoop():
                         self.handledgdcoordslist[b][1][1] -= 5
                     if(self.handledgdcoordslist[b][1][2] > 4):
                         self.handledgdcoordslist[b][1][2] -= 5
+                if(self.direction == "right"):
+                    self.handledgdcoordslist[b][0][0] = self.handledgdcoordslist[b][0][0] - self.gamespeed
+                else:
+                    self.handledgdcoordslist[b][0][0] = self.handledgdcoordslist[b][0][0] + self.gamespeed
 
         #take care of displaying attempt message
         self.attemptsurface = pygame.transform.scale(self.pusab.render("Attempt " + str(attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(attempts))),25])
