@@ -1,3 +1,4 @@
+#also this is test don't use this version
 #Main Trigonometry Rush program/script
 #    Copyright (C) 2021  Lincoln V.
 #
