@@ -223,7 +223,7 @@ class GD_Figure():
     def move(self,move,gravity):
         #gravity = 1: normal  #gravity = -1:  upside-down  note:  DO-NOT-GIVE-0-AS-A-GRAVITY-VALUE!
         self.oldpos = self.pos[:]
-        self.pos[0] = self.pos[0] + move[0] * gravity
+        self.pos[0] = self.pos[0] + move[0]
         self.pos[1] = self.pos[1] + move[1] * gravity
 
     def goto(self,goto):
