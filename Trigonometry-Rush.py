@@ -14,6 +14,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#need to add:
+#Slow: 8.4 blocks/sec
+#Normal: 11.2 blocks/sec
+#Fast: 14 blocks/sec
+#Extra-Fast: 16.8 blocks/sec
+
+
 import pygame
 import time as timelib
 import random
@@ -216,7 +223,7 @@ class GD_Figure():
     def move(self,move,gravity):
         #gravity = 1: normal  #gravity = -1:  upside-down  note:  DO-NOT-GIVE-0-AS-A-GRAVITY-VALUE!
         self.oldpos = self.pos[:]
-        self.pos[0] = self.pos[0] + move[0] * gravity
+        self.pos[0] = self.pos[0] + move[0]
         self.pos[1] = self.pos[1] + move[1] * gravity
 
     def goto(self,goto):
@@ -299,6 +306,12 @@ class GD_Figure():
             elif(figureshape == 'ball' or figureshape == 'cube'):
                 return [int(self.pos[0] + 2),int(self.pos[1] + 2),int(self.pos[0] + 6),int(self.pos[1] + 6)]
 
+    def getslamcoords(self,figureshape='cube'):
+        tmpcoords = self.getcoords(figureshape)
+        tmpcoords.append(1) #I don't remember why I required a "1" to be put in index 4
+        tmpcoords.append('ground') #needed to make the game check "slamleft" vs "slamright"
+        return tmpcoords
+
     def update(self):
         pygame.display.flip()
 
@@ -374,26 +387,26 @@ class GD_Figure():
                                     self.collision.append('triangle')
             elif(collidecoords[x][5] == 'booster'):
                 if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of booster?
-                        if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of booster?
-                            if(collidecoords[x][3] > gdcoords[1]): #is the top of GD above the bottom of booster?
-                                if(collidecoords[x][1] < gdcoords[3]): # is the top of booster above bottom of GD?
-                                    #collision with bouncepad has occured.  what kind happened???
-                                    if(collidecoords[x][4] == 1 or collidecoords[x][4] == 5):
-                                        #jump bouncepad hit!
-                                        self.collision.append('bouncepadP1')
-                                        self.move([0,-1],gravity)
-                                    elif(collidecoords[x][4] == 2 or collidecoords[x][4] == 6):
-                                        #50/50 jump happened!
-                                        self.collision.append('bouncepadP2')
-                                        self.move([0,-1],gravity)
-                                    elif(collidecoords[x][4] == 3 or collidecoords[x][4] == 7):
-                                        #superjump happened!
-                                        self.collision.append('bouncepadP3')
-                                        self.move([0,-1],gravity)
-                                    elif(collidecoords[x][4] == 4 or collidecoords[x][4] == 8):
-                                        #GRAVITYCHANGE + superjump!!!!
-                                        self.gravity = gravity * -1
-                                        self.collision.append('bouncepadP4')
+                    if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of booster?
+                        if(collidecoords[x][3] > gdcoords[1]): #is the top of GD above the bottom of booster?
+                            if(collidecoords[x][1] < gdcoords[3]): # is the top of booster above bottom of GD?
+                                #collision with bouncepad has occured.  what kind happened???
+                                if(collidecoords[x][4] == 1 or collidecoords[x][4] == 5):
+                                    #jump bouncepad hit!
+                                    self.collision.append('bouncepadP1')
+                                    self.move([0,-1],gravity)
+                                elif(collidecoords[x][4] == 2 or collidecoords[x][4] == 6):
+                                    #50/50 jump happened!
+                                    self.collision.append('bouncepadP2')
+                                    self.move([0,-1],gravity)
+                                elif(collidecoords[x][4] == 3 or collidecoords[x][4] == 7):
+                                    #superjump happened!
+                                    self.collision.append('bouncepadP3')
+                                    self.move([0,-1],gravity)
+                                elif(collidecoords[x][4] == 4 or collidecoords[x][4] == 8):
+                                    #GRAVITYCHANGE + superjump!!!!
+                                    self.gravity = gravity * -1
+                                    self.collision.append('bouncepadP4')
             elif(collidecoords[x][5] == 'bounceball'):
                 if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of bounceball?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of bounceball?
@@ -3400,6 +3413,8 @@ class GameLoop():
         self.portalsCourse = conglomeration[4][:]
 
     def GameLoop(self,choice,attempts):
+        #THE SHAKES variable
+        self.shakes = 0 #it's a Y offset used to jitter the entire screen when a player dies.
         #something needed for PM
         state = 1
         #We're NOT starting in Practice Mode...
@@ -3448,6 +3463,12 @@ class GameLoop():
         move = 0
         #PM position record
         PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+        #based on our direction, make the cube(s) to go a specified x position. (give a good starting position for everyone)
+        for imrunningoutofvariables in range(0,self.players):
+            if(self.direction == 'right'):
+                exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
+            elif(self.direction == 'left'):
+                exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(140 - 10 * imrunningoutofvariables) + ")")
         while(move < (len(self.squaresCourse[0]) * 10 - 21 * 10)):
             move += self.gamespeed
             e = int(move % 10)
@@ -3461,13 +3482,6 @@ class GameLoop():
                 self.y = int(e) #was e * self.gamespeed
                 self.x = f
                 exec("self.x10x = [self.x,self.y]")
-
-            #based on our direction, make the cube(s) to go a specified x position.
-            for imrunningoutofvariables in range(0,self.players):
-                if(self.direction == 'right'):
-                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
-                elif(self.direction == 'left'):
-                    exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(140 - 10 * imrunningoutofvariables) + ")")
 
             #erase the screen with whatever bgcolor is for next frame
             screen.fill(self.bgcolor)
@@ -3645,6 +3659,10 @@ class GameLoop():
                 exec("self.handleddead = self.gd" + str(CryingOutLoud) + ".dead")
                 if(self.handleddead == True): #don't bother computing this trash if the player's already dead
                     continue
+                #we're not allowed to fall offscreen!
+                elif(self.handledpos[1] > 130 or self.handledpos[1] < -10):
+                    exec("self.gd" + str(CryingOutLoud) + ".dead = True")
+                    exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                 if(self.handledform == 'cube' or self.handledform == 'ball'):
                     exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
@@ -3657,9 +3675,6 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                     elif('slamright' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left' or 'slamup' in self.gdcollision and self.handledgravity == -1 and self.direction == 'left'):
-                        exec("self.gd" + str(CryingOutLoud) + ".dead = True")
-                        exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
-                    elif(self.handledpos[1] > 160 or self.handledpos[1] < -60):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                 elif(self.handledform == 'arrow'):
@@ -3717,9 +3732,33 @@ class GameLoop():
                 if("portal#17" in self.gdcollision): #activate speed 3x
                     self.gamespeed = 4
                 if("portal#10" in self.gdcollision): #activate move right
-                    self.direction = "right"
+                    if(self.direction != 'right'):
+                        for getallgds in range(0,self.players):
+                            exec("self.gd" + str(getallgds) + ".setx(200 - self.gd" + str(getallgds) + ".pos[0])")
+                        self.direction = "right"
                 if("portal#11" in self.gdcollision): #activate move left
-                    self.direction = "left"
+                    if(self.direction != 'left'):
+                        for getallgds in range(0,self.players):
+                            exec("self.gd" + str(getallgds) + ".setx(200 - self.gd" + str(getallgds) + ".pos[0] - 10)")
+                        self.direction = "left"
+
+                #getting some getslamcoords() here!
+                for getallgds in range(0,self.players):
+                    if(getallgds == CryingOutLoud): #make sure we don't check collision with ourselves
+                        continue
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision([self.gd" + str(getallgds) + ".getslamcoords(self.gd" + str(getallgds) + ".form)],self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    if("slamup" in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".move([0,4],self.gd" + str(CryingOutLoud) + ".gravity)") #move the player down and the "getallgds" player the opposite
+                        exec("self.gd" + str(getallgds) + ".move([0,-4],self.gd" + str(getallgds) + ".gravity)")
+                    if("slamdown" in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".move([0,-4],self.gd" + str(CryingOutLoud) + ".gravity)") #move the player up and the "getallgds" player the opposite
+                        exec("self.gd" + str(getallgds) + ".move([0,4],self.gd" + str(getallgds) + ".gravity)")
+                    if("slamright" in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".move([4,0],self.gd" + str(CryingOutLoud) + ".gravity)") #move the player right and the "getallgds" player the opposite
+                        exec("self.gd" + str(getallgds) + ".move([-4,0],self.gd" + str(getallgds) + ".gravity)")
+                    if("slamleft" in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".move([-4,0],self.gd" + str(CryingOutLoud) + ".gravity)") #move the player left and the "getallgds" player the opposite
+                        exec("self.gd" + str(getallgds) + ".move([4,0],self.gd" + str(getallgds) + ".gravity)")
 
                 #booster collision handling
                 exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
@@ -3770,6 +3809,7 @@ class GameLoop():
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorC)")
                 if(self.handledexploding == True):
                     self.explosion.play()
+                    self.shakes = 30 #make our screen start shaking 3 blocks up then down.
                     exec("self.gd" + str(explodeplayer) + ".exploding = False")
                     #Code for pixel effects:  [[beginning size,ending size],[[beginning posX,beginningposY],[ending posX,endingposY]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
                     #Code for circle effects:  [[beginning size,ending size],[beginning pos,ending pos]],[beginning color,ending color],[Duration (in frames) of effect,starting frame]]
@@ -3856,6 +3896,11 @@ class GameLoop():
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
+                exec("self.handledpos = self.gd" + str(CryingOutLoud) + ".pos")
+                if(self.keyconfig[CryingOutLoud][0] in keys and self.handledpos[0] > 0): #move the GD_Figure left
+                    exec("self.gd" + str(CryingOutLoud) + ".move([-1,0],self.gd" + str(CryingOutLoud) + ".gravity)")
+                if(self.keyconfig[CryingOutLoud][1] in keys and self.handledpos[0] < 190): #move the GD_Figure right
+                    exec("self.gd" + str(CryingOutLoud) + ".move([1,0],self.gd" + str(CryingOutLoud) + ".gravity)")
                 if(self.keyconfig[CryingOutLoud][2] in keys or 'mouse' in keys):
                     exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
                     exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
@@ -3919,14 +3964,23 @@ class GameLoop():
         return self.returnstatement
 
     def DrawEVERYTHING(self,x10x,y10y,choice,attempts):
+        #handle our shakes
+        if(self.shakes != 0):
+            if(self.shakes > 0):
+                if(self.framecount % 3 == 0):
+                    self.shakes = self.shakes * -1 + 2
+            else:
+                if(self.framecount % 3 == 0):
+                    self.shakes = self.shakes * -1 - 2
+                
         #draw the BGEffects
         self.effects.draweffects()
             
         #draw the various components of the arena (excep t portals, see farther down)
-        exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
-        exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,40,self.gamespeed)")
-        exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]],self.fgeffects,self.framecount,30,self.gamespeed)")
+        exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
+        exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
+        exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,40,self.gamespeed)")
+        exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,30,self.gamespeed)")
 
         #draw the FGEffects (moved here to draw effects overtop of arena)
         self.fgeffects.draweffects(self.framecount)
@@ -3934,10 +3988,12 @@ class GameLoop():
         #draw the GD figure
         for imrunningoutofvariables in range(0,self.players):
             if(self.deadlist[imrunningoutofvariables][1] == False):
+                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)") #we have to account for the screen shake...
                 exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
+                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)")
 
         #draw the portals here, because it looks better for the GD_Figures to be behind them, not in front
-        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1]])")
+        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube):
         for imrunningoutofvariables in range(0,self.players):
