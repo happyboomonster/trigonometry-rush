@@ -18,7 +18,7 @@
 #Slow: 8.4 blocks/sec
 #Normal: 11.2 blocks/sec
 #Fast: 14 blocks/sec
-#Extra-Fast: 16.8 blocks/sec
+#Extra-Fast: 16.8 blocks/sec ***next thing fix collision boxes (again)***********************************************************************************************************
 
 
 import pygame
@@ -442,7 +442,7 @@ class CourseSquares(): # all done
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
 
@@ -583,7 +583,7 @@ class CoursePortals():
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
         #Portals legend:1-9? form changer? (uh-oh)  we might need to go above 9 objs for this one...
 
@@ -718,7 +718,7 @@ class CourseBounceballs(): # all done
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
 
         #BOUNCEBALLS legend: 1 = jump bouncer 2 = big jump bouncer 3 = megajump bouncer 4 = reverse gravity!!!
@@ -918,7 +918,7 @@ class CourseBoosters():  #all done
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
         
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
@@ -1193,7 +1193,7 @@ class CourseTriangles(): # all done
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
         
         # 1 = square     2 = triangle (watch out!) 3 = sideways triangle - facing left   4 = low energy ball   5 = medium energy ball  6 = xtreme (roof kind) energy ball
@@ -1316,12 +1316,22 @@ class CourseTriangles(): # all done
         for x in range(0,len(tile[0])):
             for y in range(0,len(tile)):
                 if(tile[y][x] != 0):
-                    if(tile[y][x] == 1):
-                        screen.set_at([x + coords[0],y + coords[1]],self.colorA)
-                    elif(tile[y][x] == 2):
-                        screen.set_at([x + coords[0],y + coords[1]],self.colorB)
-                    elif(tile[y][x] == 3):
-                        screen.set_at([x + coords[0],y + coords[1]],self.colorC)
+                    if(self.direction == 'right'):
+                        if(tile[y][x] == 1):
+                            screen.set_at([x + coords[0],y + coords[1]],self.colorA)
+                        elif(tile[y][x] == 2):
+                            screen.set_at([x + coords[0],y + coords[1]],self.colorB)
+                        elif(tile[y][x] == 3):
+                            screen.set_at([x + coords[0],y + coords[1]],self.colorC)
+                    else:
+                        newx = len(tile[0]) - x
+                        newy = y
+                        if(tile[y][x] == 1):
+                            screen.set_at([newx + coords[0],newy + coords[1]],self.colorA)
+                        elif(tile[y][x] == 2):
+                            screen.set_at([newx + coords[0],newy + coords[1]],self.colorB)
+                        elif(tile[y][x] == 3):
+                            screen.set_at([newx + coords[0],newy + coords[1]],self.colorC)
 
     def setcolors(self,colorA,colorB,colorC):
         self.colorA = colorA[:]
@@ -1375,7 +1385,7 @@ class CourseAnimation(): #******************************************************
         self.colorB = [0,255,0]
         self.colorC = [0,0,255]
 
-        self.screen_w = 21
+        self.screen_w = 22
         self.screen_h = 13
 
         self.direction = 'right'
@@ -2402,9 +2412,20 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             self.clock.tick(10)
 
 class Menu():
-    def __init__(self):
+    def __init__(self,colorlist=False):
         #req'd by skinsmenu
         self.skintypes = ['arrow','ball','cube','robot','ship','UFO'] #this list must be in alphabetical order.
+        
+        #all players in this game need to have colors... (skins menu)
+        if(colorlist == False):
+            self.colorlist = []
+            for x in range(0,10):
+                self.colorlist.append([[0,0,0],[0,0,0],[0,0,0]])
+        else:
+            self.colorlist = colorlist[:]
+
+        #settings list
+        self.optionslist = [["volume","analog",100,100],["player #","analog",1,10],["FG-Effects","I/O","On"],["BG-Effects","I/O","On"], ["Shake", "I/O", "On"]]
         
         self.pusab = pygame.font.Font("Assets/Fonts/PUSAB.ttf",20)
         self.oxygeneI = pygame.font.Font("Assets/Fonts/OXYGENE1.TTF",20)
@@ -2488,9 +2509,6 @@ class Menu():
         while self.NotInGame:
             #handling all these problematic events!
             for event in pygame.event.get():
-                #DO WE WANT TO QUIT???
-                if event.type == pygame.QUIT:
-                    pygame.quit()
                 #have we moved the mouse
                 if event.type == pygame.MOUSEMOTION:
                     #update the mouse's position
@@ -2681,9 +2699,6 @@ class Menu():
 
             #event loop
             for event in pygame.event.get():
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
-                    return "exit"
                 if(event.type == pygame.MOUSEBUTTONDOWN):
                     if(self.get_collision(mousepos,playbutton)):
                         return "play"
@@ -2696,7 +2711,6 @@ class Menu():
                     elif(self.get_collision(mousepos,controlsbutton)):
                         return "configure"
                     elif(self.get_collision(mousepos,exitbutton)):
-                        pygame.quit()
                         return "exit"
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
@@ -2724,7 +2738,6 @@ class Menu():
     def SettingsMenu(self):  #this'll take some TIME...
         #format for each setting:  [main list["name of setting","I/O or analog",default state]
         # DEMO List:   self.optionslist = [["name","I/O","Default"]] OR ["name","analog",defaultnumber,maximumsetting]
-        self.optionslist = [["volume","analog",100,100],["player #","analog",1,10],["FG-Effects","I/O","On"],["BG-Effects","I/O","On"]]
 
         #we're gonna need to insert the saved settings somewhere in here...
 
@@ -2801,9 +2814,6 @@ class Menu():
             realpos = (self.page * 4) + cursorpos[1]
 
             for event in pygame.event.get():
-                #get me out of here!!!
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
                 #update mouse coordinates
                 if(event.type == pygame.MOUSEMOTION):
                     self.mousepos = event.pos[:]
@@ -2859,7 +2869,7 @@ class Menu():
 
         return self.optionslist
 
-    def ControlsConfigure(self,numjoysticks):
+    def ControlsConfigure(self,numjoysticks,configuredkeys):
         #button collision boxes
         JSchangeL = [0,0,10,10]
         JSchangeR = [190,0,200,10]
@@ -2885,10 +2895,6 @@ class Menu():
 
         #what button are we currently configuring?  ("JSLbutton","JSRbutton","JSJbutton")
         configuringbutton = ''
-
-        configuredkeys = []
-        for x in range(0,numjoysticks):
-            configuredkeys.append([0,0,0])
 
         #what Joystick are we currently configuring?
         JSnum = 0
@@ -2935,8 +2941,6 @@ class Menu():
 
             #typical menu event loop
             for event in pygame.event.get():
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
                 if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -3005,7 +3009,7 @@ class Menu():
             skin = eval(self.myeval(mistr))
         return skin
 
-    def SkinsMenu(self, PlayersNum):  #got to get a Skins menu working!
+    def SkinsMenu(self, PlayersNum, skinselected=False, playercolors=False):  #got to get a Skins menu working!
         #[positivenumber,positivenumber2] means rotate from positivenumber to positivenumber2 and then back to positivenumber again
 
         #movement patterns...  [motiontype,[movementStart,movementFinish]]
@@ -3016,6 +3020,10 @@ class Menu():
         #           Moving:  moves from position movementStart (x,y setup) to position movementFinish and back again.
         #matches up with the skintypes list if you're wondering...
         movementtypes = [['rotating',[0,359]],['rocking',[-25,25]],['rotating',[0,359]],['rocking',[-45,45]],['moving',[[-4,0],[4,0]]],['moving',[[0,2],[0,-4]]]]
+
+        #if we have colors input, then...
+        if(playercolors != False):
+            self.colorlist = playercolors[:]
 
         #find all skins available in list format...and clip the list sizes so I don't run out of space for skins on the screen!
         skinsavailable = os.listdir(execpath + "/Assets/Skins/")
@@ -3053,11 +3061,6 @@ class Menu():
                      [0,0,0,0,0,0,0,0,1,0],
                      [0,0,0,0,0,0,1,1,0,0]]
 
-        #all players in this game need to have temporary color setups...
-        self.colorlist = []
-        for x in range(0,10):
-            self.colorlist.append([[0,0,0],[0,0,0],[0,0,0]])
-
         #all players in this game need to have skin returns...
         self.blankskin = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                           [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -3089,6 +3092,10 @@ class Menu():
         for b in range(0,10):
             self.skinlist.append(self.subskinlist[:])
             self.skinselected.append(self.subskinselected[:])
+
+        #selected skins for remembering settings
+        if(skinselected != False):
+            self.skinselected = skinselected[:]
 
         #button collision boxes
         PlayerMinus = [10,0,20,10]  #change which player we're messing with skins for
@@ -3187,7 +3194,7 @@ class Menu():
                         if(CurrentPlayer < PlayersNum - 1):
                             CurrentPlayer += 1
                     elif(self.get_collision(mousepos,Back)):
-                        return [self.colorlist, self.skinlist]  #we're gonna need to return one or two other things here in the future...
+                        return [self.colorlist, self.skinlist, self.skinselected]  #we're gonna need to return one or two other things here in the future...
                     elif(self.get_collision(mousepos,ShapeMinus)):
                         if(CurrentShape > 0):
                             CurrentShape -= 1
@@ -3230,12 +3237,8 @@ class Menu():
         while InMenu:
             #event loop
             for event in pygame.event.get():
-                #do we want to LEAVE???
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
-
                 #were TRACKING your mouse movements!
-                elif(event.type == pygame.MOUSEMOTION):
+                if(event.type == pygame.MOUSEMOTION):
                     self.mousepos = event.pos
 
                 #are we clicking on things???
@@ -3305,6 +3308,9 @@ class GameLoop():
 
         #explosion sound effect
         self.explosion = pygame.mixer.Sound("Assets/SFX/Explosion.wav")
+
+        #explosion flag
+        self.explosionbool = True
 
         #create as many players as we want! (and set up their variables)
         for x in range(0,players): #note: I store all variable ATTRIBUTES about GD figures inside the object instance.
@@ -3469,7 +3475,7 @@ class GameLoop():
                 exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(50 + 10 * imrunningoutofvariables) + ")")
             elif(self.direction == 'left'):
                 exec("self.gd" + str(imrunningoutofvariables) + ".setx(" + str(140 - 10 * imrunningoutofvariables) + ")")
-        while(move < (len(self.squaresCourse[0]) * 10 - 21 * 10)):
+        while(move < (len(self.squaresCourse[0]) * 10 - 22 * 10)):
             move += self.gamespeed
             e = int(move % 10)
             f = int(move / 10)
@@ -3807,7 +3813,7 @@ class GameLoop():
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorA)")
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorB)")
                 exec("self.handledcolor.append(self.gd" + str(explodeplayer) + ".colorC)")
-                if(self.handledexploding == True):
+                if(self.handledexploding == True and self.explosionbool == True):
                     self.explosion.play()
                     self.shakes = 30 #make our screen start shaking 3 blocks up then down.
                     exec("self.gd" + str(explodeplayer) + ".exploding = False")
@@ -3826,7 +3832,7 @@ class GameLoop():
                 self.bool.append(self.deadlist[pq][1])
 
             if(False not in self.bool):
-                pygame.mixer.music.stop()
+                pygame.mixer.music.fadeout(1000)
                 self.framecountdown -= 1 #now we give a few more frames for the last person (who just died) to get a good explosion in there
                 self.returnstatement = "dead"
                 for CryingOutLoud in range(0,self.players):
@@ -3857,9 +3863,7 @@ class GameLoop():
                 
             #PUT EVENT LOOP SOMEWHERE IN HERE!
             for event in pygame.event.get():
-                if(event.type == pygame.QUIT):
-                    pygame.quit()
-                elif(event.type == pygame.MOUSEBUTTONDOWN): #useful for 1 player, mouse works better...
+                if(event.type == pygame.MOUSEBUTTONDOWN): #useful for 1 player, mouse works better...
                     keys.append('mouse')
                 elif(event.type == pygame.MOUSEBUTTONUP):
                     try:
@@ -3873,6 +3877,7 @@ class GameLoop():
                     if(event.key not in keys):
                         keys.append(event.key)
                     if(event.key == pygame.K_ESCAPE):
+                        pygame.mixer.music.pause()
                         self.returnstatement = self.menu.GameMenu(PMStatus) #start a basic UI
                         if(self.returnstatement == "level menu"): #based on our UI input, do something!
                             return self.returnstatement
@@ -3893,6 +3898,7 @@ class GameLoop():
                                 pygame.display.flip()
                                 timelib.sleep(4)
                         #nothing happens if resume clicked, just continue in game...
+                        pygame.mixer.music.unpause()
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
@@ -4131,13 +4137,32 @@ migameloop = GameLoop(1,keyconfig,playercolors,playerskins,mimenu.skintypes)
 PlayerNumber = 1
 Exit = False
 clock = pygame.time.Clock() #create a clock which is used in the Level Complete menu
-settingsout = [['volume', 'analog', 100, 100], ['player #', 'analog', 1, 10], ['FG-Effects', 'I/O', 'On'], ['BG-Effects', 'I/O', 'On'], ['PP-Effects', 'I/O', 'Off']] #needed for checking whether to use FGeffects etc.
+settingsout = [['volume', 'analog', 100, 100], ['player #', 'analog', 1, 10], ['FG-Effects', 'I/O', 'On'], ['BG-Effects', 'I/O', 'On'], ["Shake", "I/O", "On"]] #needed for checking whether to use FGeffects etc.
+skinselected = False
+
+#load our settings here...
+try:
+    if(PYTHON2):
+        settingsfile = open(execpath + "/Assets/settings.pkl","r")
+    else:
+        settingsfile = open(execpath + "/Assets/settings.pkl","rb+")
+    dump = pickle.load(settingsfile)
+    #load everything out from our pickle dump
+    skinstuff = dump[0] #start with our skins
+    playercolors = skinstuff[0][:]
+    playerskins = skinstuff[1][:]
+    skinselected = skinstuff[2][:]
+    keyconfig = dump[1][:] #get our key configs recovered
+    mimenu.optionslist = dump[2][:] #options loading
+    settingsout = dump[2][:]
+except:
+    print("No saved settings found. Changing to defaults...")
 
 while True:
     choice1 = mimenu.FrontMenu()
     Exit = False
     if(choice1 == 'exit'):
-        pygame.quit() #KILLS the game
+        break #exit this endless loop!
     elif(choice1 == 'play'):
         milevel = mimenu.LevelMenu()
         milevelchoice = milevel[0]
@@ -4163,6 +4188,14 @@ while True:
                         migameloop.effects.onoff = False
                     else:
                         migameloop.effects.onoff = True
+                    #Turn on or off shake in game
+                    index = 0
+                    while "Shake" not in settingsout[index]:
+                        index += 1
+                    if(settingsout[index][2] == "Off"):
+                        migameloop.explosionbool = False
+                    else:
+                        migameloop.explosionbool = True
                     #start game!
                     returnstatement = migameloop.GameLoop(milevelchoice,Attempts)
                     pygame.mixer.music.stop()
@@ -4288,15 +4321,44 @@ while True:
         index = 0
         while "volume" not in settingsout[index]:
             index += 1
-        pygame.mixer.music.set_volume(settingsout[index][2])
+        pygame.mixer.music.set_volume(settingsout[index][2] / 100.0)
     elif(choice1 == "configure"):
-        keyconfig = mimenu.ControlsConfigure(PlayerNumber)
+        if(len(keyconfig) < PlayerNumber): #make sure we have a proper length of player keyconfigs
+            for x in range(0,PlayerNumber - len(keyconfig)):
+                configuredkeys.append([0,0,0])
+        keyconfig = mimenu.ControlsConfigure(PlayerNumber,keyconfig)
     elif(choice1 == "skins"):
-        skinstuff = mimenu.SkinsMenu(PlayerNumber)
+        skinstuff = mimenu.SkinsMenu(PlayerNumber,skinselected,playercolors)
         playercolors = skinstuff[0][:]
         playerskins = skinstuff[1][:]
+        skinselected = skinstuff[2][:] #keeps track of what we picked in SkinsMenu
     elif(choice1 == "editor"):
         pygame.key.set_repeat(300,300)
         mileveleditor.LevelEditor()
         pygame.key.set_repeat(5,5)
+
+#when we exit, save all our settings in a dump file.
+dump = []
+#make it look pretty
+screen.fill([0,0,0])
+for x in range(0,len(list("Saving your settings..."))):
+    screen.fill([0,0,0])
+    screen.blit(mimenu.pusab.render("Saving your settings...",0,[255,255,255]),[100 - x * 20,50])
+    pygame.display.flip()
+    timelib.sleep(0.05)
+    if(x == 0): #save our skin settings
+        dump.append(skinstuff)
+    elif(x == 1): #save our key configurations
+        dump.append(keyconfig)
+    elif(x == 2): #save our settings
+        dump.append(mimenu.optionslist)
+    elif(x == 3): #dump them to a file
+        if(PYTHON2):
+            settingsfile = open(execpath + "/Assets/settings.pkl","w+")
+            pickle.dump(dump,settingsfile)
+        else:
+            settingsfile = open(execpath + "/Assets/settings.pkl","wb+")
+            pickle.dump(dump,settingsfile,2)
+        settingsfile.flush()
+        settingsfile.close()
 pygame.quit()
