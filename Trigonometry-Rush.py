@@ -18,7 +18,7 @@
 #Slow: 8.4 blocks/sec
 #Normal: 11.2 blocks/sec
 #Fast: 14 blocks/sec
-#Extra-Fast: 16.8 blocks/sec ***next thing fix collision boxes (again)***********************************************************************************************************
+#Extra-Fast: 16.8 blocks/sec
 
 
 import pygame
@@ -379,6 +379,7 @@ class GD_Figure():
                     self.trianglecoords.append(collidecoords[x][1] + 1)
                     self.trianglecoords.append(collidecoords[x][2] - 2)
                     self.trianglecoords.append(collidecoords[x][3] - 1)
+                    #pygame.draw.rect(screen,[255,255,255],[self.trianglecoords[0],self.trianglecoords[1],8,8],2) #DEBUG
                     if(self.trianglecoords[0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(self.trianglecoords[2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
                             if(self.trianglecoords[3] > gdcoords[1]): #is the top of GD above the bottom of block?
@@ -545,7 +546,7 @@ class CourseSquares(): # all done
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
-    def return_collision(self,currentmap,coords,speccoords):
+    def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
         self.collidecoords = []
         if(self.direction == 'right'):
             for x in range(0,21):
@@ -561,7 +562,7 @@ class CourseSquares(): # all done
         elif(self.direction == 'left'):
             for x in range(0,21):
                 for y in range(0,12):
-                    newx = 20 - x
+                    newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         # Type 3 Collision = bounce, Type 2 collision = Death!, Type 1 collision = Ground
@@ -686,26 +687,24 @@ class CoursePortals():
                         else:
                             self.draw_tile(self.tiles[0],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
-    def return_collision(self,currentmap,coords,speccoords):
+    def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
         self.collidecoords = []
+        newgdcoords = [0,0]
+        newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
-            for x in range(0,20):
-                for y in range(0,12):
+            newgdcoords[0] = int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: arrow 6: robot 7: gravitycreeper 8: gravity 9: reverse-gravity... (uh-oh) 10: move-right 11: move-left 12: teleport entrance  13: teleport exit 14-17: speeds 0.5,1,2,&3x
-                        #if(currentmap[coords[1] + y][coords[0] + x] == 1):
                         self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])
-                        #elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                        #    self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 20,2,'portal'])
-                        #elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                        #    self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 20,3,'portal'])
-        elif(self.direction == 'left'):
-            for x in range(0,20):
-                for y in range(0,12):
-                    newx = 20 - x
+        else: #ARE WE MOVING LEFT (totally overcomplicates things...)
+            newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+                    newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])
+                        self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])        
         return self.collidecoords
 
 
@@ -876,11 +875,14 @@ class CourseBounceballs(): # all done
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
-    def return_collision(self,currentmap,coords,speccoords):
+    def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
         self.collidecoords = []
+        newgdcoords = [0,0]
+        newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
-            for x in range(0,20):
-                for y in range(0,12):
+            newgdcoords[0] = int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
                             self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,1,'bounceball'])
@@ -890,10 +892,11 @@ class CourseBounceballs(): # all done
                             self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
                             self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,4,'bounceball'])
-        elif(self.direction == 'left'):
-            for x in range(0,20):
-                for y in range(0,12):
-                    newx = 20 - x
+        else: #ARE WE MOVING LEFT (totally overcomplicates things...)
+            newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+                    newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
@@ -904,7 +907,6 @@ class CourseBounceballs(): # all done
                             self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
                             self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,4,'bounceball'])
-
         return self.collidecoords
 
 
@@ -1138,11 +1140,14 @@ class CourseBoosters():  #all done
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
-    def return_collision(self,currentmap,coords,speccoords):
+    def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]): #implemented a new collision method which only checks the blocks right around the GD_Figure object; reduces CPU load
         self.collidecoords = []
+        newgdcoords = [0,0]
+        newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
-            for x in range(0,20):
-                for y in range(0,12):
+            newgdcoords[0] = int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 8,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,1,'booster'])
@@ -1160,10 +1165,11 @@ class CourseBoosters():  #all done
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 6,3,'booster'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 8):
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 5,4,'booster'])
-        elif(self.direction == 'left'):
-            for x in range(0,20):
-                for y in range(0,12):
-                    newx = 20 - x
+        else: #ARE WE MOVING LEFT (totally overcomplicates things...)
+            newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+                    newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
@@ -1182,7 +1188,6 @@ class CourseBoosters():  #all done
                             self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1] + 2,newx * 10 + speccoords[0] + 7,newy * 10 + speccoords[1] + 6,3,'booster'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 8):
                             self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1] + 2,newx * 10 + speccoords[0] + 7,newy * 10 + speccoords[1] + 5,4,'booster'])
-
         return self.collidecoords
 
 
@@ -1355,21 +1360,25 @@ class CourseTriangles(): # all done
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
-    def return_collision(self,currentmap,coords,speccoords):
+    def return_collision(self,currentmap,coords,speccoords,gdcoords): #new collision method which only checks the triangles right around the cube works WAAAAAY faster!
         self.collidecoords = []
+        newgdcoords = [0,0]
+        newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
-            for x in range(0,20):
-                for y in range(0,12):
+            newgdcoords[0] = int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         # Type 1 Triangle collision = standard triangle death hitbox
                         if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
                             self.collidecoords.append([x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 8,y * 10 + speccoords[1] + 8,1,'triangle'])
                         elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
                             self.collidecoords.append([x * 10 + speccoords[0] + 4,y * 10 + speccoords[1] + 4,x * 10 + speccoords[0] + 6,y * 10 + speccoords[1] + 6,1,'triangle'])
-        elif(self.direction == 'left'):
-            for x in range(0,20):
-                for y in range(0,12):
-                    newx = 20 - x
+        else: #ARE WE MOVING LEFT (totally overcomplicates things...)
+            newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+                    newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         # Type 1 Triangle collision = standard triangle death hitbox
@@ -3698,13 +3707,13 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                 #this is triangle death detection
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                 if('triangle' in self.gdcollision):
                     exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                     exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                 #portal collision and what happens
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                 if('portal#1' in self.gdcollision): #change to cube
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
@@ -3767,8 +3776,8 @@ class GameLoop():
                         exec("self.gd" + str(getallgds) + ".move([4,0],self.gd" + str(getallgds) + ".gravity)")
 
                 #booster collision handling
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
                 if('bouncepadP1' in self.gdcollision):
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
                     exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
@@ -3916,7 +3925,7 @@ class GameLoop():
                     exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
                     if(self.selectedform == "cube" and self.selectednojump == 0):
                         #we check, have we collided with any bounceballs?
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]]),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if("bounceballP1" in self.gdcollision):
                             exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
                         if("bounceballP2" in self.gdcollision):
@@ -3988,19 +3997,6 @@ class GameLoop():
         exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,40,self.gamespeed)")
         exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,30,self.gamespeed)")
 
-        #draw the FGEffects (moved here to draw effects overtop of arena)
-        self.fgeffects.draweffects(self.framecount)
-
-        #draw the GD figure
-        for imrunningoutofvariables in range(0,self.players):
-            if(self.deadlist[imrunningoutofvariables][1] == False):
-                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)") #we have to account for the screen shake...
-                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
-                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-
-        #draw the portals here, because it looks better for the GD_Figures to be behind them, not in front
-        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
-
         #gdlistcoords handling (for showing a trail behind GD_Cube):
         for imrunningoutofvariables in range(0,self.players):
             exec("self.handleddead = self.gd" + str(imrunningoutofvariables) + ".dead")  #do we skip drawing this one?
@@ -4048,6 +4044,19 @@ class GameLoop():
                     self.handledgdcoordslist[b][0][0] = self.handledgdcoordslist[b][0][0] - self.gamespeed
                 else:
                     self.handledgdcoordslist[b][0][0] = self.handledgdcoordslist[b][0][0] + self.gamespeed
+
+        #draw the FGEffects (moved here to draw effects overtop of arena)
+        self.fgeffects.draweffects(self.framecount)
+
+        #draw the GD figure
+        for imrunningoutofvariables in range(0,self.players):
+            if(self.deadlist[imrunningoutofvariables][1] == False):
+                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)") #we have to account for the screen shake...
+                exec("self.gd" + str(imrunningoutofvariables) + ".draw(self.gd" + str(imrunningoutofvariables) + ".form,self.direction)")
+                exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+
+        #draw the portals here, because it looks better for the GD_Figures to be behind them, not in front
+        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
 
         #take care of displaying attempt message
         self.attemptsurface = pygame.transform.scale(self.pusab.render("Attempt " + str(attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(attempts))),25])
