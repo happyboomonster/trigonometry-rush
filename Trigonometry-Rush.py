@@ -693,14 +693,14 @@ class CoursePortals():
         newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
             newgdcoords[0] = int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
@@ -881,8 +881,8 @@ class CourseBounceballs(): # all done
         newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
             newgdcoords[0] = int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
                             self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,1,'bounceball'])
@@ -894,8 +894,8 @@ class CourseBounceballs(): # all done
                             self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,4,'bounceball'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
@@ -1146,8 +1146,8 @@ class CourseBoosters():  #all done
         newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
             newgdcoords[0] = int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 8,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 8,1,'booster'])
@@ -1167,8 +1167,8 @@ class CourseBoosters():  #all done
                             self.collidecoords.append([x * 10 + speccoords[0] + 5,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 5,4,'booster'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
@@ -1366,8 +1366,8 @@ class CourseTriangles(): # all done
         newgdcoords[1] = int(gdcoords[1] / 10.0)
         if(self.direction == 'right'):
             newgdcoords[0] = int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         # Type 1 Triangle collision = standard triangle death hitbox
                         if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
@@ -1376,8 +1376,8 @@ class CourseTriangles(): # all done
                             self.collidecoords.append([x * 10 + speccoords[0] + 4,y * 10 + speccoords[1] + 4,x * 10 + speccoords[0] + 6,y * 10 + speccoords[1] + 6,1,'triangle'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
-            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 2): #only check the blocks directly around GD_Figure
-                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 2):
+            for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
+                for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
