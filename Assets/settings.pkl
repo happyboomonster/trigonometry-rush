@@ -4134,7 +4134,7 @@ aa(lp318
 S'player #'
 p319
 ag317
-aI5
+aI1
 aI10
 aa(lp320
 S'FG-Effects'
