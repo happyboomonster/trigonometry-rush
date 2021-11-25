@@ -296,7 +296,7 @@ class GD_Figure():
 
             elif(figureshape == 'ball' or figureshape == 'cube'):
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
-        else: #GLITCHY!!!
+        else:
             if(figureshape == 'arrow'):
                 return [int(self.pos[0]) + 3,int(self.pos[1]) + 3,int(self.pos[0]) + 5,int(self.pos[1]) + 5]
 
@@ -1959,6 +1959,12 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
 
         global screen
 
+        #are we HOLDING our mouse buttonnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn????????
+        MouseDown = False
+
+        #tmp mouseposition variable
+        mousepos = [0,0]
+
         #color palette for blocks...
         colors = [[0,0,0],[255,255,0],[0,255,0],[255,0,0],[0,0,255]]
 
@@ -2112,7 +2118,12 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             for event in pygame.event.get():
                 if(event.type == pygame.MOUSEMOTION):
                     mousepos = event.pos[:]
-                if(event.type == pygame.MOUSEBUTTONDOWN):
+                elif(event.type == pygame.MOUSEBUTTONUP):
+                    MouseDown = False
+                    mousepos = event.pos[:]
+                elif(event.type == pygame.MOUSEBUTTONDOWN):
+                    MouseDown = True
+                    mousepos = event.pos[:]
                     collision = self.menuengine.getcollision(event.pos)
                     if(0 in collision): #exit button
                         try: #just in case we DON'T save our changes...
@@ -2213,6 +2224,64 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             selectedblocks += 1
                         for x in range(0,18):
                             exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
+                    for x in range(99,119): #settings buttons
+                        if(x in collision):
+                            if(x == 118): #trash
+                                if(self.trash == False):
+                                    self.trash = True
+                                    self.number = False
+                                else:
+                                    self.trash = False
+                            if(x == 117): #number for portals
+                                if(self.number == False):
+                                    self.number = True
+                                    self.trash = False
+                                    self.insert = False
+                                else:
+                                    self.number = False
+                            if(x == 108): #move 20 left
+                                if(editpos[0] >= 20):
+                                    editpos[0] -= 20
+                            if(x == 109): #move 20 right
+                                editpos[0] += 20
+                            if(x == 107): #move up 20 blocks
+                                for c in range(0,10):
+                                    if(editpos[1] > 10):
+                                        editpos[1] -= 1
+                                    else:
+                                        self.squares.arena = self.insertrow(self.squares.arena)
+                                        self.triangles.arena = self.insertrow(self.triangles.arena)
+                                        self.boosters.arena = self.insertrow(self.boosters.arena)
+                                        self.bounceballs.arena = self.insertrow(self.bounceballs.arena)
+                                        self.portals.arena = self.insertrow(self.portals.arena)
+                            if(x == 110): #move down 20 blocks
+                                editpos[1] += 10
+                            if(x == 106): #insert X
+                                if(self.insert == False or self.insertxy == "y"):
+                                    self.insert = True
+                                    self.insertxy = "x"
+                                    self.number = False
+                                else:
+                                    self.insert = False
+                            if(x == 111): #insert Y
+                                if(self.insert == False or self.insertxy == "x"):
+                                    self.insert = True
+                                    self.insertxy = "y"
+                                    self.number = False
+                                else:
+                                    self.insert = False
+                    for x in range(119,137): #block buttons
+                        if(x in collision):
+                            blocknum = x - 119
+                            self.trash = False
+                            self.number = False
+                            self.insert = False
+                            exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
+                            if(blocknum < len(self.tmptiles)):
+                                self.selectedblock = blocknum
+
+                if(MouseDown == True):
+                    collision = self.menuengine.getcollision(mousepos)
                     for x in range(9,99): #have we placed a block somewhere?
                         if(x in collision):
                             tiley = int((x - 9) / 18)
@@ -2258,6 +2327,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                             if(editpos[0] > 0):
                                                 editpos[0] -= 1
                             elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
+                                MouseDown = False
                                 #now we find if a portal has been placed where we clicked
                                 if(self.portals.arena[tiley + editpos[1]][tilex + editpos[0]] != 0):
                                     num = "0" #current number variable we typed in
@@ -2281,6 +2351,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                     portal12 = bigpusab.render("12 = Teleport Entrance",0,[0,0,255])
                                     portal14 = bigpusab.render("14 = Speed 0.5x",0,[0,0,255])
                                     portal16 = bigpusab.render("16 = Speed 2x",0,[0,0,255])
+                                    portal18 = bigpusab.render("18 = Exit Mini Status",0,[0,255,0])
 
                                     #we needs a message tracker...
                                     numbers = []
@@ -2363,61 +2434,6 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             else:
                                 for x in range(0,len(enginetypes)):
                                     exec(str(enginetypes[x]) + ".arena[" + str(tiley + editpos[1]) + "][" + str(tilex + editpos[0]) + "] = 0")
-                    for x in range(99,119): #settings buttons
-                        if(x in collision):
-                            if(x == 118): #trash
-                                if(self.trash == False):
-                                    self.trash = True
-                                    self.number = False
-                                else:
-                                    self.trash = False
-                            if(x == 117): #number for portals
-                                if(self.number == False):
-                                    self.number = True
-                                    self.trash = False
-                                    self.insert = False
-                                else:
-                                    self.number = False
-                            if(x == 108): #move 20 left
-                                if(editpos[0] >= 20):
-                                    editpos[0] -= 20
-                            if(x == 109): #move 20 right
-                                editpos[0] += 20
-                            if(x == 107): #move up 20 blocks
-                                for c in range(0,10):
-                                    if(editpos[1] > 10):
-                                        editpos[1] -= 1
-                                    else:
-                                        self.squares.arena = self.insertrow(self.squares.arena)
-                                        self.triangles.arena = self.insertrow(self.triangles.arena)
-                                        self.boosters.arena = self.insertrow(self.boosters.arena)
-                                        self.bounceballs.arena = self.insertrow(self.bounceballs.arena)
-                                        self.portals.arena = self.insertrow(self.portals.arena)
-                            if(x == 110): #move down 20 blocks
-                                editpos[1] += 10
-                            if(x == 106): #insert X
-                                if(self.insert == False or self.insertxy == "y"):
-                                    self.insert = True
-                                    self.insertxy = "x"
-                                    self.number = False
-                                else:
-                                    self.insert = False
-                            if(x == 111): #insert Y
-                                if(self.insert == False or self.insertxy == "x"):
-                                    self.insert = True
-                                    self.insertxy = "y"
-                                    self.number = False
-                                else:
-                                    self.insert = False
-                    for x in range(119,137): #block buttons
-                        if(x in collision):
-                            blocknum = x - 119
-                            self.trash = False
-                            self.number = False
-                            self.insert = False
-                            exec("self.tmptiles = " + str(enginetypes[selectedblocks]) + ".tiles")
-                            if(blocknum < len(self.tmptiles)):
-                                self.selectedblock = blocknum
 
             #I always forget to do this when developing in Pygame...
             pygame.display.flip()
@@ -3372,10 +3388,12 @@ class GameLoop():
         self.attemptpos = [20,20]
         
         #padjumpsizes [P1,P2,P3,P4,MiniP1,MiniP2,MiniP3,MiniP4]
-        self.padjumpsizes = [-1.79,-2.77,-3.65,1.37,-1.32,-2.13,-2.71,1.37]
+        self.padjumpsizes = [-1.79,-2.70,-3.65,1.37,-1.32,-2.13,-2.71,1.37]
+        #P2 WAS -2.77
         
         #balljumpsizes = [P1,P2,P3,P4,P5,P6,P7,P8,MiniVariants 1 - 8] 
-        self.balljumpsizes = [-1.37,-1.91,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
+        self.balljumpsizes = [-1.37,-1.85,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
+        #P2 WAS -1.91
         
         #fps info / presets
         self.fps = 52
@@ -3741,14 +3759,6 @@ class GameLoop():
                 if('portal#9' in self.gdcollision): #activate reverse gravity
                     exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".gravity = -1")
-                if("portal#14" in self.gdcollision): #activate speed 0.5x
-                    self.gamespeed = 1
-                if("portal#15" in self.gdcollision): #activate speed 1x
-                    self.gamespeed = 2
-                if("portal#16" in self.gdcollision): #activate speed 2x
-                    self.gamespeed = 3
-                if("portal#17" in self.gdcollision): #activate speed 3x
-                    self.gamespeed = 4
                 if("portal#10" in self.gdcollision): #activate move right
                     if(self.direction != 'right'):
                         for getallgds in range(0,self.players):
@@ -3759,6 +3769,17 @@ class GameLoop():
                         for getallgds in range(0,self.players):
                             exec("self.gd" + str(getallgds) + ".setx(200 - self.gd" + str(getallgds) + ".pos[0] - 10)")
                         self.direction = "left"
+                if("portal#14" in self.gdcollision): #activate speed 0.5x
+                    self.gamespeed = 1
+                if("portal#15" in self.gdcollision): #activate speed 1x
+                    self.gamespeed = 2
+                if("portal#16" in self.gdcollision): #activate speed 2x
+                    self.gamespeed = 3
+                if("portal#17" in self.gdcollision): #activate speed 3x
+                    self.gamespeed = 4
+                if("portal#18" in self.gdcollision): #deactivate mini status
+                    exec("self.gd" + str(CryingOutLoud) + ".mini = False")
+                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
 
                 #getting some getslamcoords() here!
                 for getallgds in range(0,self.players):
@@ -3781,24 +3802,46 @@ class GameLoop():
                 #booster collision handling
                 exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                 exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
-                if('bouncepadP1' in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                elif('bouncepadP2' in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[1] * self.unit")
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                elif('bouncepadP3' in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[2] * self.unit")
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
-                elif('bouncepadP4' in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
-                    exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
-                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[3] * self.unit")
-                    exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                exec("self.handledmini = self.gd" + str(CryingOutLoud) + ".mini")
+                if(self.handledmini == False):
+                    if('bouncepadP1' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[0] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP2' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[1] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP3' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[2] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP4' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                        exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[3] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                else:
+                    if('bouncepadP1' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[4] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP2' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[5] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP3' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[6] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    elif('bouncepadP4' in self.gdcollision):
+                        exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                        exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                        exec("self.gd" + str(CryingOutLoud) + ".move([0,7],self.gd" + str(CryingOutLoud) + ".gravity)")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.padjumpsizes[7] * self.unit")
+                        exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+
 
                 #update dead lists
                 exec("self.deadlist[CryingOutLoud][1] = self.gd" + str(CryingOutLoud) + ".dead")
@@ -3927,18 +3970,33 @@ class GameLoop():
                     exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
                     exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
                     if(self.selectedform == "cube" and self.selectednojump == 0):
-                        #we check, have we collided with any bounceballs?
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                        if("bounceballP1" in self.gdcollision):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
-                        if("bounceballP2" in self.gdcollision):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
-                        if("bounceballP3" in self.gdcollision):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
-                        if("bounceballP4" in self.gdcollision):
-                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                            exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
-                            exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
+                        if(self.selectedmini == False):
+                            #we check, have we collided with any bounceballs?
+                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                            if("bounceballP1" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
+                            if("bounceballP2" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
+                            if("bounceballP3" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
+                            if("bounceballP4" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
+                        else:
+                            #we check, have we collided with any bounceballs?
+                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                            if("bounceballP1" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[8]")
+                            if("bounceballP2" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[9]")
+                            if("bounceballP3" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[10]")
+                            if("bounceballP4" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
+
                     if(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == False):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
