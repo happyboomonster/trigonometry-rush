@@ -3743,6 +3743,7 @@ class GameLoop():
                     exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
                     exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
+                    exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0") #make sure we don't start with a crazy Yspeed when we change to ship
                 if('portal#3' in self.gdcollision): #change to ball
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'ball'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 1")
@@ -4225,6 +4226,17 @@ try:
     keyconfig = dump[1][:] #get our key configs recovered
     mimenu.optionslist = dump[2][:] #options loading
     settingsout = dump[2][:]
+    #finish pulling data from "settingsout"
+    #set our player number variable to what we set it to in the SettingsMenu()
+    index = 0
+    while "player #" not in settingsout[index]:
+        index += 1
+    PlayerNumber = settingsout[index][2]
+    #set our volume to what we chose
+    index = 0
+    while "volume" not in settingsout[index]:
+        index += 1
+    pygame.mixer.music.set_volume(settingsout[index][2] / 100.0)
 except:
     print("No saved settings found. Changing to defaults...")
 
