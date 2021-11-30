@@ -167916,7 +167916,7 @@ aI0
 aI0
 aI0
 aI0
-aI3
+aI2
 aI0
 aI0
 aI0
@@ -217725,7 +217725,7 @@ aI0
 aI0
 aI0
 aI0
-aI0
+aI9
 aI0
 aI0
 aI0
@@ -218040,7 +218040,7 @@ aI0
 aI0
 aI0
 aI0
-aI9
+aI0
 aI0
 aI0
 aI0
@@ -245728,4 +245728,16 @@ aI0
 aI0
 aI0
 aI0
-aaa.
+aaa(lp786
+S'this is where the CourseAnimation() should go if I ever implement it'
+p787
+aa(lp788
+S'this is where the CourseDecoration() should go if I ever implement IT'
+p789
+aa(lp790
+(lp791
+a(lp792
+a(lp793
+a(lp794
+a(lp795
+aa.

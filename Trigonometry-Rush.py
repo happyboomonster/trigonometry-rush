@@ -20,7 +20,6 @@
 #Fast: 14 blocks/sec
 #Extra-Fast: 16.8 blocks/sec
 
-
 import pygame
 import time as timelib
 import random
@@ -435,6 +434,48 @@ class GD_Figure():
             pass
         return self.collision, self.gravity
             
+class ColorChanger(): #a colorchanger class which will be used within all the larger CourseXXX() classes to change the blocks' colors.
+    def __init__(self,color=[255,0,0]):
+        self.frames = 0 #basically a count of how many times updatecolor() is run
+        self.framestart = 0 #a backup of self.frames which gives us a relative measure of how many frames since we started a color change
+        self.oldcolor = color[:] #a backup of what our Current color WAS until we started transitioning
+        self.color = color[:] #current color
+        self.newcolor = color[:] #the one we're gonna change to later
+        self.changeR = 0
+        self.changeG = 0
+        self.changeB = 0
+        self.inlistinc = 0 #a counter to keep track of what colorchange we're on in our colorchange list
+
+    def colorchange(self,newcolor,frames):
+        self.oldcolor = self.color[:] #backup our currentcolor to provide a reference
+        self.newcolor = newcolor[:]
+        self.framestart = self.frames #backup our framecounter to provide a reference
+        self.changeR = int((self.newcolor[0] - self.oldcolor[0]) / frames) #find out how much we need to change in each color
+        self.changeG = int((self.newcolor[1] - self.oldcolor[1]) / frames)
+        self.changeB = int((self.newcolor[2] - self.oldcolor[2]) / frames)
+
+    def colorcheck(self,colorvalue):
+        if(colorvalue > 255):
+            return 255
+        elif(colorvalue < 0):
+            return 0
+        return colorvalue
+
+    def updatecolor(self):
+        self.frames += 1 #update our framecounter
+        progress = self.frames - self.framestart #find out how many frames we are into the colorchange
+        self.color[0] = self.oldcolor[0] + (self.changeR * progress)
+        self.color[1] = self.oldcolor[1] + (self.changeG * progress)
+        self.color[2] = self.oldcolor[2] + (self.changeB * progress)
+        self.color[0] = self.colorcheck(self.color[0])
+        self.color[1] = self.colorcheck(self.color[1])
+        self.color[2] = self.colorcheck(self.color[2])
+
+    def checklist(self,inlist):
+        if(self.inlistinc < len(inlist)):
+            if(self.frames == inlist[self.inlistinc][0]):
+                self.colorchange(inlist[self.inlistinc][2],inlist[self.inlistinc][1])
+                self.inlistinc += 1
 
 class CourseSquares(): # all done
     def __init__(self):
@@ -442,6 +483,24 @@ class CourseSquares(): # all done
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        #our list of colorchanges to happen throught the level
+        self.colorAchanges = []
+        self.colorBchanges = []
+        self.colorCchanges = []
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -532,7 +591,15 @@ class CourseSquares(): # all done
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def draw_arena(self,currentmap,coords,speccoords):
+    def draw_arena(self,currentmap,coords,speccoords,colorupdate=False,gamespeed=2):
+        if(colorupdate == True):
+            for change in range(0,gamespeed):
+                self.colorAchange.updatecolor() #I would've put all this stuff in the ReturnCollision function rather than DrawArena() because that way I wouldn't get annoying errors while using LevelEditor() BUT I check collision a LOT
+                self.colorBchange.updatecolor() #for squares in one frame...it's not really worth it for me to go to the trouble of checking and resettting the framecounter each time I check collision.
+                self.colorCchange.updatecolor()
+                self.colorAchange.checklist(self.colorAchanges)
+                self.colorBchange.checklist(self.colorBchanges)
+                self.colorCchange.checklist(self.colorCchanges)
         if(self.direction == 'right'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -547,6 +614,7 @@ class CourseSquares(): # all done
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
+        #actual start of getting collision
         self.collidecoords = []
         newgdcoords = [0,0]
         newgdcoords[1] = int(gdcoords[1] / 10.0)
@@ -586,6 +654,24 @@ class CoursePortals():
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        #our list of colorchanges to happen throught the level
+        self.colorAchanges = []
+        self.colorBchanges = []
+        self.colorCchanges = []
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -670,7 +756,15 @@ class CoursePortals():
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def draw_arena(self,currentmap,coords,speccoords):
+    def draw_arena(self,currentmap,coords,speccoords,colordraw=False,gamespeed=2):
+        if(colordraw):
+            for change in range(0,gamespeed):
+                self.colorAchange.updatecolor() #placed this here because it didn't work so well inside DrawArena due to LevelEditor using this class too - I'm eating my words now, aren't I?
+                self.colorBchange.updatecolor()
+                self.colorCchange.updatecolor()
+                self.colorAchange.checklist(self.colorAchanges)
+                self.colorBchange.checklist(self.colorBchanges)
+                self.colorCchange.checklist(self.colorCchanges)
         if(self.direction == 'right'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -691,6 +785,7 @@ class CoursePortals():
                             self.draw_tile(self.tiles[0],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
+        #actual collision begins here
         self.collidecoords = []
         newgdcoords = [0,0]
         newgdcoords[1] = int(gdcoords[1] / 10.0)
@@ -719,6 +814,28 @@ class CourseBounceballs(): # all done
         self.colorB = [255,255,0]
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
+
+        #our list of colorchanges to happen throught the level
+        self.colorAchanges = []
+        self.colorBchanges = []
+        self.colorCchanges = []
+        self.colorDchanges = []
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+        self.colorDchange = ColorChanger(self.colorD)
+        self.colorDchange.color = self.colorD[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
+        self.colorD = self.colorDchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -815,7 +932,17 @@ class CourseBounceballs(): # all done
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed):
+    def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
+        if(colordraw):
+            for change in range(0,gamespeed):
+                self.colorAchange.updatecolor() #this is here because LevelEditor doesn't behave well if this stuff is inside DrawArena()
+                self.colorBchange.updatecolor()
+                self.colorCchange.updatecolor()
+                self.colorDchange.updatecolor()
+                self.colorAchange.checklist(self.colorAchanges)
+                self.colorBchange.checklist(self.colorBchanges)
+                self.colorCchange.checklist(self.colorCchanges)
+                self.colorDchange.checklist(self.colorDchanges)
         if(self.direction == 'right'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -879,6 +1006,7 @@ class CourseBounceballs(): # all done
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]):
+        #actual collision begins here
         self.collidecoords = []
         newgdcoords = [0,0]
         newgdcoords[1] = int(gdcoords[1] / 10.0)
@@ -922,6 +1050,28 @@ class CourseBoosters():  #all done
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
         self.colorD = [0,255,255]
+
+        #our list of colorchanges to happen throught the level
+        self.colorAchanges = []
+        self.colorBchanges = []
+        self.colorCchanges = []
+        self.colorDchanges = []
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+        self.colorDchange = ColorChanger(self.colorD)
+        self.colorDchange.color = self.colorD[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
+        self.colorD = self.colorDchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -1065,7 +1215,17 @@ class CourseBoosters():  #all done
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed):
+    def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
+        if(colordraw):
+            for change in range(0,gamespeed):
+                self.colorAchange.updatecolor() #moved inside DrawArena after all...
+                self.colorBchange.updatecolor()
+                self.colorCchange.updatecolor()
+                self.colorDchange.updatecolor()
+                self.colorAchange.checklist(self.colorAchanges)
+                self.colorBchange.checklist(self.colorBchanges)
+                self.colorCchange.checklist(self.colorCchanges)
+                self.colorDchange.checklist(self.colorDchanges)
         if(self.direction == 'right'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -1144,6 +1304,7 @@ class CourseBoosters():  #all done
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords,gdcoords=[0,0]): #implemented a new collision method which only checks the blocks right around the GD_Figure object; reduces CPU load
+        #actual collision begins here...
         self.collidecoords = []
         newgdcoords = [0,0]
         newgdcoords[1] = int(gdcoords[1] / 10.0)
@@ -1200,6 +1361,24 @@ class CourseTriangles(): # all done
         self.colorA = [0,0,255]
         self.colorB = [255,255,255]
         self.colorC = [0,0,255]
+
+        #our list of colorchanges to happen throught the level list[colorchange[position,time,color]]]
+        self.colorAchanges = []
+        self.colorBchanges = []
+        self.colorCchanges = []
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -1349,7 +1528,15 @@ class CourseTriangles(): # all done
     def getcolors(self):
         return [self.colorA,self.colorB,self.colorC]
 
-    def draw_arena(self,currentmap,coords,speccoords): #incresing the Y on coords moves the map up, while decreasing the Y on speccoords moves the map up...
+    def draw_arena(self,currentmap,coords,speccoords,colordraw=False,gamespeed=2): #incresing the Y on coords moves the map up, while decreasing the Y on speccoords moves the map up...
+        if(colordraw):
+            for change in range(0,gamespeed):
+                self.colorAchange.updatecolor() #placed this here instead of in DrawArena() because LevelEditor() doesn't like it - I'm eating my words now...
+                self.colorBchange.updatecolor()
+                self.colorCchange.updatecolor()
+                self.colorAchange.checklist(self.colorAchanges)
+                self.colorBchange.checklist(self.colorBchanges)
+                self.colorCchange.checklist(self.colorCchanges)
         if(self.direction == 'right'):
             for x in range(0,self.screen_w):
                 for y in range(0,self.screen_h):
@@ -1364,6 +1551,7 @@ class CourseTriangles(): # all done
                         self.draw_tile(self.tiles[currentmap[coords[1] + y][coords[0] + x] - 1],[newx * 10 + speccoords[0],newy * 10 + speccoords[1]])
 
     def return_collision(self,currentmap,coords,speccoords,gdcoords): #new collision method which only checks the triangles right around the cube works WAAAAAY faster!
+        #actual collision begins here
         self.collidecoords = []
         newgdcoords = [0,0]
         newgdcoords[1] = int(gdcoords[1] / 10.0)
@@ -1396,6 +1584,24 @@ class CourseAnimation(): #******************************************************
         self.colorA = [255,0,0]
         self.colorB = [0,255,0]
         self.colorC = [0,0,255]
+
+        #our list of colorchanges to happen throught the level
+        self.colorAchanges = [[10,5,[0,0,0]]]
+        self.colorBchanges = [[10,20,[0,0,0]]]
+        self.colorCchanges = [[10,30,[0,0,0]]]
+
+        #establish our colorchange() objects
+        self.colorAchange = ColorChanger(self.colorA)
+        self.colorAchange.color = self.colorA[:]
+        self.colorBchange = ColorChanger(self.colorB)
+        self.colorBchange.color = self.colorB[:]
+        self.colorCchange = ColorChanger(self.colorC)
+        self.colorCchange.color = self.colorC[:]
+
+        #link the self.colorX variables with the ones internal to the ColorChange() objects
+        self.colorA = self.colorAchange.color
+        self.colorB = self.colorBchange.color
+        self.colorC = self.colorCchange.color
 
         self.screen_w = 22
         self.screen_h = 13
@@ -1537,6 +1743,13 @@ class CourseAnimation(): #******************************************************
                     self.draw_tile(self.tiles[arena[y + coords[1]][x + coords[0]]],arena[y + coords[1]][x + coords[0]],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
 
     def return_collision(self,arena,coords,speccoords):
+        self.colorAchange.updatecolor() #placed this here because LevelEditor won't like it inside DrawArena()
+        self.colorBchange.updatecolor()
+        self.colorCchange.updatecolor()
+        self.colorAchange.checklist(self.colorAchanges)
+        self.colorBchange.checklist(self.colorBchanges)
+        self.colorCchange.checklist(self.colorCchanges)
+        #actual collision begins here
         for x in range(0,self.screen_w):
             for y in range(0,self.screen_h):
                 pass
@@ -1547,7 +1760,11 @@ class BGEffects():
     def __init__(self):
         self.effectspos = []
         self.effectscolor = [40,40,40]
+        self.effectscolorchanges = []
         self.onoff = True
+        self.effectscolorchanger = ColorChanger(self.effectscolor)
+        self.effectscolorchanger.color = self.effectscolor[:]
+        self.effectscolor = self.effectscolorchanger.color #link the two lists together so that we don't have to keep updating self.effectscolor every frame
 
     def moveeffects(self,direction):
         if(self.onoff == False):
@@ -1587,9 +1804,12 @@ class BGEffects():
     def getcolor(self):
         return self.effectscolor
 
-    def draweffects(self):
+    def draweffects(self,gamespeed=2):
         if(self.onoff == False):
             return
+        for speed in range(0,gamespeed):
+            self.effectscolorchanger.checklist(self.effectscolorchanges)
+            self.effectscolorchanger.updatecolor()
         for x in range(0,len(self.effectspos)):
             if(self.effectspos[x][2] == 'circle'):
                 pygame.draw.circle(screen,self.effectscolor,[self.effectspos[x][0],self.effectspos[x][1]],self.effectspos[x][3],5)
@@ -1701,6 +1921,9 @@ class MenuEngine():
 
 class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: arrow 6: robot 7: gravitycreeper 8: gravity 9: reverse-gravity... (uh-oh) 10: move-right 11: move-left 12: teleport entrance  13: teleport exit 14-17: speeds 0.5,1,2,&3x
     def __init__(self):
+        #for the "getcolor()" function
+        self.pickedcolor = [100,100,100]
+        #LEVEL EDITOR stuff begins here...
         self.imageset = [] #our list for holding all the images that correspond to various hitboxes
         #exit button, change name button, save button 
         self.buttonplacement = [[0,0],[20,0],[180,0]] #0-2
@@ -1866,6 +2089,93 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             [46,"."],
             [95,"_"]]
 
+    def numberentry(self,heading):
+        tmpfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",10)
+        continuehitbox = [0,30,200,40]
+        number = 0
+        while True:
+            screen.fill([0,0,0])
+            tmpsurface = tmpfont.render(heading,1,[255,255,255])
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),0])
+            tmpsurface = tmpfont.render(str(number),1,[255,255,255])
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),100])
+            tmpsurface = tmpfont.render("Enter to Continue",1,[255,255,255])
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),30]) #draw a continue button
+            pygame.draw.rect(screen,[100,100,100],[0,29,200,12],1) #draw a box around our continue button
+
+            for event in pygame.event.get():
+                if(event.type == pygame.KEYDOWN):
+                    try:
+                        int(self.akey(event.key)) #make sure what we typed in was a number
+                        number = int(str(number) + str(self.akey(event.key)))
+                    except:
+                        pass
+                    if(event.key == pygame.K_BACKSPACE): #backspace some of "number"
+                        if(len(list(str(number))) > 0):
+                            if(len(list(str(number))) == 1):
+                                number = 0
+                            else:
+                                number = list(str(number))
+                                del(number[len(number) - 1])
+                                number = int(self.ListToStr(number))
+                    elif(event.key == pygame.K_RETURN):
+                        return number
+
+            pygame.display.flip()
+            clock.tick(30)
+                        
+
+    def getcolors(self,heading):
+        tmpfont = pygame.font.Font("Assets/Fonts/PUSAB.ttf",10)
+        continuehitbox = [0,30,200,40]
+        MouseDown = False
+        mousepos = [0,0]
+        while True:
+            #draw the colorchoose area
+            for acv in range(0,51):
+                pygame.draw.line(screen,[acv * 5,0,0],[0,120 - acv],[66,120 - acv],1)
+            for acv in range(0,51):
+                pygame.draw.line(screen,[0,acv * 5,0],[66,120 - acv],[133,120 - acv],1)
+            for acv in range(0,51):
+                pygame.draw.line(screen,[0,0,acv * 5],[133,120 - acv],[200,120 - acv],1)
+
+            tmpsurface = tmpfont.render(heading,1,[255,255,255])
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),0]) #draw the heading [gonna be Pick colors for CourseXXX]
+            tmpsurface = tmpfont.render("Sample Color",1,self.pickedcolor)
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),15]) #draw a sample of the color we're gonna be choosing
+            tmpsurface = tmpfont.render("Continue",1,[255,255,255])
+            screen.blit(tmpsurface,[100 - int(tmpsurface.get_width() / 2),30]) #draw a continue button
+            pygame.draw.rect(screen,[100,100,100],[0,29,200,12],1) #draw a box around our continue button
+
+            pygame.draw.line(screen,[100,100,100],[0,120 - (self.pickedcolor[0] / 5)],[66,120 - (self.pickedcolor[0] / 5)],5)
+            pygame.draw.line(screen,[100,100,100],[66,120 - (self.pickedcolor[1] / 5)],[133,120 - (self.pickedcolor[1] / 5)],5)
+            pygame.draw.line(screen,[100,100,100],[133,120 - (self.pickedcolor[2] / 5)],[200,120 - (self.pickedcolor[2] / 5)],5)
+
+            #EVENT LOOP!!!
+            for event in pygame.event.get():
+                if(event.type == pygame.MOUSEBUTTONDOWN):
+                    MouseDown = True
+                    if(event.pos[0] > continuehitbox[0] and event.pos[0] < continuehitbox[2]): #did we click continue???
+                        if(event.pos[1] > continuehitbox[1] and event.pos[1] < continuehitbox[3]):
+                            return self.pickedcolor
+                elif(event.type == pygame.MOUSEBUTTONUP):
+                    MouseDown = False
+                elif(event.type == pygame.MOUSEMOTION):
+                    mousepos = event.pos[:]
+            if(MouseDown):
+                if(mousepos[1] > 69): #did we click in the colorpicking area?
+                    if(mousepos[0] < 67):
+                        self.pickedcolor[0] = (120 - mousepos[1]) * 5
+                    elif(mousepos[0] < 134):
+                        self.pickedcolor[1] = (120 - mousepos[1]) * 5
+                    else:
+                        self.pickedcolor[2] = (120 - mousepos[1]) * 5
+
+            #flip our display
+            pygame.display.flip()
+            screen.fill([0,0,0]) #fill the screen with everyone's favorite color
+            self.clock.tick(30) #throttle our FPS
+
     def create_arena(self): #creates a 20x20 arena grid
         tmparenaP = [] #temporary arena Piece
         for x in range(0,20):
@@ -1983,6 +2293,14 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         levelname = "level"
         caps = False
 
+        #get a colorchange() cache set up
+        self.colorchanges = []
+        finalchangeA = []
+        finalchangeB = []
+        finalchangeC = []
+        finalchangeD = []
+        finalchangeG = []
+
         #load in an already made level...?
         if(levelin != False): #levelin format: [level file,level name]
             self.arena = pickle.load(levelin[0])
@@ -2007,6 +2325,23 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             except IndexError:
                 self.portals.arena = self.create_arena()
             levelname = levelin[1]
+            #now we need to load the colorchange() stuff...
+            try:
+                tmpcolor = self.arena[7]
+                finalchangeA = tmpcolor[0][:]
+                finalchangeB = tmpcolor[1][:]
+                finalchangeC = tmpcolor[2][:]
+                finalchangeD = tmpcolor[3][:]
+                finalchangeG = tmpcolor[4][:]
+                for loadpos in range(0,len(finalchangeA)):
+                    self.colorchanges.append(finalchangeA[loadpos][0][0])
+            except IndexError:
+                #get a colorchange() cache set up
+                finalchangeA = []
+                finalchangeB = []
+                finalchangeC = []
+                finalchangeD = []
+                finalchangeG = []
 
         #check arena integrity and repair if needed and make a loading screen so it looks ok
         screen.fill([0,0,0]) #loading bar at 0%
@@ -2064,8 +2399,12 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
         self.imageset[108] = self.twentyleft
 
         #move 20 blocks up/down
-        self.imageset[107] = pygame.image.load("Assets/LevelEditor/MiniUp.png") #up?
+        self.imageset[107] = pygame.image.load("Assets/LevelEditor/MiniUp.png") #up
         self.imageset[110] = pygame.image.load("Assets/LevelEditor/MiniDown.png") #down
+
+        #ColorChange()
+        self.imageset[99] = pygame.image.load("Assets/LevelEditor/ColorChange.png")
+        self.colorchange = False
 
         while running:
             #make sure our arenasizes are large enough to prevent IndexErrors from occurring
@@ -2076,6 +2415,11 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             self.portals.arena = self.resize_arena(self.portals.arena,editpos)
             
             screen.fill(self.bgcolor) #fill our background with BLACK (an excellent way to start a menu)
+
+            #draw a grey bar wherever colorchanges happen to be
+            for findchange in range(0,len(finalchangeA)):
+                if(finalchangeA[findchange][0][0] / 10 >= editpos[0] and finalchangeA[findchange][0][0] / 10 <= editpos[0] + 18):
+                    pygame.draw.rect(screen,[100,100,100],[finalchangeA[findchange][0][0] + 10 - (editpos[0] * 10),40,10,50],0)
 
             #draw the arena
             self.squares.draw_arena(self.squares.arena,editpos,[10,40])
@@ -2098,6 +2442,9 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
             #annnd...the portal# button
             if(self.number == True):
                 pygame.draw.line(screen,[255,255,255],[190,20],[180,30],1)
+            #NOW the ColorChange() button ontop of that...
+            if(self.colorchange == True):
+                pygame.draw.line(screen,[255,255,255],[10,20],[0,30],1)
 
             #draw the level's name
             screen.blit(self.pusab.render(levelname,0,[150,150,150]),[100 - len(levelname) * 3,5])
@@ -2170,12 +2517,33 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             self.clock.tick(10)
                     #save button
                     elif(2 in collision):
+                        #first we have to sort the "FinalChangeX" lists
+                        unperfect = True
+                        while unperfect:
+                            unperfect = False
+                            for sortlist in range(0,len(finalchangeA) - 1):
+                                if(finalchangeA[sortlist][0][0] > finalchangeA[sortlist + 1][0][0]):
+                                    finalchangeA.insert(sortlist + 1,finalchangeA.pop(sortlist)) #there might be a problem here...
+                            for sortlist in range(0,len(finalchangeB) - 1):
+                                if(finalchangeB[sortlist][0][0] > finalchangeB[sortlist + 1][0][0]):
+                                    finalchangeB.insert(sortlist + 1,finalchangeB.pop(sortlist)) #there might be a problem here...
+                            for sortlist in range(0,len(finalchangeC) - 1):
+                                if(finalchangeC[sortlist][0][0] > finalchangeC[sortlist + 1][0][0]):
+                                    finalchangeC.insert(sortlist + 1,finalchangeC.pop(sortlist)) #there might be a problem here...
+                            for sortlist in range(0,len(finalchangeD) - 1):
+                                if(finalchangeD[sortlist][0][0] > finalchangeD[sortlist + 1][0][0]):
+                                    finalchangeD.insert(sortlist + 1,finalchangeD.pop(sortlist)) #there might be a problem here...
+                                    unperfect = True #we're using a simple sorting algorithm here...and we have to do a LOT of passes and we use a variable to check when we don't have to make any more passes over the list.
+                        #now we save everything...
                         mimetalist = []
                         mimetalist.append(self.squares.arena[:])
                         mimetalist.append(self.triangles.arena[:])
                         mimetalist.append(self.boosters.arena[:])
                         mimetalist.append(self.bounceballs.arena[:])
                         mimetalist.append(self.portals.arena[:])
+                        mimetalist.append(["this is where the CourseAnimation() should go if I ever implement it"])
+                        mimetalist.append(["this is where the CourseDecoration() should go if I ever implement IT"])
+                        mimetalist.append([finalchangeA[:],finalchangeB[:],finalchangeC[:],finalchangeD[:],finalchangeG[:]]) #add our colorchanges to this
                         os.system("mkdir " + '"' + str(execpath) + "/Assets/Levels/" + str(levelname) + '"')
                         if(PYTHON2):
                             outfilename = open("Assets/Levels/" + str(levelname) + "/OutputLevel.pkl","w+")
@@ -2226,6 +2594,13 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             exec("self.imageset[119 + x] = " + str(blocktypes[selectedblocks]) + "[x]")
                     for x in range(99,119): #settings buttons
                         if(x in collision):
+                            if(x == 99): #colorchange()
+                                if(self.colorchange == False):
+                                    self.colorchange = True
+                                    self.number = False
+                                    self.insert = False
+                                else:
+                                    self.colorchange = False
                             if(x == 118): #trash
                                 if(self.trash == False):
                                     self.trash = True
@@ -2234,6 +2609,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                     self.trash = False
                             if(x == 117): #number for portals
                                 if(self.number == False):
+                                    self.colorchange = False
                                     self.number = True
                                     self.trash = False
                                     self.insert = False
@@ -2257,6 +2633,8 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 110): #move down 20 blocks
                                 editpos[1] += 10
                             if(x == 106): #insert X
+                                pygame.time.delay(100) #insert small delay so we don't accidentally insert 5 columns
+                                self.colorchange = False
                                 if(self.insert == False or self.insertxy == "y"):
                                     self.insert = True
                                     self.insertxy = "x"
@@ -2264,6 +2642,8 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                 else:
                                     self.insert = False
                             if(x == 111): #insert Y
+                                pygame.time.delay(100) #insert small delay so we don't accidentally insert 5 columns
+                                self.colorchange = False
                                 if(self.insert == False or self.insertxy == "x"):
                                     self.insert = True
                                     self.insertxy = "y"
@@ -2273,6 +2653,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                     for x in range(119,137): #block buttons
                         if(x in collision):
                             blocknum = x - 119
+                            self.colorchange = False
                             self.trash = False
                             self.number = False
                             self.insert = False
@@ -2286,7 +2667,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                         if(x in collision):
                             tiley = int((x - 9) / 18)
                             tilex = int((x - 9) % 18)
-                            if(self.trash == False and self.number == False and self.insert == False):
+                            if(self.trash == False and self.number == False and self.insert == False and self.colorchange == False):
                                 exec(str(enginetypes[selectedblocks]) + ".arena[" + str(tiley + editpos[1]) + "]" + "[" + str(tilex + editpos[0]) + "] = " + str(self.selectedblock + 1))
                             elif(self.insert == True):
                                 if(self.insertxy == "x"):
@@ -2431,6 +2812,84 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                         self.clock.tick(30)
                                 else:
                                     pass #do nothing!
+                            elif(self.colorchange == True):
+                                MouseDown = False
+                                if(self.trash == True): #then we delete a colorchange (if there is one)
+                                    #find a colorchange that matches up with our current position we clicked...
+                                    trashpos = 10 * (editpos[0] + tilex)
+                                    for findchange in range(0,len(finalchangeA)):
+                                        if(finalchangeA[findchange][0][0] == trashpos):
+                                            del(finalchangeA[findchange])
+                                            del(finalchangeB[findchange])
+                                            del(finalchangeC[findchange])
+                                            del(finalchangeD[findchange])
+                                            break
+                                else: #if not, then we create a new colorchange
+                                    #we need to do one for each class, squares, triangles, bounceballs, bouncepads, and portals.
+                                    changepos = 10 * (editpos[0] + tilex)
+                                    self.colorchanges.append(changepos)
+                                    #get the change duration
+                                    changeduration = self.numberentry("Specify ColorChange len")
+                                    tmpchangeA = []
+                                    tmpchangeB = []
+                                    tmpchangeC = []
+                                    tmpchangeD = []
+                                    #Squares
+                                    #get the color change for all 3 colors
+                                    changeA = self.getcolors("Pick ColorA change [squares]")
+                                    changeB = self.getcolors("Pick ColorB change [squares]")
+                                    changeC = self.getcolors("Pick ColorC change [squares]")
+                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    tmpchangeD.append([0])
+                                    #triangles
+                                    #get the color change for all 3 colors
+                                    changeA = self.getcolors("Pick ColorA change [triangles]")
+                                    changeB = self.getcolors("Pick ColorB change [triangles]")
+                                    changeC = self.getcolors("Pick ColorC change [triangles]")
+                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    tmpchangeD.append([0])
+                                    #boosters
+                                    #get the color change for all 3 colors
+                                    changeA = self.getcolors("Pick ColorA change [boosters]")
+                                    changeB = self.getcolors("Pick ColorB change [boosters]")
+                                    changeC = self.getcolors("Pick ColorC change [boosters]")
+                                    changeD = self.getcolors("Pick ColorD change [boosters]")
+                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    tmpchangeD.append([changepos,changeduration,changeD[:]])
+                                    #bounceballs
+                                    #get the color change for all 3 colors
+                                    changeA = self.getcolors("Pick ColorA change [B.balls]")
+                                    changeB = self.getcolors("Pick ColorB change [B.balls]")
+                                    changeC = self.getcolors("Pick ColorC change [B.balls]")
+                                    changeD = self.getcolors("Pick ColorD change [B.balls]")
+                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    tmpchangeD.append([changepos,changeduration,changeD[:]])
+                                    #portals
+                                    #get the color change for all 3 colors
+                                    changeA = self.getcolors("Pick ColorA change [portals]")
+                                    changeB = self.getcolors("Pick ColorB change [portals]")
+                                    changeC = self.getcolors("Pick ColorC change [portals]")
+                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    tmpchangeD.append([0])
+                                    #get the FG-Effects and background colorchanges too
+                                    changeFG = self.getcolors("Pick FG-Effects change")
+                                    changeBG = self.getcolors("Pick background change")
+                                    #append our metalist of colorchanges to the FinalChange[] list
+                                    finalchangeA.append(tmpchangeA[:])
+                                    finalchangeB.append(tmpchangeB[:])
+                                    finalchangeC.append(tmpchangeC[:])
+                                    finalchangeD.append(tmpchangeD[:])
+                                    finalchangeG.append([[changepos,changeduration,changeFG],[changepos,changeduration,changeBG]])
                             else:
                                 for x in range(0,len(enginetypes)):
                                     exec(str(enginetypes[x]) + ".arena[" + str(tiley + editpos[1]) + "][" + str(tilex + editpos[0]) + "] = 0")
@@ -3415,8 +3874,11 @@ class GameLoop():
         #how much a jump unit is?
         self.unit = 1.0
         
-        #background color
+        #background color + background FadeFX stuff
         self.bgcolor = [0,0,0]
+        self.bgcolorchanges = []
+        self.bgcolorchanger = ColorChanger([0,0,0])
+        self.bgcolor = self.bgcolorchanger.color #link these two lists together...
 
         #SET OUR DIRECTION, FOR PETE'S SAKE!
         self.direction = 'right'
@@ -3447,7 +3909,33 @@ class GameLoop():
         self.bouncepadsCourse = conglomeration[2][:]
         self.bounceballsCourse = conglomeration[3][:]
         self.portalsCourse = conglomeration[4][:]
-
+        self.animationCourse = conglomeration[5][:]
+        self.decorationCourse = conglomeration[6][:]
+        self.colorchanges = conglomeration[7][:]
+        #now we have to deal with the colorchanges...
+        #ORDER: list[colorchange[squares,triangles,boosters,bounceballs,portals]]
+        for findchanges in range(0,len(self.colorchanges[0])):#encapsulating list, inside list, enginetypes, colorABCDs
+            self.squares.colorAchanges.append(self.colorchanges[0][findchanges][0][:]) #squares
+            self.squares.colorBchanges.append(self.colorchanges[1][findchanges][0][:])
+            self.squares.colorCchanges.append(self.colorchanges[2][findchanges][0][:])
+            self.triangles.colorAchanges.append(self.colorchanges[0][findchanges][1][:]) #triangles
+            self.triangles.colorBchanges.append(self.colorchanges[1][findchanges][1][:])
+            self.triangles.colorCchanges.append(self.colorchanges[2][findchanges][1][:])
+            self.boosters.colorAchanges.append(self.colorchanges[0][findchanges][2][:]) #boosters
+            self.boosters.colorBchanges.append(self.colorchanges[1][findchanges][2][:])
+            self.boosters.colorCchanges.append(self.colorchanges[2][findchanges][2][:])
+            self.boosters.colorDchanges.append(self.colorchanges[3][findchanges][2][:])
+            self.bounceballs.colorAchanges.append(self.colorchanges[0][findchanges][3][:]) #bounceballs
+            self.bounceballs.colorBchanges.append(self.colorchanges[1][findchanges][3][:])
+            self.bounceballs.colorCchanges.append(self.colorchanges[2][findchanges][3][:])
+            self.bounceballs.colorDchanges.append(self.colorchanges[3][findchanges][3][:])
+            self.portals.colorAchanges.append(self.colorchanges[0][findchanges][4][:]) #portals
+            self.portals.colorBchanges.append(self.colorchanges[1][findchanges][4][:])
+            self.portals.colorCchanges.append(self.colorchanges[2][findchanges][4][:])
+        for findchanges in range(0,len(self.colorchanges[4])):
+            self.effects.effectscolorchanges.append(self.colorchanges[4][findchanges][0][:]) #bg-effects
+            self.bgcolorchanges.append(self.colorchanges[4][findchanges][1][:]) #background changecolor
+            
     def GameLoop(self,choice,attempts):
         #THE SHAKES variable
         self.shakes = 0 #it's a Y offset used to jitter the entire screen when a player dies.
@@ -3518,9 +4006,6 @@ class GameLoop():
                 self.y = int(e) #was e * self.gamespeed
                 self.x = f
                 exec("self.x10x = [self.x,self.y]")
-
-            #erase the screen with whatever bgcolor is for next frame
-            screen.fill(self.bgcolor)
 
             #set some object variables so the course knows which way we're going
             self.triangles.direction = self.direction
@@ -4041,6 +4526,13 @@ class GameLoop():
         return self.returnstatement
 
     def DrawEVERYTHING(self,x10x,y10y,choice,attempts):
+        #handle our backgrounds color changes
+        for updatecolors in range(0,self.gamespeed):
+            self.bgcolorchanger.checklist(self.bgcolorchanges)
+            self.bgcolorchanger.updatecolor()
+        #erase the screen with whatever bgcolor is for next frame
+        screen.fill(self.bgcolor)
+        
         #handle our shakes
         if(self.shakes != 0):
             if(self.shakes > 0):
@@ -4051,13 +4543,13 @@ class GameLoop():
                     self.shakes = self.shakes * -1 - 2
                 
         #draw the BGEffects
-        self.effects.draweffects()
+        self.effects.draweffects(self.gamespeed)
             
         #draw the various components of the arena (excep t portals, see farther down)
-        exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
-        exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
-        exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,40,self.gamespeed)")
-        exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,30,self.gamespeed)")
+        exec("self.squares.draw_arena(self.squaresCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],True,self.gamespeed)")
+        exec("self.triangles.draw_arena(self.trianglesCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],True,self.gamespeed)")
+        exec("self.boosters.draw_arena(self.bouncepadsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,40,self.gamespeed,True)")
+        exec("self.bounceballs.draw_arena(self.bounceballsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],self.fgeffects,self.framecount,30,self.gamespeed,True)")
 
         #gdlistcoords handling (for showing a trail behind GD_Cube):
         for imrunningoutofvariables in range(0,self.players):
@@ -4118,7 +4610,7 @@ class GameLoop():
                 exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-self.shakes],self.gd" + str(imrunningoutofvariables) + ".gravity)")
 
         #draw the portals here, because it looks better for the GD_Figures to be behind them, not in front
-        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes])")
+        exec("self.portals.draw_arena(self.portalsCourse,[x10x[0],y10y[0]],[-x10x[1],y10y[1] + self.shakes],True,self.gamespeed)")
 
         #take care of displaying attempt message
         self.attemptsurface = pygame.transform.scale(self.pusab.render("Attempt " + str(attempts),1, [255,255,255]),[10 * len(list("Attempt " + str(attempts))),25])
@@ -4254,6 +4746,7 @@ while True:
                 migameloop.LoadLevel(milevelchoice)
                 while True:
                     migameloop.__init__(PlayerNumber,keyconfig,playercolors,playerskins,mimenu.skintypes)
+                    migameloop.LoadLevel(milevelchoice) #need this here because it overwrites colorchange() stuff
                     #Turn on or off FG-Effects in game
                     index = 0
                     while "FG-Effects" not in settingsout[index]:

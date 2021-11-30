@@ -50629,4 +50629,16 @@ aI0
 aI0
 aI0
 aI0
-aaa.
+aaa(lp381
+S'this is where the CourseAnimation() should go if I ever implement it'
+p382
+aa(lp383
+S'this is where the CourseDecoration() should go if I ever implement IT'
+p384
+aa(lp385
+(lp386
+a(lp387
+a(lp388
+a(lp389
+a(lp390
+aa.
