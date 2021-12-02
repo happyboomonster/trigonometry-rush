@@ -2774,7 +2774,7 @@ aa(lp233
 S'player #'
 p234
 ag232
-aI2
+aI1
 aI10
 aa(lp235
 S'FG-Effects'

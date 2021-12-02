@@ -293,8 +293,11 @@ class GD_Figure():
             elif(figureshape == 'ship'):
                 return [int(self.pos[0] + 1),int(self.pos[1] + 7),int(self.pos[0] + 14),int(self.pos[1] + 9)]
 
-            elif(figureshape == 'ball' or figureshape == 'cube'):
+            elif(figureshape == 'cube'):
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
+
+            elif(figureshape == 'ball'):
+                return [int(self.pos[0] + 6),int(self.pos[1] + 4),int(self.pos[0] + 10),int(self.pos[1] + 12)]
         else:
             if(figureshape == 'arrow'):
                 return [int(self.pos[0]) + 3,int(self.pos[1]) + 3,int(self.pos[0]) + 5,int(self.pos[1]) + 5]
@@ -346,7 +349,7 @@ class GD_Figure():
         for x in range(0,len(collidecoords)):
             if(collidecoords[x][5] == 'ground'):  #this is for block collision ONLY.
                 if(collidecoords[x][4] == 1):
-                    #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],10,10],1)
+                    #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],10,10],2) #debug ONLY
                     #inside a collision list, we get [x,y,x2,y2,Collision Type:(1 = Ground,2 = Death), in GDcoords, we have just [x,y,x2,y2] though.
                     if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
@@ -440,6 +443,7 @@ class ColorChanger(): #a colorchanger class which will be used within all the la
         self.framestart = 0 #a backup of self.frames which gives us a relative measure of how many frames since we started a color change
         self.oldcolor = color[:] #a backup of what our Current color WAS until we started transitioning
         self.color = color[:] #current color
+        self.floatcolor = self.color[:] #the copy of the current color which we work with to avoid losing decimal points
         self.newcolor = color[:] #the one we're gonna change to later
         self.changeR = 0
         self.changeG = 0
@@ -450,9 +454,9 @@ class ColorChanger(): #a colorchanger class which will be used within all the la
         self.oldcolor = self.color[:] #backup our currentcolor to provide a reference
         self.newcolor = newcolor[:]
         self.framestart = self.frames #backup our framecounter to provide a reference
-        self.changeR = int((self.newcolor[0] - self.oldcolor[0]) / frames) #find out how much we need to change in each color
-        self.changeG = int((self.newcolor[1] - self.oldcolor[1]) / frames)
-        self.changeB = int((self.newcolor[2] - self.oldcolor[2]) / frames)
+        self.changeR = (self.newcolor[0] - self.oldcolor[0]) / (frames * 1.0) #find out how much we need to change in each color
+        self.changeG = (self.newcolor[1] - self.oldcolor[1]) / (frames * 1.0)
+        self.changeB = (self.newcolor[2] - self.oldcolor[2]) / (frames * 1.0)
 
     def colorcheck(self,colorvalue):
         if(colorvalue > 255):
@@ -461,15 +465,19 @@ class ColorChanger(): #a colorchanger class which will be used within all the la
             return 0
         return colorvalue
 
-    def updatecolor(self):
+    def updatecolor(self,inlist):
         self.frames += 1 #update our framecounter
         progress = self.frames - self.framestart #find out how many frames we are into the colorchange
-        self.color[0] = self.oldcolor[0] + (self.changeR * progress)
-        self.color[1] = self.oldcolor[1] + (self.changeG * progress)
-        self.color[2] = self.oldcolor[2] + (self.changeB * progress)
-        self.color[0] = self.colorcheck(self.color[0])
-        self.color[1] = self.colorcheck(self.color[1])
-        self.color[2] = self.colorcheck(self.color[2])
+        self.floatcolor[0] = self.oldcolor[0] + (self.changeR * progress)
+        self.floatcolor[1] = self.oldcolor[1] + (self.changeG * progress)
+        self.floatcolor[2] = self.oldcolor[2] + (self.changeB * progress)
+        self.floatcolor[0] = self.colorcheck(self.floatcolor[0])
+        self.floatcolor[1] = self.colorcheck(self.floatcolor[1])
+        self.floatcolor[2] = self.colorcheck(self.floatcolor[2])
+        #now we have to set self.color to the int() version of self.floatcolor
+        self.color[0] = int(self.floatcolor[0])
+        self.color[1] = int(self.floatcolor[1])
+        self.color[2] = int(self.floatcolor[2])
 
     def checklist(self,inlist):
         if(self.inlistinc < len(inlist)):
@@ -594,9 +602,9 @@ class CourseSquares(): # all done
     def draw_arena(self,currentmap,coords,speccoords,colorupdate=False,gamespeed=2):
         if(colorupdate == True):
             for change in range(0,gamespeed):
-                self.colorAchange.updatecolor() #I would've put all this stuff in the ReturnCollision function rather than DrawArena() because that way I wouldn't get annoying errors while using LevelEditor() BUT I check collision a LOT
-                self.colorBchange.updatecolor() #for squares in one frame...it's not really worth it for me to go to the trouble of checking and resettting the framecounter each time I check collision.
-                self.colorCchange.updatecolor()
+                self.colorAchange.updatecolor(self.colorAchanges) #I would've put all this stuff in the ReturnCollision function rather than DrawArena() because that way I wouldn't get annoying errors while using LevelEditor() BUT I check collision a LOT
+                self.colorBchange.updatecolor(self.colorBchanges) #for squares in one frame...it's not really worth it for me to go to the trouble of checking and resettting the framecounter each time I check collision.
+                self.colorCchange.updatecolor(self.colorCchanges)
                 self.colorAchange.checklist(self.colorAchanges)
                 self.colorBchange.checklist(self.colorBchanges)
                 self.colorCchange.checklist(self.colorCchanges)
@@ -759,9 +767,9 @@ class CoursePortals():
     def draw_arena(self,currentmap,coords,speccoords,colordraw=False,gamespeed=2):
         if(colordraw):
             for change in range(0,gamespeed):
-                self.colorAchange.updatecolor() #placed this here because it didn't work so well inside DrawArena due to LevelEditor using this class too - I'm eating my words now, aren't I?
-                self.colorBchange.updatecolor()
-                self.colorCchange.updatecolor()
+                self.colorAchange.updatecolor(self.colorAchanges) #placed this here because it didn't work so well inside DrawArena due to LevelEditor using this class too - I'm eating my words now, aren't I?
+                self.colorBchange.updatecolor(self.colorBchanges)
+                self.colorCchange.updatecolor(self.colorCchanges)
                 self.colorAchange.checklist(self.colorAchanges)
                 self.colorBchange.checklist(self.colorBchanges)
                 self.colorCchange.checklist(self.colorCchanges)
@@ -935,10 +943,10 @@ class CourseBounceballs(): # all done
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
         if(colordraw):
             for change in range(0,gamespeed):
-                self.colorAchange.updatecolor() #this is here because LevelEditor doesn't behave well if this stuff is inside DrawArena()
-                self.colorBchange.updatecolor()
-                self.colorCchange.updatecolor()
-                self.colorDchange.updatecolor()
+                self.colorAchange.updatecolor(self.colorAchanges) #this is here because LevelEditor doesn't behave well if this stuff is inside DrawArena()
+                self.colorBchange.updatecolor(self.colorBchanges)
+                self.colorCchange.updatecolor(self.colorCchanges)
+                self.colorDchange.updatecolor(self.colorDchanges)
                 self.colorAchange.checklist(self.colorAchanges)
                 self.colorBchange.checklist(self.colorBchanges)
                 self.colorCchange.checklist(self.colorCchanges)
@@ -1218,10 +1226,10 @@ class CourseBoosters():  #all done
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
         if(colordraw):
             for change in range(0,gamespeed):
-                self.colorAchange.updatecolor() #moved inside DrawArena after all...
-                self.colorBchange.updatecolor()
-                self.colorCchange.updatecolor()
-                self.colorDchange.updatecolor()
+                self.colorAchange.updatecolor(self.colorAchanges) #moved inside DrawArena after all...
+                self.colorBchange.updatecolor(self.colorBchanges)
+                self.colorCchange.updatecolor(self.colorCchanges)
+                self.colorDchange.updatecolor(self.colorDchanges)
                 self.colorAchange.checklist(self.colorAchanges)
                 self.colorBchange.checklist(self.colorBchanges)
                 self.colorCchange.checklist(self.colorCchanges)
@@ -1531,9 +1539,9 @@ class CourseTriangles(): # all done
     def draw_arena(self,currentmap,coords,speccoords,colordraw=False,gamespeed=2): #incresing the Y on coords moves the map up, while decreasing the Y on speccoords moves the map up...
         if(colordraw):
             for change in range(0,gamespeed):
-                self.colorAchange.updatecolor() #placed this here instead of in DrawArena() because LevelEditor() doesn't like it - I'm eating my words now...
-                self.colorBchange.updatecolor()
-                self.colorCchange.updatecolor()
+                self.colorAchange.updatecolor(self.colorAchanges) #placed this here instead of in DrawArena() because LevelEditor() doesn't like it - I'm eating my words now...
+                self.colorBchange.updatecolor(self.colorBchanges)
+                self.colorCchange.updatecolor(self.colorCchanges)
                 self.colorAchange.checklist(self.colorAchanges)
                 self.colorBchange.checklist(self.colorBchanges)
                 self.colorCchange.checklist(self.colorCchanges)
@@ -1743,9 +1751,9 @@ class CourseAnimation(): #******************************************************
                     self.draw_tile(self.tiles[arena[y + coords[1]][x + coords[0]]],arena[y + coords[1]][x + coords[0]],[x * 10 + speccoords[0],y * 10 + speccoords[1]])
 
     def return_collision(self,arena,coords,speccoords):
-        self.colorAchange.updatecolor() #placed this here because LevelEditor won't like it inside DrawArena()
-        self.colorBchange.updatecolor()
-        self.colorCchange.updatecolor()
+        self.colorAchange.updatecolor(self.colorAchanges) #placed this here because LevelEditor won't like it inside DrawArena() note-need to add input within LevelEditor() and account for Gamespeed variable here still...
+        self.colorBchange.updatecolor(self.colorBchanges)
+        self.colorCchange.updatecolor(self.colorCchanges)
         self.colorAchange.checklist(self.colorAchanges)
         self.colorBchange.checklist(self.colorBchanges)
         self.colorCchange.checklist(self.colorCchanges)
@@ -1809,7 +1817,7 @@ class BGEffects():
             return
         for speed in range(0,gamespeed):
             self.effectscolorchanger.checklist(self.effectscolorchanges)
-            self.effectscolorchanger.updatecolor()
+            self.effectscolorchanger.updatecolor(self.effectscolorchanges)
         for x in range(0,len(self.effectspos)):
             if(self.effectspos[x][2] == 'circle'):
                 pygame.draw.circle(screen,self.effectscolor,[self.effectspos[x][0],self.effectspos[x][1]],self.effectspos[x][3],5)
@@ -3960,7 +3968,7 @@ class GameLoop():
                 break
         exec("self.x10x = [0,0]")
         #PMtouchingground list
-        touchingground = []
+        #touchingground = []
         #list of all keys pressed at the moment
         keys = []
         #start some music
@@ -4122,15 +4130,6 @@ class GameLoop():
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                                     elif(currentshipspeed < 0):
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                        #this checks if we are still on the ground or no.
-                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
-                        if('ground' not in self.gdcollision):
-                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
-                        else:
-                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
-                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
-                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                     elif(self.selectedform == 'arrow'):
                         exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 1")
                         exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
@@ -4390,17 +4389,16 @@ class GameLoop():
                     self.gd0.dead = False
                     self.direction = PMpos[3]
                     self.gd0.Yspeed = PMpos[4]
+                    self.gd0.touchingground = 0
 
-            #PM tracker...
+            #PM tracker...more of it inside the Event Loop.
             if(PMStatus == True):
                 #if we JUST started the loop, make a valid bookmark pos
                 if(self.framecount == 1):
                     PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
-                touchingground.append(self.gd0.touchingground)
-                if(len(touchingground) > 200):
-                    touchingground.pop(0)
-                if(self.framecount % 100 == 0): #after a few jumps, we record our new position
-                    PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+##                touchingground.append(self.gd0.touchingground)
+##                if(len(touchingground) > 200):
+##                    touchingground.pop(0)
                 
             #PUT EVENT LOOP SOMEWHERE IN HERE!
             for event in pygame.event.get():
@@ -4417,6 +4415,9 @@ class GameLoop():
                 elif(event.type == pygame.KEYDOWN):
                     if(event.key not in keys):
                         keys.append(event.key)
+                    if(event.key == pygame.K_DOWN): #down arrow = add another PM bookmark
+                        if(PMStatus == True):
+                            PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
                     if(event.key == pygame.K_ESCAPE):
                         pygame.mixer.music.pause()
                         self.returnstatement = self.menu.GameMenu(PMStatus) #start a basic UI
@@ -4443,6 +4444,16 @@ class GameLoop():
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
+                #this checks if we are still on the ground or no.
+                exec("self.gd" + str(CryingOutLoud) + ".move([0,1],self.gd" + str(CryingOutLoud) + ".gravity)")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                if('ground' not in self.gdcollision):
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+                else:
+                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 1")
+                    exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
+                exec("self.gd" + str(CryingOutLoud) + ".move([0,-1],self.gd" + str(CryingOutLoud) + ".gravity)")
+                #get our "handledXXX" variables
                 exec("self.handledpos = self.gd" + str(CryingOutLoud) + ".pos")
                 if(self.keyconfig[CryingOutLoud][0] in keys and self.handledpos[0] > 0): #move the GD_Figure left
                     exec("self.gd" + str(CryingOutLoud) + ".move([-1,0],self.gd" + str(CryingOutLoud) + ".gravity)")
@@ -4455,7 +4466,7 @@ class GameLoop():
                     exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
                     exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
                     exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
-                    if(self.selectedform == "cube" and self.selectednojump == 0):
+                    if(self.selectednojump == 0):
                         if(self.selectedmini == False):
                             #we check, have we collided with any bounceballs?
                             exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
@@ -4491,7 +4502,7 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = -1")
                     elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5): #physics for mini ship might need to be updated eventually...
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.1")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.125")
                     elif(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == True):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[1] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
@@ -4529,7 +4540,7 @@ class GameLoop():
         #handle our backgrounds color changes
         for updatecolors in range(0,self.gamespeed):
             self.bgcolorchanger.checklist(self.bgcolorchanges)
-            self.bgcolorchanger.updatecolor()
+            self.bgcolorchanger.updatecolor(self.bgcolorchanges)
         #erase the screen with whatever bgcolor is for next frame
         screen.fill(self.bgcolor)
         
