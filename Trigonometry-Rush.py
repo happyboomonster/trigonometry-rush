@@ -411,6 +411,7 @@ class GD_Figure():
                                     self.gravity = gravity * -1
                                     self.collision.append('bouncepadP4')
             elif(collidecoords[x][5] == 'bounceball'):
+                #pygame.draw.rect(screen,[255,255,255],[collidecoords[x][0],collidecoords[x][1],20,20],1) #DEBUG
                 if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of bounceball?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of bounceball?
                             if(collidecoords[x][3] > gdcoords[1]): #is the top of GD above the bottom of bounceball?
@@ -1024,13 +1025,13 @@ class CourseBounceballs(): # all done
                 for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,1,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,1,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,2,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,2,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,3,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 2,y * 10 + speccoords[1] - 2,x * 10 + speccoords[0] + 12,y * 10 + speccoords[1] + 12,4,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,4,'bounceball'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
@@ -1039,13 +1040,13 @@ class CourseBounceballs(): # all done
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,1,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,1,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,2,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,2,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,3,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 2,newy * 10 + speccoords[1] - 2,newx * 10 + speccoords[0] + 12,newy * 10 + speccoords[1] + 12,4,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,4,'bounceball'])
         return self.collidecoords
 
 
@@ -2641,7 +2642,6 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             if(x == 110): #move down 20 blocks
                                 editpos[1] += 10
                             if(x == 106): #insert X
-                                pygame.time.delay(100) #insert small delay so we don't accidentally insert 5 columns
                                 self.colorchange = False
                                 if(self.insert == False or self.insertxy == "y"):
                                     self.insert = True
@@ -2650,7 +2650,6 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                 else:
                                     self.insert = False
                             if(x == 111): #insert Y
-                                pygame.time.delay(100) #insert small delay so we don't accidentally insert 5 columns
                                 self.colorchange = False
                                 if(self.insert == False or self.insertxy == "x"):
                                     self.insert = True
@@ -2715,6 +2714,8 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                                 del(self.squares.arena[listindex][int(tilex + editpos[0])])
                                             if(editpos[0] > 0):
                                                 editpos[0] -= 1
+                                MouseDown = False #keep us from inserting WAAAAY too many columns every time we try to use this function
+                                break
                             elif(self.number == True): #basically we're gonna need to make a number show up onscreen which can be changed corresponding to portal values.
                                 MouseDown = False
                                 #now we find if a portal has been placed where we clicked
@@ -3867,7 +3868,7 @@ class GameLoop():
         self.fpsextremes = [self.fps,self.fps]
         
         #key repeat
-        pygame.key.set_repeat(5,5)
+        pygame.key.set_repeat(1000,1000)
         
         #frameskip variable
         self.frameskip = 0
@@ -3952,7 +3953,7 @@ class GameLoop():
         #We're NOT starting in Practice Mode...
         PMStatus = False
         #set key repeat
-        pygame.key.set_repeat(5,5)
+        pygame.key.set_repeat(1000,1000)
         #when we exit the loop, we need to give out something to tell what we wanted to do
         self.returnstatement = "won"
         #a countdown variable that gives a few frames left after the last person dies so he can have a glorious explosion like everyone else.
@@ -3971,6 +3972,8 @@ class GameLoop():
         #touchingground = []
         #list of all keys pressed at the moment
         keys = []
+        keydown = []
+        keydowncheck = []
         #start some music
         filepath = list(self.filename)
         for delete in range(0,15): #delete "OutputLevel.pkl" from end of filename
@@ -3994,7 +3997,7 @@ class GameLoop():
         #we've got to switch to While loop!...
         move = 0
         #PM position record
-        PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+        PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed,self.gd0.form,self.gd0.gravity]
         #based on our direction, make the cube(s) to go a specified x position. (give a good starting position for everyone)
         for imrunningoutofvariables in range(0,self.players):
             if(self.direction == 'right'):
@@ -4130,6 +4133,15 @@ class GameLoop():
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                                     elif(currentshipspeed < 0):
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                            #this checks if we are still on the ground or no.
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        if('ground' not in self.gdcollision):
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
+                        else:
+                            exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
+                        exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                     elif(self.selectedform == 'arrow'):
                         exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = 1")
                         exec("self.gd" + str(imrunningoutofvariables) + ".rotating = 0")
@@ -4390,6 +4402,8 @@ class GameLoop():
                     self.direction = PMpos[3]
                     self.gd0.Yspeed = PMpos[4]
                     self.gd0.touchingground = 0
+                    self.gd0.form = PMpos[5]
+                    self.gd0.gravity = PMpos[6]
 
             #PM tracker...more of it inside the Event Loop.
             if(PMStatus == True):
@@ -4404,6 +4418,7 @@ class GameLoop():
             for event in pygame.event.get():
                 if(event.type == pygame.MOUSEBUTTONDOWN): #useful for 1 player, mouse works better...
                     keys.append('mouse')
+                    keydown.append(['mouse',0])
                 elif(event.type == pygame.MOUSEBUTTONUP):
                     try:
                         keys.remove('mouse')
@@ -4413,11 +4428,12 @@ class GameLoop():
                     if(event.key in keys):
                         keys.remove(event.key)
                 elif(event.type == pygame.KEYDOWN):
+                    keydown.append([event.key,0])
                     if(event.key not in keys):
                         keys.append(event.key)
                     if(event.key == pygame.K_DOWN): #down arrow = add another PM bookmark
                         if(PMStatus == True):
-                            PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed]
+                            PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed,self.gd0.form,self.gd0.gravity]
                     if(event.key == pygame.K_ESCAPE):
                         pygame.mixer.music.pause()
                         self.returnstatement = self.menu.GameMenu(PMStatus) #start a basic UI
@@ -4444,15 +4460,6 @@ class GameLoop():
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
-                #this checks if we are still on the ground or no.
-                exec("self.gd" + str(CryingOutLoud) + ".move([0,1],self.gd" + str(CryingOutLoud) + ".gravity)")
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                if('ground' not in self.gdcollision):
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                else:
-                    exec("self.gd" + str(CryingOutLoud) + ".touchingground = 1")
-                    exec("self.gd" + str(CryingOutLoud) + ".rotating = 0")
-                exec("self.gd" + str(CryingOutLoud) + ".move([0,-1],self.gd" + str(CryingOutLoud) + ".gravity)")
                 #get our "handledXXX" variables
                 exec("self.handledpos = self.gd" + str(CryingOutLoud) + ".pos")
                 if(self.keyconfig[CryingOutLoud][0] in keys and self.handledpos[0] > 0): #move the GD_Figure left
@@ -4466,34 +4473,6 @@ class GameLoop():
                     exec("self.selectedgravity = self.gd" + str(CryingOutLoud) + ".gravity")
                     exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
                     exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
-                    if(self.selectednojump == 0):
-                        if(self.selectedmini == False):
-                            #we check, have we collided with any bounceballs?
-                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                            if("bounceballP1" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
-                            if("bounceballP2" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
-                            if("bounceballP3" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
-                            if("bounceballP4" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
-                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
-                        else:
-                            #we check, have we collided with any bounceballs?
-                            exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                            if("bounceballP1" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[8]")
-                            if("bounceballP2" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[9]")
-                            if("bounceballP3" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[10]")
-                            if("bounceballP4" in self.gdcollision):
-                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
-                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
-                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 10")
-
                     if(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == False):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[0] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
@@ -4506,9 +4485,50 @@ class GameLoop():
                     elif(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == True):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[1] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
-                    elif(self.selectedform == 'ball' and self.selectedtouchingground == 1):
+
+            #check our keydown() list
+            for CryingOutLoud in range(0,self.players):
+                exec("self.selectedform = self.gd" + str(CryingOutLoud) + ".form")
+                exec("self.selectedtouchingground = self.gd" + str(CryingOutLoud) + ".touchingground")
+                exec("self.selectedmini = self.gd" + str(CryingOutLoud) + ".mini")
+                exec("self.selectednojump = self.gd" + str(CryingOutLoud) + ".nojump")
+                if(self.keyconfig[CryingOutLoud][2] in keydowncheck or 'mouse' in keydowncheck):
+                    if(self.selectedmini == False):
+                        #we check, have we collided with any bounceballs?
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        if("bounceballP1" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
+                        if("bounceballP2" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[1]")
+                        if("bounceballP3" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[2]")
+                        if(self.selectednojump == 0):
+                            if("bounceballP4" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 8")
+                    else:
+                        #we check, have we collided with any bounceballs?
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        if("bounceballP1" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[8]")
+                        if("bounceballP2" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[9]")
+                        if("bounceballP3" in self.gdcollision):
+                            exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[10]")
+                        if(self.selectednojump == 0):
+                            if("bounceballP4" in self.gdcollision):
+                                exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
+                                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                                exec("self.gd" + str(CryingOutLoud) + ".nojump = 8")
+                    if(self.selectedform == 'ball' and self.selectedtouchingground == 1):
                         exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".gravity * -1")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed = 0")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
+
+            tmpkeylist = self.keypresshandler(keydown)
+            keydowncheck = tmpkeylist[1][:]
+            keydown = tmpkeylist[0][:]
 
             #display handling and some misc stuff
             self.framecount += 1
@@ -4535,6 +4555,21 @@ class GameLoop():
         #return something
         pygame.mixer.music.stop()
         return self.returnstatement
+
+    def keypresshandler(self,keylist):
+        for key in range(0,len(keylist)):
+            for speed in range(0,self.gamespeed):
+                #format: [key,frametime]
+                keylist[key][1] += 1
+        offset = 0
+        for key in range(0,len(keylist)):
+            if(keylist[key + offset][1] >= 10):
+                del(keylist[key + offset])
+                offset -= 1
+        keypresses = []
+        for key in range(0,len(keylist)):
+            keypresses.append(keylist[key][0])
+        return [keylist,keypresses]
 
     def DrawEVERYTHING(self,x10x,y10y,choice,attempts):
         #handle our backgrounds color changes
@@ -4875,7 +4910,7 @@ while True:
                             else:
                                 milevelfile = open(milevelchoice,"rb")
                             mileveleditor.LevelEditor([milevelfile,milevel[2]])
-                            pygame.key.set_repeat(5,5)
+                            pygame.key.set_repeat(1000,1000)
                             Exit = True
                             break
                         else:
@@ -4894,7 +4929,7 @@ while True:
             else:
                 milevelfile = open(milevelchoice,"rb")
             mileveleditor.LevelEditor([milevelfile,milevel[2]])
-            pygame.key.set_repeat(5,5)
+            pygame.key.set_repeat(1000,1000)
     elif(choice1 == "settings"):
         #start the settings menu
         settingsout = mimenu.SettingsMenu()
@@ -4921,7 +4956,7 @@ while True:
     elif(choice1 == "editor"):
         pygame.key.set_repeat(300,300)
         mileveleditor.LevelEditor()
-        pygame.key.set_repeat(5,5)
+        pygame.key.set_repeat(1000,1000)
 
 #when we exit, save all our settings in a dump file.
 dump = []
