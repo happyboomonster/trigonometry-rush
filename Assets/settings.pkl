@@ -2768,7 +2768,7 @@ S'volume'
 p231
 aS'analog'
 p232
-aI100
+aI20
 aI100
 aa(lp233
 S'player #'

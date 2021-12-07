@@ -1025,13 +1025,13 @@ class CourseBounceballs(): # all done
                 for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,1,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 5,y * 10 + speccoords[1] - 5,x * 10 + speccoords[0] + 15,y * 10 + speccoords[1] + 15,1,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,2,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 5,y * 10 + speccoords[1] - 5,x * 10 + speccoords[0] + 15,y * 10 + speccoords[1] + 15,2,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,3,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 5,y * 10 + speccoords[1] - 5,x * 10 + speccoords[0] + 15,y * 10 + speccoords[1] + 15,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
-                            self.collidecoords.append([x * 10 + speccoords[0] - 3,y * 10 + speccoords[1] - 3,x * 10 + speccoords[0] + 13,y * 10 + speccoords[1] + 12,4,'bounceball'])
+                            self.collidecoords.append([x * 10 + speccoords[0] - 5,y * 10 + speccoords[1] - 5,x * 10 + speccoords[0] + 15,y * 10 + speccoords[1] + 15,4,'bounceball'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
@@ -1040,13 +1040,13 @@ class CourseBounceballs(): # all done
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
                         if(currentmap[coords[1] + y][coords[0] + x] == 1):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,1,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 5,newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 15,newy * 10 + speccoords[1] + 15,1,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 2):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,2,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 5,newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 15,newy * 10 + speccoords[1] + 15,2,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 3):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,3,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 5,newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 15,newy * 10 + speccoords[1] + 15,3,'bounceball'])
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
-                            self.collidecoords.append([newx * 10 + speccoords[0] - 3,newy * 10 + speccoords[1] - 3,newx * 10 + speccoords[0] + 13,newy * 10 + speccoords[1] + 13,4,'bounceball'])
+                            self.collidecoords.append([newx * 10 + speccoords[0] - 5,newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 15,newy * 10 + speccoords[1] + 15,4,'bounceball'])
         return self.collidecoords
 
 
@@ -2832,6 +2832,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                             del(finalchangeB[findchange])
                                             del(finalchangeC[findchange])
                                             del(finalchangeD[findchange])
+                                            del(finalchangeG[findchange])
                                             break
                                 else: #if not, then we create a new colorchange
                                     #we need to do one for each class, squares, triangles, bounceballs, bouncepads, and portals.
@@ -3860,7 +3861,7 @@ class GameLoop():
         #P2 WAS -2.77
         
         #balljumpsizes = [P1,P2,P3,P4,P5,P6,P7,P8,MiniVariants 1 - 8] 
-        self.balljumpsizes = [-1.37,-1.85,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
+        self.balljumpsizes = [-1.37,-1.80,-2.68,1.37,1.91,2.6,0,0,-0.94,-1.43,-2.05,1.37,1.43,2.6,0,0]
         #P2 WAS -1.91
         
         #fps info / presets
