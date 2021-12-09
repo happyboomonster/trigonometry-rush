@@ -858,15 +858,6 @@ class CourseBounceballs(): # all done
                         elif(tile[y][x] == 4):
                             pygame.draw.line(screen,self.colorD,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
 
-    def setcolors(self,colorA,colorB,colorC,colorD):
-        self.colorA = colorA[:]
-        self.colorB = colorB[:]
-        self.colorC = colorC[:]
-        self.colorD = colorD[:]
-
-    def getcolors(self):
-        return [self.colorA,self.colorB,self.colorC]
-
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
         if(colordraw):
             for change in range(0,gamespeed):
@@ -974,9 +965,6 @@ class CourseBounceballs(): # all done
                         elif(currentmap[coords[1] + y][coords[0] + x] == 4):
                             self.collidecoords.append([newx * 10 + speccoords[0] - 5,newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 15,newy * 10 + speccoords[1] + 15,4,'bounceball'])
         return self.collidecoords
-
-
-
 
 class CourseBoosters():  #all done
     def __init__(self):
@@ -1113,15 +1101,6 @@ class CourseBoosters():  #all done
                         pygame.draw.line(screen,self.colorC,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
                     elif(tile[y][x] == 4):
                         pygame.draw.line(screen,self.colorD,[x + coords[0],y + coords[1]],[x + coords[0],y + coords[1]],1)
-
-    def setcolors(self,colorA,colorB,colorC,colorD):
-        self.colorA = colorA[:]
-        self.colorB = colorB[:]
-        self.colorC = colorC[:]
-        self.colorD = colorD[:]
-
-    def getcolors(self):
-        return [self.colorA,self.colorB,self.colorC]
 
     def draw_arena(self,currentmap,coords,speccoords,fgeffects,currentframe,time,gamespeed,colordraw=False):
         if(colordraw):
@@ -1400,14 +1379,6 @@ class CourseTriangles(): # all done
                             screen.set_at([newx + coords[0],newy + coords[1]],self.colorB)
                         elif(tile[y][x] == 3):
                             screen.set_at([newx + coords[0],newy + coords[1]],self.colorC)
-
-    def setcolors(self,colorA,colorB,colorC):
-        self.colorA = colorA[:]
-        self.colorB = colorB[:]
-        self.colorC = colorC[:]
-
-    def getcolors(self):
-        return [self.colorA,self.colorB,self.colorC]
 
     def draw_arena(self,currentmap,coords,speccoords,colordraw=False,gamespeed=2): #incresing the Y on coords moves the map up, while decreasing the Y on speccoords moves the map up...
         if(colordraw):
@@ -2038,7 +2009,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                     MouseDown = True
                     if(event.pos[0] > continuehitbox[0] and event.pos[0] < continuehitbox[2]): #did we click continue???
                         if(event.pos[1] > continuehitbox[1] and event.pos[1] < continuehitbox[3]):
-                            return self.pickedcolor
+                            return self.pickedcolor[:]
                 elif(event.type == pygame.MOUSEBUTTONUP):
                     MouseDown = False
                 elif(event.type == pygame.MOUSEMOTION):
@@ -2405,12 +2376,15 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             for sortlist in range(0,len(finalchangeA) - 1):
                                 if(finalchangeA[sortlist][0][0] > finalchangeA[sortlist + 1][0][0]):
                                     finalchangeA.insert(sortlist + 1,finalchangeA.pop(sortlist)) #there might be a problem here...
+                                    unperfect = True
                             for sortlist in range(0,len(finalchangeB) - 1):
                                 if(finalchangeB[sortlist][0][0] > finalchangeB[sortlist + 1][0][0]):
                                     finalchangeB.insert(sortlist + 1,finalchangeB.pop(sortlist)) #there might be a problem here...
+                                    unperfect = True
                             for sortlist in range(0,len(finalchangeC) - 1):
                                 if(finalchangeC[sortlist][0][0] > finalchangeC[sortlist + 1][0][0]):
                                     finalchangeC.insert(sortlist + 1,finalchangeC.pop(sortlist)) #there might be a problem here...
+                                    unperfect = True
                             for sortlist in range(0,len(finalchangeD) - 1):
                                 if(finalchangeD[sortlist][0][0] > finalchangeD[sortlist + 1][0][0]):
                                     finalchangeD.insert(sortlist + 1,finalchangeD.pop(sortlist)) #there might be a problem here...
@@ -2418,6 +2392,7 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                             for sortlist in range(0,len(finalchangeG) - 1):
                                 if(finalchangeG[sortlist][0][0] > finalchangeG[sortlist + 1][0][0]):
                                     finalchangeG.insert(sortlist + 1,finalchangeG.pop(sortlist)) #there might be a problem here...
+                                    unperfect = True
                         #now we save everything...
                         mimetalist = []
                         mimetalist.append(self.squares.arena[:])
@@ -2721,50 +2696,50 @@ class LevelEditor(): # Type 1 Collision: cube 2: spaceship 3: ball? 4: mini 5: a
                                     tmpchangeD = []
                                     #Squares
                                     #get the color change for all 3 colors
-                                    changeA = self.getcolors("Pick ColorA change [squares]")
-                                    changeB = self.getcolors("Pick ColorB change [squares]")
-                                    changeC = self.getcolors("Pick ColorC change [squares]")
-                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
-                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
-                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    changeAs = self.getcolors("Pick ColorA change [squares]")
+                                    changeBs = self.getcolors("Pick ColorB change [squares]")
+                                    changeCs = self.getcolors("Pick ColorC change [squares]")
+                                    tmpchangeA.append([changepos,changeduration,changeAs[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeBs[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeCs[:]])
                                     tmpchangeD.append([0])
                                     #triangles
                                     #get the color change for all 3 colors
-                                    changeA = self.getcolors("Pick ColorA change [triangles]")
-                                    changeB = self.getcolors("Pick ColorB change [triangles]")
-                                    changeC = self.getcolors("Pick ColorC change [triangles]")
-                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
-                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
-                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    changeAt = self.getcolors("Pick ColorA change [triangles]")
+                                    changeBt = self.getcolors("Pick ColorB change [triangles]")
+                                    changeCt = self.getcolors("Pick ColorC change [triangles]")
+                                    tmpchangeA.append([changepos,changeduration,changeAt[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeBt[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeCt[:]])
                                     tmpchangeD.append([0])
                                     #boosters
                                     #get the color change for all 3 colors
-                                    changeA = self.getcolors("Pick ColorA change [boosters]")
-                                    changeB = self.getcolors("Pick ColorB change [boosters]")
-                                    changeC = self.getcolors("Pick ColorC change [boosters]")
-                                    changeD = self.getcolors("Pick ColorD change [boosters]")
-                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
-                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
-                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
-                                    tmpchangeD.append([changepos,changeduration,changeD[:]])
+                                    changeAb = self.getcolors("Pick ColorA change [boosters]")
+                                    changeBb = self.getcolors("Pick ColorB change [boosters]")
+                                    changeCb = self.getcolors("Pick ColorC change [boosters]")
+                                    changeDb = self.getcolors("Pick ColorD change [boosters]")
+                                    tmpchangeA.append([changepos,changeduration,changeAb[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeBb[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeCb[:]])
+                                    tmpchangeD.append([changepos,changeduration,changeDb[:]])
                                     #bounceballs
                                     #get the color change for all 3 colors
-                                    changeA = self.getcolors("Pick ColorA change [B.balls]")
-                                    changeB = self.getcolors("Pick ColorB change [B.balls]")
-                                    changeC = self.getcolors("Pick ColorC change [B.balls]")
-                                    changeD = self.getcolors("Pick ColorD change [B.balls]")
-                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
-                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
-                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
-                                    tmpchangeD.append([changepos,changeduration,changeD[:]])
+                                    changeAbb = self.getcolors("Pick ColorA change [B.balls]")
+                                    changeBbb = self.getcolors("Pick ColorB change [B.balls]")
+                                    changeCbb = self.getcolors("Pick ColorC change [B.balls]")
+                                    changeDbb = self.getcolors("Pick ColorD change [B.balls]")
+                                    tmpchangeA.append([changepos,changeduration,changeAbb[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeBbb[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeCbb[:]])
+                                    tmpchangeD.append([changepos,changeduration,changeDbb[:]])
                                     #portals
                                     #get the color change for all 3 colors
-                                    changeA = self.getcolors("Pick ColorA change [portals]")
-                                    changeB = self.getcolors("Pick ColorB change [portals]")
-                                    changeC = self.getcolors("Pick ColorC change [portals]")
-                                    tmpchangeA.append([changepos,changeduration,changeA[:]])
-                                    tmpchangeB.append([changepos,changeduration,changeB[:]])
-                                    tmpchangeC.append([changepos,changeduration,changeC[:]])
+                                    changeAp = self.getcolors("Pick ColorA change [portals]")
+                                    changeBp = self.getcolors("Pick ColorB change [portals]")
+                                    changeCp = self.getcolors("Pick ColorC change [portals]")
+                                    tmpchangeA.append([changepos,changeduration,changeAp[:]])
+                                    tmpchangeB.append([changepos,changeduration,changeBp[:]])
+                                    tmpchangeC.append([changepos,changeduration,changeCp[:]])
                                     tmpchangeD.append([0])
                                     #get the FG-Effects and background colorchanges too
                                     changeFG = self.getcolors("Pick FG-Effects change")
