@@ -1,0 +1,26 @@
+#BPM:
+-bpm 140
+
+#BPS:
+-blocks/s 14,7,or 10.5
+-blocks/s 10.5 it is! (52FPS, gamespeed = 2)
+
+#timing:
+-10seconds thunder/opening -105 blocks
+-24seconds start - EZ ship? -252 blocks
+-38seconds - hard cube? -399 blocks
+-50seconds - hard ship -525 blocks
+-1:18mins - MIX! -819 blocks
+-1:32mins - hard mix! -966 blocks
+-1:46mins - cube -1113 blocks
+-2:00mins - ship -1260 blocks
+-2:16mins - hard ship? -1428 blocks
+-2:30mins - calmer music...? -1575 blocks
+-3:00mins - EZ music -1890 blocks
+
+#for thunder FX:
+0:01mins -10 blocks
+2:18mins -1449 blocks
+2:23mins -1502 blocks (rounded from 1501.5)
+2:47mins -1754 blocks (rounded from 1753.5)
+2:51mins -1796 blocks(rounded from 1795.5)

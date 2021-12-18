@@ -32,8 +32,11 @@ pygame.init()
 pygame.font.init()
 
 videostuff = pygame.display.Info()
-screen = pygame.display.set_mode([200,120],pygame.HWSURFACE | pygame.HWACCEL | pygame.SCALED)
+screen = pygame.display.set_mode([200,120],pygame.SCALED | pygame.HWSURFACE | pygame.HWACCEL)
 pygame.display.set_caption('Trigonometry Rush V1.0-RC')
+
+#mouse grab goes brrrr
+pygame.event.set_grab(False)
 
 def debackslash(string):
     mystr = list(string)
@@ -291,7 +294,7 @@ class GD_Figure():
                 return [int(self.pos[0]) + 7,int(self.pos[1]) + 7,int(self.pos[0]) + 9,int(self.pos[1]) + 9]
 
             elif(figureshape == 'ship'):
-                return [int(self.pos[0] + 1),int(self.pos[1] + 7),int(self.pos[0] + 14),int(self.pos[1] + 9)]
+                return [int(self.pos[0] + 4),int(self.pos[1] + 6),int(self.pos[0] + 12),int(self.pos[1] + 10)]
 
             elif(figureshape == 'cube'):
                 return [int(self.pos[0] + 4),int(self.pos[1] + 4),int(self.pos[0] + 12),int(self.pos[1] + 12)]
@@ -341,6 +344,7 @@ class GD_Figure():
         return self.tmpsurface
 
     def checkcollision(self,collidecoords,gdcoords,gravity):
+        #pygame.draw.rect(screen,[255,255,255],[gdcoords[0],gdcoords[1],gdcoords[2] - gdcoords[0],gdcoords[3] - gdcoords[1]],1) #debug
         #there's a few different types of collision: 'ground' stuff you can stand on, or 'slamleft', 'slamright', 'slamup', and 'slamdown'.
         #then there's triangles / spikes.  they all return 'triangle' (you're dead)
         #Bouncepads and Bounceballs work similarly.  there's powers 1-4, and 5-8 are upsidedown variants.  They all return 'bounceballP(power)' or 'bouncepadP(power)'
@@ -377,11 +381,11 @@ class GD_Figure():
                 if(collidecoords[x][4] == 1):
                     #triangle collision!
                     self.trianglecoords = []
-                    self.trianglecoords.append(collidecoords[x][0] + 2)
-                    self.trianglecoords.append(collidecoords[x][1] + 1)
-                    self.trianglecoords.append(collidecoords[x][2] - 2)
-                    self.trianglecoords.append(collidecoords[x][3] - 1)
-                    #pygame.draw.rect(screen,[255,255,255],[self.trianglecoords[0],self.trianglecoords[1],8,8],2) #DEBUG
+                    self.trianglecoords.append(collidecoords[x][0])
+                    self.trianglecoords.append(collidecoords[x][1])
+                    self.trianglecoords.append(collidecoords[x][2])
+                    self.trianglecoords.append(collidecoords[x][3])
+                    #pygame.draw.rect(screen,[255,255,255],[self.trianglecoords[0],self.trianglecoords[1],self.trianglecoords[2] - self.trianglecoords[0],self.trianglecoords[3] - self.trianglecoords[1]],2) #DEBUG
                     if(self.trianglecoords[0] < gdcoords[2]):  #is the right side of GD greater than left side of block?
                         if(self.trianglecoords[2] > gdcoords[0]): #is the left side of GD smaller than right side of block?
                             if(self.trianglecoords[3] > gdcoords[1]): #is the top of GD above the bottom of block?
@@ -428,8 +432,8 @@ class GD_Figure():
             elif(collidecoords[x][5] == 'portal'):
                 if(collidecoords[x][0] < gdcoords[2]):  #is the right side of GD greater than left side of portal?
                         if(collidecoords[x][2] > gdcoords[0]): #is the left side of GD smaller than right side of portal?
-                            if(collidecoords[x][3] > gdcoords[1] - 5): #is the top of GD above the bottom of portal?
-                                if(collidecoords[x][1] < gdcoords[3] + 5): # is the top of portal above bottom of GD?
+                            if(collidecoords[x][3] > gdcoords[1]): #is the top of GD above the bottom of portal?
+                                if(collidecoords[x][1] < gdcoords[3]): # is the top of portal above bottom of GD?
                                     #collision!
                                     self.collision.append('portal#' + str(collidecoords[x][4]))
         try:
@@ -754,7 +758,7 @@ class CoursePortals():
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
                 for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1],x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])
+                        self.collidecoords.append([x * 10 + speccoords[0],y * 10 + speccoords[1] - 5,x * 10 + speccoords[0] + 10,y * 10 + speccoords[1] + 25,currentmap[coords[1] + y][coords[0] + x],'portal'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
@@ -762,7 +766,7 @@ class CoursePortals():
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
-                        self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1],newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 20,currentmap[coords[1] + y][coords[0] + x],'portal'])        
+                        self.collidecoords.append([newx * 10 + speccoords[0],newy * 10 + speccoords[1] - 5,newx * 10 + speccoords[0] + 10,newy * 10 + speccoords[1] + 25,currentmap[coords[1] + y][coords[0] + x],'portal'])        
         return self.collidecoords
 
 
@@ -1254,6 +1258,25 @@ class CourseTriangles(): # all done
         self.colorBchanges = []
         self.colorCchanges = []
 
+        #hitboxes
+        self.righthitboxes = []
+        self.righthitboxes.append([0,0,0,0]) #append a dummy hitbox which is unused
+        for hitboxesappend in range(0,4):
+            self.righthitboxes.append([2,2,8,8]) #triangles 1-4
+        self.righthitboxes.append([2,8,8,10]) #triangle 5
+        self.righthitboxes.append([2,0,8,2]) #triangle 6
+        self.righthitboxes.append([8,2,10,8]) #triangle 8
+        self.righthitboxes.append([0,2,2,8]) #triangle 7
+
+        self.lefthitboxes = []
+        self.lefthitboxes.append([0,0,0,0]) #append a dummy hitbox which is unused
+        for hitboxesappend in range(0,4):
+            self.lefthitboxes.append([2,2,8,8]) #triangles 1-4
+        self.lefthitboxes.append([2,8,8,10]) #triangle 5
+        self.lefthitboxes.append([2,0,8,2]) #triangle 6
+        self.lefthitboxes.append([0,2,2,8]) #triangle 8
+        self.lefthitboxes.append([8,2,10,8]) #triangle 7
+
         #establish our colorchange() objects
         self.colorAchange = ColorChanger(self.colorA)
         self.colorAchange.color = self.colorA[:]
@@ -1412,11 +1435,12 @@ class CourseTriangles(): # all done
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
                 for y in range(newgdcoords[1] - 1,newgdcoords[1] + 3):
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.collidecoords.append([x * 10 + speccoords[0] + self.righthitboxes[currentmap[coords[1] + y][coords[0] + x]][0],y * 10 + speccoords[1] + self.righthitboxes[currentmap[coords[1] + y][coords[0] + x]][1],x * 10 + speccoords[0] + self.righthitboxes[currentmap[coords[1] + y][coords[0] + x]][2],y * 10 + speccoords[1] + self.righthitboxes[currentmap[coords[1] + y][coords[0] + x]][3],1,'triangle'])
                         # Type 1 Triangle collision = standard triangle death hitbox
-                        if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
-                            self.collidecoords.append([x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 8,y * 10 + speccoords[1] + 8,1,'triangle'])
-                        elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
-                            self.collidecoords.append([x * 10 + speccoords[0] + 4,y * 10 + speccoords[1] + 4,x * 10 + speccoords[0] + 6,y * 10 + speccoords[1] + 6,1,'triangle'])
+##                        if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
+##                            self.collidecoords.append([x * 10 + speccoords[0] + 2,y * 10 + speccoords[1] + 2,x * 10 + speccoords[0] + 8,y * 10 + speccoords[1] + 8,1,'triangle'])
+##                        elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
+##                            self.collidecoords.append([x * 10 + speccoords[0] + 4,y * 10 + speccoords[1] + 4,x * 10 + speccoords[0] + 6,y * 10 + speccoords[1] + 6,1,'triangle'])
         else: #ARE WE MOVING LEFT (totally overcomplicates things...)
             newgdcoords[0] = 20 - int(gdcoords[0] / 10.0)
             for x in range(newgdcoords[0] - 1,newgdcoords[0] + 3): #only check the blocks directly around GD_Figure
@@ -1424,11 +1448,12 @@ class CourseTriangles(): # all done
                     newx = 21 - x
                     newy = y
                     if(currentmap[coords[1] + y][coords[0] + x] != 0):
+                        self.collidecoords.append([newx * 10 + speccoords[0] + self.lefthitboxes[currentmap[coords[1] + y][coords[0] + x]][0],newy * 10 + speccoords[1] + self.lefthitboxes[currentmap[coords[1] + y][coords[0] + x]][1],newx * 10 + speccoords[0] + self.lefthitboxes[currentmap[coords[1] + y][coords[0] + x]][2],newy * 10 + speccoords[1] + self.lefthitboxes[currentmap[coords[1] + y][coords[0] + x]][3],1,'triangle'])
                         # Type 1 Triangle collision = standard triangle death hitbox
-                        if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
-                            self.collidecoords.append([newx * 10 + speccoords[0] + 2,newy * 10 + speccoords[1] + 2,newx * 10 + speccoords[0] + 8,newy * 10 + speccoords[1] + 8,1,'triangle'])
-                        elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
-                            self.collidecoords.append([newx * 10 + speccoords[0] + 4,newy * 10 + speccoords[1] + 4,newx * 10 + speccoords[0] + 6,newy * 10 + speccoords[1] + 6,1,'triangle'])
+##                        if(currentmap[coords[1] + y][coords[0] + x] != 0 and currentmap[coords[1] + y][coords[0] + x] < 5):
+##                            self.collidecoords.append([newx * 10 + speccoords[0] + 2,newy * 10 + speccoords[1] + 2,newx * 10 + speccoords[0] + 8,newy * 10 + speccoords[1] + 8,1,'triangle'])
+##                        elif(currentmap[coords[1] + y][coords[0] + x] >= 5 and currentmap[coords[1] + y][coords[0] + x] <= 8):
+##                            self.collidecoords.append([newx * 10 + speccoords[0] + 4,newy * 10 + speccoords[1] + 4,newx * 10 + speccoords[0] + 6,newy * 10 + speccoords[1] + 6,1,'triangle'])
         return self.collidecoords
 
 class CourseAnimation(): #************************************************************************** NEEDS MORE WORK DONE HERE REALLY NEEDS IT ATTENTION ********************************************************************************#
@@ -3797,6 +3822,10 @@ class GameLoop():
             self.bgcolorchanges.append(self.colorchanges[4][findchanges][1][:]) #background changecolor
             
     def GameLoop(self,choice,attempts):
+        #mouse grab goes brrrr
+        pygame.event.set_grab(True)
+        #keep the mouse pointer out of the way
+        pygame.mouse.set_visible(False)
         #THE SHAKES variable
         self.shakes = 0 #it's a Y offset used to jitter the entire screen when a player dies.
         #something needed for PM
@@ -3946,7 +3975,7 @@ class GameLoop():
                 for c in range(0,self.gamespeed):
                     self.gdcollision = []
                     if(self.selectedform == 'cube' or self.selectedform == 'ball'):
-                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                         if('ground' in self.gdcollision):
                             if(self.selectedgravity == 1):
                                exec("self.gd" + str(imrunningoutofvariables) + ".pos[1] = math.ceil(self.selectedpos[1])")
@@ -3957,7 +3986,7 @@ class GameLoop():
                                 for d in range(0,len(self.selectedshipspeeds)):
                                     if(self.selectedshipspeeds[d] != 0):
                                         self.currentshipspeed = self.selectedshipspeeds[d]
-                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                 if('ground' in self.gdcollision):
                                     if(self.currentshipspeed > 0):
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -3978,7 +4007,7 @@ class GameLoop():
                                 for d in range(0,len(self.selectedshipspeeds)):
                                     if(self.selectedshipspeeds[d] != 0):
                                         self.currentshipspeed = self.selectedshipspeeds[d]
-                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                 if('ground' in self.gdcollision):
                                     if(self.currentshipspeed > 0):
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -3986,7 +4015,7 @@ class GameLoop():
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                             #this checks if we are still on the ground or no.
                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                         if('ground' not in self.gdcollision):
                             exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
                         else:
@@ -4000,15 +4029,15 @@ class GameLoop():
                         exec("self.gd" + str(imrunningoutofvariables) + ".jumping = 1")
                         #are we still on the ground or NO?
                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
-                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                         if('ground' not in self.gdcollision):
                             exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 0")
-                            exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0 - self.selectedYspeed * 40)")
+                            exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0 - self.selectedYspeed * 50)") #sets the direction the ship is pointing (0-360 degrees)
                         else:
                             exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
                         #actual gravity stuff begins
-                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                         if('ground' in self.gdcollision):
                             exec("self.gd" + str(imrunningoutofvariables) + ".setrotate(0)")
                             exec("self.gd" + str(imrunningoutofvariables) + ".touchingground = 1")
@@ -4016,14 +4045,14 @@ class GameLoop():
                             self.selectedYspeed = 0
                         elif(self.selectedtouchingground == 0):
                             if(self.selectedYspeed < 1.5):
-                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.03")
+                                exec("self.gd" + str(imrunningoutofvariables) + ".Yspeed = self.gd" + str(imrunningoutofvariables) + ".Yspeed + 0.035") #was 0.03
                         if(self.selectedYspeed == 0):
                             for i in range(0,int((self.selectedYspeed + 1) * self.gamespeed)):
                                 currentshipspeed = 0
                                 for d in range(0,len(self.selectedshipspeeds)):
                                     if(self.selectedshipspeeds[d] != 0):
                                         currentshipspeed = self.selectedshipspeeds[d]
-                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
+                                exec("self.gdcollision = self.gd" + str(imrunningoutofvariables) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(imrunningoutofvariables) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(imrunningoutofvariables) + ".gravity)[0]")
                                 if('ground' in self.gdcollision):
                                     if(currentshipspeed > 0):
                                         exec("self.gd" + str(imrunningoutofvariables) + ".move([0,-1],self.gd" + str(imrunningoutofvariables) + ".gravity)")
@@ -4047,7 +4076,7 @@ class GameLoop():
                     exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                     exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                 if(self.handledform == 'cube' or self.handledform == 'ball'):
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('slamleft' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right' or 'slamdown' in self.gdcollision and self.selectedgravity == 1 and self.direction == 'right'):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
@@ -4061,12 +4090,12 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                 elif(self.handledform == 'arrow'):
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('ground' in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
                 elif(self.handledform == 'ship'):
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.squares.return_collision(self.squaresCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(imrunningoutofvariables) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if('slamleft' in self.gdcollision and self.direction == 'right'):
                         exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
@@ -4075,13 +4104,13 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                 #this is triangle death detection
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.triangles.return_collision(self.trianglesCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                 if('triangle' in self.gdcollision):
                     exec("self.gd" + str(CryingOutLoud) + ".dead = True")
                     exec("self.gd" + str(CryingOutLoud) + ".exploding = True")
 
                 #portal collision and what happens
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.portals.return_collision(self.portalsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(imrunningoutofvariables) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                 if('portal#1' in self.gdcollision): #change to cube
                     exec("self.gd" + str(CryingOutLoud) + ".form = 'cube'")
                     exec("self.gd" + str(CryingOutLoud) + ".jumping = 0")
@@ -4133,7 +4162,7 @@ class GameLoop():
                 for getallgds in range(0,self.players):
                     if(getallgds == CryingOutLoud): #make sure we don't check collision with ourselves
                         continue
-                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision([self.gd" + str(getallgds) + ".getslamcoords(self.gd" + str(getallgds) + ".form)],self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                    exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision([self.gd" + str(getallgds) + ".getslamcoords(self.gd" + str(getallgds) + ".form)],self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                     if("slamup" in self.gdcollision):
                         exec("self.gd" + str(CryingOutLoud) + ".move([0,4],self.gd" + str(CryingOutLoud) + ".gravity)") #move the player down and the "getallgds" player the opposite
                         exec("self.gd" + str(getallgds) + ".move([0,-4],self.gd" + str(getallgds) + ".gravity)")
@@ -4148,8 +4177,8 @@ class GameLoop():
                         exec("self.gd" + str(getallgds) + ".move([4,0],self.gd" + str(getallgds) + ".gravity)")
 
                 #booster collision handling
-                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
-                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
+                exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                exec("self.gd" + str(CryingOutLoud) + ".gravity = self.gd" + str(CryingOutLoud) + ".checkcollision(self.boosters.return_collision(self.bouncepadsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[1]")
                 exec("self.handledmini = self.gd" + str(CryingOutLoud) + ".mini")
                 if(self.handledmini == False):
                     if('bouncepadP1' in self.gdcollision):
@@ -4287,6 +4316,7 @@ class GameLoop():
                             PMpos = [move,self.y10y[:],self.gd0.pos[:],self.direction,self.gd0.Yspeed,self.gd0.form,self.gd0.gravity]
                     if(event.key == pygame.K_ESCAPE):
                         pygame.mixer.music.pause()
+                        pygame.mouse.set_visible(True)
                         self.returnstatement = self.menu.GameMenu(PMStatus) #start a basic UI
                         if(self.returnstatement == "level menu"): #based on our UI input, do something!
                             return self.returnstatement
@@ -4308,6 +4338,7 @@ class GameLoop():
                                 timelib.sleep(4)
                         #nothing happens if resume clicked, just continue in game...
                         pygame.mixer.music.unpause()
+                        pygame.mouse.set_visible(False)
 
             #hmmm... let's try a more flexible approach to this... (key detection)
             for CryingOutLoud in range(0,self.players):
@@ -4332,7 +4363,7 @@ class GameLoop():
                         exec("self.gd" + str(CryingOutLoud) + ".setrotate(0)")
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = -1")
                     elif(self.selectedform == 'ship' and self.selectedYspeed > -1.5): #physics for mini ship might need to be updated eventually...
-                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.125")
+                        exec("self.gd" + str(CryingOutLoud) + ".Yspeed -= 0.14")
                     elif(self.selectedform == 'cube' and self.selectedtouchingground == 1 and self.selectedmini == True):
                         exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.jumpsizes[1] * self.unit")
                         exec("self.gd" + str(CryingOutLoud) + ".touchingground = 0")
@@ -4346,7 +4377,7 @@ class GameLoop():
                 if(self.keyconfig[CryingOutLoud][2] in keydowncheck or 'mouse' in keydowncheck):
                     if(self.selectedmini == False):
                         #we check, have we collided with any bounceballs?
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if("bounceballP1" in self.gdcollision):
                             exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[0]")
                         if("bounceballP2" in self.gdcollision):
@@ -4360,7 +4391,7 @@ class GameLoop():
                                 exec("self.gd" + str(CryingOutLoud) + ".nojump = 8")
                     else:
                         #we check, have we collided with any bounceballs?
-                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
+                        exec("self.gdcollision = self.gd" + str(CryingOutLoud) + ".checkcollision(self.bounceballs.return_collision(self.bounceballsCourse,[self.x10x[0],self.y10y[0]],[-self.x10x[1],self.y10y[1]],self.gd" + str(CryingOutLoud) + ".pos),self.gd" + str(CryingOutLoud) + ".getcoords(self.gd" + str(CryingOutLoud) + ".form),self.gd" + str(CryingOutLoud) + ".gravity)[0]")
                         if("bounceballP1" in self.gdcollision):
                             exec("self.gd" + str(CryingOutLoud) + ".Yspeed = self.balljumpsizes[8]")
                         if("bounceballP2" in self.gdcollision):
@@ -4670,6 +4701,10 @@ while True:
                         migameloop.explosionbool = True
                     #start game!
                     returnstatement = migameloop.GameLoop(milevelchoice,Attempts)
+                    #mouse grab goes brrrr
+                    pygame.event.set_grab(False)
+                    #we can't see our mouse!
+                    pygame.mouse.set_visible(True)
                     pygame.mixer.music.stop()
                     if(returnstatement == "won"):
                         for x in range(0,50): #fade out the screen... *darkness*
